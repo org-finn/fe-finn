@@ -5,11 +5,11 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import MainHeader from './MainHeader';
 import Footer from './Footer';
-import useScrollToTop from '../../../hooks/useScrollToTop';
+import useScrollToTop from '@/hooks/useScrollToTop';
 import ErrorComponent from './Error';
 import Loading from './Loading';
-import MainSkeleton from '../../Main/MainSkeleton';
-import StockSkeleton from '../../Stock/StockSkeleton';
+import MainSkeleton from '@/components/Main/MainSkeleton';
+import StockSkeleton from '@/components/Stock/StockSkeleton';
 
 export default function MainLayout() {
   const location = useLocation();
