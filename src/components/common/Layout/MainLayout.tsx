@@ -119,6 +119,7 @@ const Wrapper = styled.div`
 `;
 
 const InnerWrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

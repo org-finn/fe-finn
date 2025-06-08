@@ -38,5 +38,6 @@ const HeaderContainer = styled.header`
 `;
 const LogoWrapper = styled.img`
   width: 60px;
+  margin-left: 20px;
   cursor: pointer;
 `;
