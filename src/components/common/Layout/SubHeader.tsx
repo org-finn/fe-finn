@@ -15,6 +15,11 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
 
     const isActive = (path: string) => {
       if (path.startsWith('http')) return false;
+      if (path === '/') {
+        return (
+          location.pathname === '/' || location.pathname.startsWith('/stock')
+        );
+      }
       return location.pathname === path;
     };
     return (
