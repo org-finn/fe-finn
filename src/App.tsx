@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from './components/common/Layout/MainLayout';
-import MainPage from './pages/Stock';
+import MainPage from './pages/Main';
 import StockPage from './pages/Stock';
 import DetailPage from './pages/Detail';
 import NewsBoardPage from './pages/NewsBoard';
@@ -12,11 +12,11 @@ function App() {
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index path="/" element={<MainPage />} />
-        <Route index path="/stock" element={<StockPage />} />
-        <Route index path="/stock/:id" element={<DetailPage />} />
-        <Route index path="/news" element={<NewsBoardPage />} />
-        <Route index path="/finngpt" element={<FinnGPTPage />} />
-        <Route index path="/my" element={<MyPage />} />
+        <Route path="/stock" element={<StockPage />} />
+        <Route path="/stock/:id" element={<DetailPage />} />
+        <Route path="/news" element={<NewsBoardPage />} />
+        <Route path="/finngpt" element={<FinnGPTPage />} />
+        <Route path="/my" element={<MyPage />} />
       </Route>
     </Routes>
   );
