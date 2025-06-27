@@ -6,7 +6,9 @@ export interface IParagraph extends IText {
   children: React.ReactNode;
 }
 
-const ParagraphStyled = styled.p``;
+const ParagraphStyled = styled.p`
+  margin: 0;
+`;
 
 export function Paragraph({ size, weight, variant, children }: IParagraph) {
   return (

@@ -24,10 +24,9 @@ export default function Footer() {
 }
 
 const FooterContainer = styled.footer`
-  background-color: #ecf5fa;
+  background-color: #f6f6f6;
   width: 100%;
-  height: 160px;
-  padding: 30px;
+  padding: 24px 30px;
   box-sizing: border-box;
 `;
 
