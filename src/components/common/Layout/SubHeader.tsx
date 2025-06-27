@@ -16,11 +16,9 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
     const isActive = (path: string) => {
       if (path.startsWith('http')) return false;
       if (path === '/') {
-        return (
-          location.pathname === '/' || location.pathname.startsWith('/stock')
-        );
+        return location.pathname === '/';
       }
-      return location.pathname === path;
+      return location.pathname.startsWith(path);
     };
     return (
       <HeaderContainer
@@ -36,11 +34,11 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
           뉴스보드
         </Item>
         <Item
-          aria-label="header-finngpt"
-          to="/finngpt"
-          $isActive={isActive('/finngpt')}
+          aria-label="header-stock"
+          to="/stock"
+          $isActive={isActive('/stock')}
         >
-          FinnGPT
+          종목
         </Item>
         <Item aria-label="header-my" to="/my" $isActive={isActive('/my')}>
           포트폴리오
