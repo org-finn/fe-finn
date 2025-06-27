@@ -1,17 +1,30 @@
 import { Text } from '@/components/common/typography/Text';
 import StockCharts from '@/components/Stock/StockCharts';
 import { IoLogoUsd } from 'react-icons/io5';
-import { StockData } from '@/types';
+import { StockDetailData } from '@/types';
 // import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { predictedData, realData } from '@/constants/dummy';
 
-const stockData: StockData = {
+const stockData: StockDetailData = {
   stockId: 1,
-  company: 'Aplphabet Inc.',
+  companyName: 'Aplphabet Inc.',
   stockCode: 'GOOGL',
   predictedPrice: 210.5,
   predictedChangeRate: 1.8,
   isUp: true,
+  opinion: '내일 1.8% 상승할 것으로 예상됩니다.',
+  predDataList: predictedData, // 예측한 값
+  realDataList: realData, // 실제 값
+  detailDataList: {
+    date: '2025-06-08',
+    open: 117.7,
+    close: 118.5,
+    high: 119.1,
+    low: 116.3,
+    volume: 1,
+    news: [],
+  },
 };
 
 export default function DetailPage() {
@@ -25,7 +38,7 @@ export default function DetailPage() {
             {stockData.stockCode}
           </Text>
           <Text size="xs" weight="normal" variant="grey">
-            {stockData.company}
+            {stockData.companyName}
           </Text>
         </StockInfo>
         <PriceInfo>
@@ -47,18 +60,18 @@ export default function DetailPage() {
           </Text>
         </PriceInfo>
       </StockTitle>
-      <StockCharts />
+      <StockCharts
+        predData={stockData.predDataList}
+        realData={stockData.realDataList}
+        isUp={stockData.isUp}
+      />
       <OpinionContainer>
         <Text size="s" weight="bold">
           투자 의견
         </Text>
         <Opinion>
           <Text size="xs" weight="normal">
-            내일{' '}
-            <Text size="xs" weight="bold">
-              10% 상승
-            </Text>
-            할 것으로 예상됩니다.
+            {stockData.opinion}
           </Text>
         </Opinion>
       </OpinionContainer>
