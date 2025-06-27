@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { IoLogoUsd } from 'react-icons/io5';
 import { Text } from '../common/typography/Text';
-import { StockData } from '@/types';
+import { StockItemData } from '@/types';
 import { Link } from 'react-router-dom';
 
-export default function StockItem({ item }: { item: StockData }) {
+export default function StockItem({ item }: { item: StockItemData }) {
   return (
     <Wrapper to={`/stock/${item.stockId}`}>
       <StockInfo>
@@ -12,7 +12,7 @@ export default function StockItem({ item }: { item: StockData }) {
           {item.stockCode}
         </Text>
         <Text size="xs" weight="normal" variant="grey">
-          {item.company}
+          {item.companyName}
         </Text>
       </StockInfo>
       <PriceInfo>

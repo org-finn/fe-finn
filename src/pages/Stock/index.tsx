@@ -1,10 +1,11 @@
 import StockList from '@/components/Stock/StockList';
+import { LoveItems } from '@/constants/dummy';
 import styled from 'styled-components';
 
 export default function StockPage() {
   return (
     <Wrapper>
-      <StockList />
+      <StockList items={LoveItems} />
     </Wrapper>
   );
 }

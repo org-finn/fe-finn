@@ -4,12 +4,33 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import StockList from '@/components/Stock/StockList';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { LoveItems, UpItems } from '@/constants/dummy';
 
 export default function MainPage() {
   const navigate = useNavigate();
   return (
     <Wrapper>
       <SearchBar />
+      <StockSection>
+        <StockTitle>
+          <Left>
+            <Paragraph size="m" weight="bold">
+              한국인이 가장 좋아하는 종목 Top5
+            </Paragraph>
+            <Paragraph size="xxs" weight="normal" variant="grey">
+              여러분이 가장 좋아하는 종목을 예측했어요!
+            </Paragraph>
+          </Left>
+          <MoreBtn
+            aria-label="more-stock-btn"
+            onClick={() => navigate('/stock')}
+          >
+            전체 보기
+            <IoIosArrowForward />
+          </MoreBtn>
+        </StockTitle>
+        <StockList items={LoveItems} />
+      </StockSection>
       <StockSection>
         <StockTitle>
           <Left>
@@ -28,25 +49,9 @@ export default function MainPage() {
             <IoIosArrowForward />
           </MoreBtn>
         </StockTitle>
-        <StockList />
+        <StockList items={UpItems} />
       </StockSection>
-      <StockSection>
-        <StockTitle>
-          <Left>
-            <Paragraph size="m" weight="bold">
-              하락률 Top5
-            </Paragraph>
-            <Paragraph size="xxs" weight="normal" variant="grey">
-              지금 사세요 어쩌고
-            </Paragraph>
-          </Left>
-          <MoreBtn>
-            전체 보기
-            <IoIosArrowForward />
-          </MoreBtn>
-        </StockTitle>
-        <StockList />
-      </StockSection>
+
       <BannerSection></BannerSection>
     </Wrapper>
   );
