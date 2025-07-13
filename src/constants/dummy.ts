@@ -7,7 +7,7 @@ export const LoveItems: StockItemData[] = [
     stockCode: 'GOOGL',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 2,
@@ -15,15 +15,15 @@ export const LoveItems: StockItemData[] = [
     stockCode: 'AAPL',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: false,
+    isUp: -1,
   },
   {
     stockId: 3,
     companyName: 'Coinbase Global, Inc.',
     stockCode: 'COIN',
     predictedPrice: 210.5,
-    predictedChangeRate: 1.8,
-    isUp: false,
+    predictedChangeRate: 0,
+    isUp: 0,
   },
   {
     stockId: 4,
@@ -31,7 +31,7 @@ export const LoveItems: StockItemData[] = [
     stockCode: 'Meta',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 5,
@@ -39,7 +39,7 @@ export const LoveItems: StockItemData[] = [
     stockCode: 'NFLX',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: false,
+    isUp: -1,
   },
 ];
 export const UpItems: StockItemData[] = [
@@ -49,7 +49,7 @@ export const UpItems: StockItemData[] = [
     stockCode: 'GOOGL',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 2,
@@ -57,7 +57,7 @@ export const UpItems: StockItemData[] = [
     stockCode: 'AAPL',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 3,
@@ -65,7 +65,7 @@ export const UpItems: StockItemData[] = [
     stockCode: 'COIN',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 4,
@@ -73,7 +73,7 @@ export const UpItems: StockItemData[] = [
     stockCode: 'Meta',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
   {
     stockId: 5,
@@ -81,7 +81,7 @@ export const UpItems: StockItemData[] = [
     stockCode: 'NFLX',
     predictedPrice: 210.5,
     predictedChangeRate: 1.8,
-    isUp: true,
+    isUp: 1,
   },
 ];
 

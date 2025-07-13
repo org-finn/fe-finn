@@ -6,7 +6,7 @@ import { GraphDataResponse } from '@/types';
 type ChartProps = {
   predData: GraphDataResponse[];
   realData: GraphDataResponse[];
-  isUp: boolean;
+  isUp: number;
 };
 const shownDates = [
   '2025-05-11',
@@ -114,12 +114,14 @@ export default function StockCharts({ predData, realData, isUp }: ChartProps) {
     </Wrapper>
   );
 }
-const Wrapper = styled.div<{ $isUp: boolean }>`
+const Wrapper = styled.div<{ $isUp: number }>`
   .apexcharts-candlestick-series
     .apexcharts-series
     .apexcharts-candlestick-area:last-of-type {
-    stroke: ${({ $isUp }) => ($isUp ? 'red' : '#0057ff')} !important;
-    fill: ${({ $isUp }) => ($isUp ? 'red' : '#0057ff')} !important;
+    stroke: ${({ $isUp }) =>
+      $isUp === 1 ? 'red' : $isUp === 0 ? 'grey' : '#0057ff'} !important;
+    fill: ${({ $isUp }) =>
+      $isUp === 1 ? 'red' : $isUp === 0 ? 'grey' : '#0057ff'} !important;
   }
   .apexcharts-xaxis-annotation-label {
     writing-mode: horizontal-tb !important;

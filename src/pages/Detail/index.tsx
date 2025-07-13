@@ -5,6 +5,8 @@ import { StockDetailData } from '@/types';
 // import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { predictedData, realData } from '@/constants/dummy';
+import useGetVariant from '@/hooks/useGetVariant';
+import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 
 const stockData: StockDetailData = {
   stockId: 1,
@@ -12,7 +14,7 @@ const stockData: StockDetailData = {
   stockCode: 'GOOGL',
   predictedPrice: 210.5,
   predictedChangeRate: 1.8,
-  isUp: true,
+  isUp: 1,
   opinion: '내일 1.8% 상승할 것으로 예상됩니다.',
   predDataList: predictedData, // 예측한 값
   realDataList: realData, // 실제 값
@@ -30,6 +32,8 @@ const stockData: StockDetailData = {
 export default function DetailPage() {
   // const { id } = useParams() as { id: string };
   // const { data: stockData } = useGetStockData(id);
+  const getVariant = useGetVariant(stockData.isUp);
+  const getSignSymbol = useGetSignSymbol(stockData.isUp);
   return (
     <Wrapper>
       <StockTitle>
@@ -42,20 +46,12 @@ export default function DetailPage() {
           </Text>
         </StockInfo>
         <PriceInfo>
-          <Text
-            size="m"
-            weight="bold"
-            variant={stockData.isUp ? 'red' : 'blue'}
-          >
-            {stockData.isUp ? `+` : `-`}
+          <Text size="m" weight="bold" variant={getVariant}>
+            {getSignSymbol}
             <IoLogoUsd size={18} />
             {stockData.predictedPrice}
           </Text>
-          <Text
-            size="s"
-            weight="bold"
-            variant={stockData.isUp ? 'red' : 'blue'}
-          >
+          <Text size="s" weight="bold" variant={getVariant}>
             {stockData.predictedChangeRate}%
           </Text>
         </PriceInfo>

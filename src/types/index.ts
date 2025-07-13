@@ -5,7 +5,7 @@ export type StockItemData = {
   stockCode: string;
   predictedPrice: number;
   predictedChangeRate: number;
-  isUp: boolean;
+  isUp: number;
 };
 
 // 주가 상세 데이터
@@ -15,7 +15,7 @@ export type StockDetailData = {
   stockCode: string;
   predictedPrice: number;
   predictedChangeRate: number;
-  isUp: boolean;
+  isUp: number;
   opinion: string;
   predDataList: GraphDataResponse[];
   realDataList: GraphDataResponse[];

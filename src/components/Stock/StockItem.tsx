@@ -3,8 +3,13 @@ import { IoLogoUsd } from 'react-icons/io5';
 import { Text } from '../common/typography/Text';
 import { StockItemData } from '@/types';
 import { Link } from 'react-router-dom';
+import useGetVariant from '@/hooks/useGetVariant';
+import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 
 export default function StockItem({ item }: { item: StockItemData }) {
+  const getVariant = useGetVariant(item.isUp);
+  const getSignSymbol = useGetSignSymbol(item.isUp);
+
   return (
     <Wrapper to={`/stock/${item.stockId}`}>
       <StockInfo>
@@ -16,12 +21,12 @@ export default function StockItem({ item }: { item: StockItemData }) {
         </Text>
       </StockInfo>
       <PriceInfo>
-        <Text size="m" weight="bold" variant={item.isUp ? 'red' : 'blue'}>
-          {item.isUp ? `+` : `-`}
+        <Text size="m" weight="bold" variant={getVariant}>
+          {getSignSymbol}
           <IoLogoUsd size={18} />
           {item.predictedPrice}
         </Text>
-        <Text size="s" weight="bold" variant={item.isUp ? 'red' : 'blue'}>
+        <Text size="s" weight="bold" variant={getVariant}>
           {item.predictedChangeRate}%
         </Text>
       </PriceInfo>
