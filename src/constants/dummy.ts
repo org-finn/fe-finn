@@ -1,4 +1,47 @@
-import { StockItemData } from '@/types';
+import { NewsDataResponse, StockItemData } from '@/types';
+
+export const NewsDummy: NewsDataResponse[] = [
+  {
+    newsId: '1',
+    headline: 'Google Announces New AI Features',
+    companyName: 'Google',
+    thumbnailUrl: 'https://placehold.co/100',
+    contentUrl: 'https://example.com/google-ai-news',
+    publishedDate: '2025-05-03 오전 12:00',
+  },
+  {
+    newsId: '2',
+    headline: 'Apple Unveils Latest iPhone Model',
+    companyName: 'Apple',
+    thumbnailUrl: 'https://placehold.co/100',
+    contentUrl: 'https://example.com/apple-iphone-news',
+    publishedDate: '2025-05-03 오전 12:00',
+  },
+  {
+    newsId: '3',
+    headline: 'Meta Platforms Launches New VR Headset',
+    companyName: 'Meta',
+    thumbnailUrl: 'https://placehold.co/100',
+    contentUrl: 'https://example.com/meta-vr-news',
+    publishedDate: '2025-05-03 오전 12:00',
+  },
+  {
+    newsId: '4',
+    headline: 'Netflix Expands Streaming Service to New Markets',
+    companyName: 'Netflix',
+    thumbnailUrl: 'https://placehold.co/100',
+    contentUrl: 'https://example.com/netflix-expansion-news',
+    publishedDate: '2025-05-03 오전 12:00',
+  },
+  {
+    newsId: '5',
+    headline: 'Coinbase Announces New Cryptocurrency Features',
+    companyName: 'Coinbase',
+    thumbnailUrl: 'https://placehold.co/100',
+    contentUrl: 'https://example.com/coinbase-crypto-news',
+    publishedDate: '2025-05-03 오전 12:00',
+  },
+];
 
 export const LoveItems: StockItemData[] = [
   {

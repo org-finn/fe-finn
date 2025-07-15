@@ -43,4 +43,8 @@ export type DetailDataResponse = {
 export type NewsDataResponse = {
   newsId: string;
   headline: string;
+  companyName: string;
+  thumbnailUrl: string;
+  contentUrl: string;
+  publishedDate: string;
 };
