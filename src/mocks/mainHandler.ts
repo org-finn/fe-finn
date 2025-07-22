@@ -1,0 +1,103 @@
+import { http, HttpResponse } from 'msw';
+import { BASE_URL } from '@/api/instance';
+import { getStockListPath } from '@/api/hooks/useGetStockList';
+
+const mockStockData = [
+  {
+    stockId: 1,
+    companyName: 'Alphabet Inc.',
+    stockCode: 'GOOGL',
+    predictedPrice: 210.5,
+    predictedChangeRate: 1.8,
+    isUp: 1,
+  },
+  {
+    stockId: 2,
+    companyName: 'Apple Inc.',
+    stockCode: 'AAPL',
+    predictedPrice: 185.2,
+    predictedChangeRate: -2.3,
+    isUp: -1,
+  },
+  {
+    stockId: 3,
+    companyName: 'Meta Platforms, Inc.',
+    stockCode: 'META',
+    predictedPrice: 312.4,
+    predictedChangeRate: 3.1,
+    isUp: 1,
+  },
+  {
+    stockId: 4,
+    companyName: 'Netflix, Inc.',
+    stockCode: 'NFLX',
+    predictedPrice: 421.8,
+    predictedChangeRate: -1.5,
+    isUp: -1,
+  },
+  {
+    stockId: 5,
+    companyName: 'Coinbase Global, Inc.',
+    stockCode: 'COIN',
+    predictedPrice: 68.7,
+    predictedChangeRate: 0,
+    isUp: 0,
+  },
+  {
+    stockId: 6,
+    companyName: 'NVIDIA Corporation',
+    stockCode: 'NVDA',
+    predictedPrice: 875.2,
+    predictedChangeRate: 5.7,
+    isUp: 1,
+  },
+  {
+    stockId: 7,
+    companyName: 'Tesla, Inc.',
+    stockCode: 'TSLA',
+    predictedPrice: 245.8,
+    predictedChangeRate: 4.2,
+    isUp: 1,
+  },
+  {
+    stockId: 8,
+    companyName: 'Amazon.com, Inc.',
+    stockCode: 'AMZN',
+    predictedPrice: 178.9,
+    predictedChangeRate: 3.8,
+    isUp: 1,
+  },
+  {
+    stockId: 9,
+    companyName: 'PayPal Holdings, Inc.',
+    stockCode: 'PYPL',
+    predictedPrice: 45.2,
+    predictedChangeRate: -8.5,
+    isUp: -1,
+  },
+  {
+    stockId: 10,
+    companyName: 'Zoom Video Communications',
+    stockCode: 'ZM',
+    predictedPrice: 62.1,
+    predictedChangeRate: -6.2,
+    isUp: -1,
+  },
+];
+
+export const stockHandlers = [
+  http.get(`${BASE_URL}${getStockListPath()}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '주식 리스트를 성공적으로 조회하였습니다.',
+      content: {
+        predictionDate: '2025-07-22',
+        stockList: mockStockData,
+        pageNumber: 1,
+        hasNext: false,
+      },
+    });
+  }),
+];
+
+export const mainHandlers = [...stockHandlers];
