@@ -1,3 +1,9 @@
+export type ApiResponse<T> = {
+  code: string;
+  message: string;
+  content: T;
+};
+
 // 주가 아이템 컴포넌트
 export type StockItemData = {
   stockId: number;
@@ -8,19 +14,22 @@ export type StockItemData = {
   isUp: number;
 };
 
-export type StockListResponse = {
+export type StockListData = {
+  predictionDate: string;
+  stockList: StockItemData[];
+  pageNumber: number;
+  hasNext: boolean;
+};
+
+export type PageableData<T> = {
   code: string;
   message: string;
-  content: {
-    predictionDate: string;
-    stockList: StockItemData[];
-    pageNumber: number;
-    hasNext: boolean;
-  };
+  content: T;
 };
 
 // 주가 상세 데이터
 export type StockDetailData = {
+  predictionDate: string;
   stockId: number;
   companyName: string;
   stockCode: string;
@@ -28,9 +37,7 @@ export type StockDetailData = {
   predictedChangeRate: number;
   isUp: number;
   opinion: string;
-  predDataList: GraphDataResponse[];
-  realDataList: GraphDataResponse[];
-  detailDataList: DetailDataResponse;
+  detailData: DetailDataResponse;
 };
 
 export type GraphDataResponse = {
@@ -42,7 +49,7 @@ export type GraphDataResponse = {
 };
 
 export type DetailDataResponse = {
-  date: string;
+  priceDate: string;
   open: number;
   close: number;
   high: number;

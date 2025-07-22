@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 
-import { StockListResponse } from '@/types';
+import { PageableData, StockListData } from '@/types';
 
 interface GetStockListParams {
   sort: 'popular' | 'upward' | 'downward';
@@ -22,7 +22,7 @@ export const getStockList = async ({
     size: size.toString(),
   });
 
-  const response = await fetchInstance.get<StockListResponse>(
+  const response = await fetchInstance.get<PageableData<StockListData>>(
     `${getStockListPath()}?${params}`
   );
   return response.data;
