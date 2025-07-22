@@ -4,10 +4,15 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import StockList from '@/components/Stock/StockList';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { LoveItems, UpItems } from '@/constants/dummy';
+import {
+  useGetPopularStocks,
+  useGetRisingStocks,
+} from '@/api/hooks/useGetStockList';
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const { data: popularData } = useGetPopularStocks(5);
+  const { data: risingData } = useGetRisingStocks(5);
   return (
     <Wrapper>
       <SearchBar />
@@ -29,7 +34,7 @@ export default function MainPage() {
             <IoIosArrowForward />
           </MoreBtn>
         </StockTitle>
-        <StockList items={LoveItems} />
+        <StockList items={popularData?.content.stockList || []} />
       </StockSection>
       <StockSection>
         <StockTitle>
@@ -49,7 +54,7 @@ export default function MainPage() {
             <IoIosArrowForward />
           </MoreBtn>
         </StockTitle>
-        <StockList items={UpItems} />
+        <StockList items={risingData?.content.stockList || []} />
       </StockSection>
 
       <BannerSection></BannerSection>

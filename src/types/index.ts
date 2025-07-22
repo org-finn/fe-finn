@@ -8,6 +8,17 @@ export type StockItemData = {
   isUp: number;
 };
 
+export type StockListResponse = {
+  code: string;
+  message: string;
+  content: {
+    predictionDate: string;
+    stockList: StockItemData[];
+    pageNumber: number;
+    hasNext: boolean;
+  };
+};
+
 // 주가 상세 데이터
 export type StockDetailData = {
   stockId: number;
