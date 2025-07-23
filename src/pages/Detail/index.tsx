@@ -1,20 +1,41 @@
 import { Text } from '@/components/common/typography/Text';
-// import StockCharts from '@/components/Stock/StockCharts';
+import StockCharts from '@/components/Stock/StockCharts';
 import { IoLogoUsd } from 'react-icons/io5';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import { useGetStockDetail } from '@/api/hooks/useGetStockDetail';
+import { useGetPredGraph, PredGraphPeriod } from '@/api/hooks/useGetPredGraph';
 import Loading from '@/components/common/Layout/Loading';
+import { useState } from 'react';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
-  const { data: response, isLoading, error } = useGetStockDetail(id);
+  const [period, setPeriod] = useState<PredGraphPeriod>('2W');
 
-  const stockData = response?.content;
+  const {
+    data: stockResponse,
+    isLoading: stockLoading,
+    error: stockError,
+  } = useGetStockDetail(id);
+  const {
+    data: graphResponse,
+    isLoading: graphLoading,
+    error: graphError,
+  } = useGetPredGraph({
+    stockId: id,
+    period,
+  });
+
+  const stockData = stockResponse?.content;
+  const graphData = graphResponse?.content;
+
   const getVariant = useGetVariant(stockData?.isUp ?? 0);
   const getSignSymbol = useGetSignSymbol(stockData?.isUp ?? 0);
+
+  const isLoading = stockLoading || graphLoading;
+  const error = stockError || graphError;
 
   if (isLoading) {
     return <Loading />;
@@ -50,11 +71,26 @@ export default function DetailPage() {
           </Text>
         </PriceInfo>
       </StockTitle>
-      {/* <StockCharts
-        predData={stockData.predDataList || []}
-        realData={stockData.realDataList || []}
-        isUp={stockData.isUp ?? false}
-      /> */}
+      <PeriodSelector>
+        {(['2W', '1M', '6M', '1Y'] as PredGraphPeriod[]).map((p) => (
+          <PeriodButton
+            key={p}
+            $active={period === p}
+            onClick={() => setPeriod(p)}
+          >
+            {p}
+          </PeriodButton>
+        ))}
+      </PeriodSelector>
+
+      {graphData && (
+        <StockCharts
+          predData={graphData.graphData || []}
+          realData={[]}
+          isUp={stockData.isUp ?? 0}
+        />
+      )}
+
       <OpinionContainer>
         <Text size="s" weight="bold">
           투자 의견
@@ -109,6 +145,27 @@ const StockTitle = styled.div`
   justify-content: space-between;
   padding: 20px 0px;
   color: black;
+`;
+const PeriodSelector = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+`;
+const PeriodButton = styled.button<{ $active: boolean }>`
+  padding: 8px 16px;
+  border: 1px solid ${(props) => (props.$active ? '#47c8d9' : '#ddd')};
+  background-color: ${(props) => (props.$active ? '#47c8d9' : 'white')};
+  color: ${(props) => (props.$active ? 'white' : '#666')};
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #47c8d9;
+    background-color: ${(props) => (props.$active ? '#47c8d9' : '#f0f9fa')};
+  }
 `;
 const ErrorMessage = styled.div`
   padding: 20px;

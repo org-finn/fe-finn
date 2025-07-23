@@ -42,10 +42,11 @@ export type StockDetailData = {
 
 export type GraphDataResponse = {
   date: string;
-  open: number;
-  close: number;
-  high: number;
-  low: number;
+  price: number;
+};
+export type GraphData = {
+  period: string;
+  graphData: GraphDataResponse[];
 };
 
 export type DetailDataResponse = {

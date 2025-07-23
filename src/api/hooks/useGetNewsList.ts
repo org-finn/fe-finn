@@ -9,7 +9,7 @@ interface GetNewsListParams {
   size: number;
 }
 
-export const getNewsListPath = () => `api/news`;
+export const getNewsListPath = () => `/api/news`;
 
 export const getNewsList = async ({
   option,

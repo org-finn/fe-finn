@@ -51,7 +51,7 @@ const mockNewsList = [
 ];
 
 export const newsHandlers = [
-  http.get(`${BASE_URL}/${getNewsListPath()}`, ({ request }) => {
+  http.get(`${BASE_URL}${getNewsListPath()}`, ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1');
 
