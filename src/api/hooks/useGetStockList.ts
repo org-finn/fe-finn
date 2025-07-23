@@ -32,6 +32,7 @@ export const useGetStockList = ({ sort, page, size }: GetStockListParams) => {
   return useQuery({
     queryKey: ['stocks', 'list', { sort, page, size }],
     queryFn: () => getStockList({ sort, page, size }),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

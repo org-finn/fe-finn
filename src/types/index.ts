@@ -60,9 +60,16 @@ export type DetailDataResponse = {
 
 export type NewsDataResponse = {
   newsId: string;
-  headline: string;
+  title: string;
   companyName: string;
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
+  source: string;
+};
+
+export type NewsListData = {
+  newsList: NewsDataResponse[];
+  pageNumber: number;
+  hasNext: boolean;
 };

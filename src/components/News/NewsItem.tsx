@@ -11,11 +11,11 @@ export default function NewsItem({ item }: { item: NewsDataResponse }) {
     <Wrapper onClick={handleClick}>
       <NewsContent>
         <ImageContainer>
-          <Image src={item.thumbnailUrl} alt={item.headline} />
+          <Image src={item.thumbnailUrl} alt={item.title} />
         </ImageContainer>
         <TextContainer>
           <Text size="m" weight="bold">
-            {item.headline}
+            {item.title}
           </Text>
           <DateAndCompany>
             <Text size="xs" weight="normal" variant="grey">

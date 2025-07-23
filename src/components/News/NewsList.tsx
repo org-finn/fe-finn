@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import NewsItem from './NewsItem';
 import { NewsDataResponse } from '@/types';
 
-export default function StockList({
+export default function NewsList({
   items = [],
 }: {
   items: NewsDataResponse[];
