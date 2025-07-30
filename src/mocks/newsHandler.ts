@@ -11,6 +11,7 @@ const mockNewsList = [
     contentUrl: 'https://example.com/google-ai-news',
     publishedDate: '2025-05-03 오전 12:00',
     source: '연합뉴스',
+    newsSentiment: 1,
   },
   {
     newsId: '2',
@@ -20,6 +21,7 @@ const mockNewsList = [
     contentUrl: 'https://example.com/apple-iphone-news',
     publishedDate: '2025-05-03 오전 12:00',
     source: '연합뉴스',
+    newsSentiment: -1,
   },
   {
     newsId: '3',
@@ -29,6 +31,7 @@ const mockNewsList = [
     contentUrl: 'https://example.com/meta-vr-news',
     publishedDate: '2025-05-03 오전 12:00',
     source: '연합뉴스',
+    newsSentiment: 0,
   },
   {
     newsId: '4',
@@ -38,6 +41,7 @@ const mockNewsList = [
     contentUrl: 'https://example.com/netflix-expansion-news',
     publishedDate: '2025-05-03 오전 12:00',
     source: '연합뉴스',
+    newsSentiment: 1,
   },
   {
     newsId: '5',
@@ -47,6 +51,7 @@ const mockNewsList = [
     contentUrl: 'https://example.com/coinbase-crypto-news',
     publishedDate: '2025-05-03 오전 12:00',
     source: '연합뉴스',
+    newsSentiment: -1,
   },
 ];
 

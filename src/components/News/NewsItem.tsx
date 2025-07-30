@@ -1,17 +1,27 @@
 import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { NewsDataResponse } from '@/types';
+import PosNews from '@/assets/images/PosNews.png';
+import NegNews from '@/assets/images/NegNews.png';
+import defaultNews from '@/assets/images/DefaultNews.png';
 
 export default function NewsItem({ item }: { item: NewsDataResponse }) {
   const handleClick = () => {
     window.open(item.contentUrl, '_blank');
   };
 
+  const newsImage =
+    item.newsSentiment > 0
+      ? PosNews
+      : item.newsSentiment < 0
+        ? NegNews
+        : defaultNews;
+
   return (
     <Wrapper onClick={handleClick}>
       <NewsContent>
         <ImageContainer>
-          <Image src={item.thumbnailUrl} alt={item.title} />
+          <Image src={newsImage} alt={item.title} />
         </ImageContainer>
         <TextContainer>
           <Text size="m" weight="bold">

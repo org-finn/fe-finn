@@ -56,7 +56,7 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: NewsDataResponse[];
+  news: RotationNewsData[];
 };
 
 export type NewsDataResponse = {
@@ -67,10 +67,17 @@ export type NewsDataResponse = {
   contentUrl: string;
   publishedDate: string;
   source: string;
+  newsSentiment: number;
 };
 
 export type NewsListData = {
   newsList: NewsDataResponse[];
   pageNumber: number;
   hasNext: boolean;
+};
+
+export type RotationNewsData = {
+  newsId: string;
+  headline: string;
+  newsSentiment: number;
 };
