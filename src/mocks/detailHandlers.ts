@@ -20,11 +20,11 @@ const mockNewsData = [
 ];
 const mockStockDetail = {
   predictionDate: '2025-07-22',
-  stockId: 1,
+  stockId: '0-d-q-8b-95n',
   companyName: 'Aplphabet Inc.',
   stockCode: 'GOOGL',
   predictedPrice: 210.5,
-  predictedChangeRate: 1.8,
+  predictedChangeRate: '1.8000%',
   isUp: 1,
   opinion: '내일 1.8% 상승할 것으로 예상됩니다.',
   detailData: {

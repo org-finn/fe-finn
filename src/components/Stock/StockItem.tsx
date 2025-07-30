@@ -27,7 +27,7 @@ export default function StockItem({ item }: { item: StockItemData }) {
           {item.predictedPrice}
         </Text>
         <Text size="s" weight="bold" variant={getVariant}>
-          {item.predictedChangeRate}%
+          {item.predictedChangeRate}
         </Text>
       </PriceInfo>
     </Wrapper>

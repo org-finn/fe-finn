@@ -1,11 +1,12 @@
 import StockList from '@/components/Stock/StockList';
-import { LoveItems } from '@/constants/dummy';
 import styled from 'styled-components';
+import { useGetPopularStocks } from '@/api/hooks/useGetStockList';
 
 export default function StockPage() {
+  const { data: stockData } = useGetPopularStocks();
   return (
     <Wrapper>
-      <StockList items={LoveItems} />
+      <StockList items={stockData?.content.stockList} />
     </Wrapper>
   );
 }

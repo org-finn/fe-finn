@@ -6,11 +6,11 @@ export type ApiResponse<T> = {
 
 // 주가 아이템 컴포넌트
 export type StockItemData = {
-  stockId: number;
+  stockId: string;
   companyName: string;
   stockCode: string;
   predictedPrice: number;
-  predictedChangeRate: number;
+  predictedChangeRate: string;
   isUp: number;
 };
 
@@ -30,11 +30,11 @@ export type PageableData<T> = {
 // 주가 상세 데이터
 export type StockDetailData = {
   predictionDate: string;
-  stockId: number;
+  stockId: string;
   companyName: string;
   stockCode: string;
   predictedPrice: number;
-  predictedChangeRate: number;
+  predictedChangeRate: string;
   isUp: number;
   opinion: string;
   detailData: DetailDataResponse;
