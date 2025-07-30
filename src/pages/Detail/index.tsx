@@ -7,6 +7,7 @@ import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import { useGetStockDetail } from '@/api/hooks/useGetStockDetail';
 import { useGetPredGraph, PredGraphPeriod } from '@/api/hooks/useGetPredGraph';
+import { useGetRealGraph } from '@/api/hooks/useGetRealGraph';
 import Loading from '@/components/common/Layout/Loading';
 import { useState } from 'react';
 
@@ -20,22 +21,32 @@ export default function DetailPage() {
     error: stockError,
   } = useGetStockDetail(id);
   const {
-    data: graphResponse,
-    isLoading: graphLoading,
-    error: graphError,
+    data: predGraphResponse,
+    isLoading: predGraphLoading,
+    error: predGraphError,
   } = useGetPredGraph({
     stockId: id,
     period,
   });
 
+  const {
+    data: realGraphResponse,
+    isLoading: realGraphLoading,
+    error: realGraphError,
+  } = useGetRealGraph({
+    stockId: id,
+    period,
+  });
+
   const stockData = stockResponse?.content;
-  const graphData = graphResponse?.content;
+  const predGraphData = predGraphResponse?.content;
+  const realGraphData = realGraphResponse?.content;
 
   const getVariant = useGetVariant(stockData?.isUp ?? 0);
   const getSignSymbol = useGetSignSymbol(stockData?.isUp ?? 0);
 
-  const isLoading = stockLoading || graphLoading;
-  const error = stockError || graphError;
+  const isLoading = stockLoading || predGraphLoading || realGraphLoading;
+  const error = stockError || predGraphError || realGraphError;
 
   if (isLoading) {
     return <Loading />;
@@ -83,10 +94,10 @@ export default function DetailPage() {
         ))}
       </PeriodSelector>
 
-      {graphData && (
+      {predGraphData && realGraphData && (
         <StockCharts
-          predData={graphData.graphData || []}
-          realData={[]}
+          predData={predGraphData.graphData || []}
+          realData={realGraphData.graphData || []}
           isUp={stockData.isUp ?? 0}
         />
       )}
