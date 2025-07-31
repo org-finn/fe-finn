@@ -81,3 +81,10 @@ export type RotationNewsData = {
   headline: string;
   newsSentiment: number;
 };
+
+export type StockSearchResponse = {
+  stockId: string;
+  stockCode: string;
+  companyName: string;
+  fullCompanyName: string;
+};
