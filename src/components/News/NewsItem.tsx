@@ -17,6 +17,18 @@ export default function NewsItem({ item }: { item: NewsDataResponse }) {
         ? NegNews
         : defaultNews;
 
+  const getSentimentInfo = () => {
+    if (item.newsSentiment > 0) {
+      return { label: '긍정', emoji: '📈', color: '#ef4444' };
+    } else if (item.newsSentiment < 0) {
+      return { label: '부정', emoji: '📉', color: '#3b82f6' };
+    } else {
+      return { label: '중립', emoji: '➖', color: '#6b7280' };
+    }
+  };
+
+  const sentimentInfo = getSentimentInfo();
+
   return (
     <Wrapper onClick={handleClick}>
       <NewsContent>
@@ -36,6 +48,14 @@ export default function NewsItem({ item }: { item: NewsDataResponse }) {
                 {item.companyName}
               </Text>
             </CompanyTag>
+            {item.newsSentiment !== 0 && (
+              <SentimentTag $color={sentimentInfo.color}>
+                <span>{sentimentInfo.emoji}</span>
+                <Text size="xs" weight="bold">
+                  {sentimentInfo.label}
+                </Text>
+              </SentimentTag>
+            )}
           </DateAndCompany>
         </TextContainer>
       </NewsContent>
@@ -128,5 +148,25 @@ const CompanyTag = styled.div`
 
   span {
     color: #374151 !important;
+  }
+`;
+
+const SentimentTag = styled.div<{ $color: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 4px 8px;
+  background-color: ${(props) => props.$color}15;
+  border: 1px solid ${(props) => props.$color}40;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  span {
+    font-size: 12px;
+  }
+
+  & > *:last-child {
+    color: ${(props) => props.$color} !important;
   }
 `;
