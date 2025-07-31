@@ -88,3 +88,7 @@ export type StockSearchResponse = {
   companyName: string;
   fullCompanyName: string;
 };
+
+export type HolidayData = {
+  isHoliday: boolean;
+};

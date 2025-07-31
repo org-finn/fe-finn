@@ -8,6 +8,7 @@ import {
   useGetPopularStocks,
   useGetRisingStocks,
 } from '@/api/hooks/useGetStockList';
+import HolidayBanner from '@/components/common/Banner/HolidayBanner';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function MainPage() {
     <Wrapper>
       <SearchBar />
       <StockSection>
+        <HolidayBanner />
         <StockTitle>
           <Left>
             <Paragraph size="m" weight="bold">

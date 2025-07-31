@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getStockListPath } from '@/api/hooks/useGetStockList';
+import { getHolidaysPath } from '@/api/hooks/useGetHolidays';
 
 const mockStockData = [
   {
@@ -100,4 +101,10 @@ export const stockHandlers = [
   }),
 ];
 
-export const mainHandlers = [...stockHandlers];
+export const holidayHandlers = [
+  http.get(`${BASE_URL}${getHolidaysPath()}`, () => {
+    return HttpResponse.json(true);
+  }),
+];
+
+export const mainHandlers = [...stockHandlers, ...holidayHandlers];
