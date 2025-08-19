@@ -5,18 +5,18 @@ export type ApiResponse<T> = {
 };
 
 // 주가 아이템 컴포넌트
-export type StockItemData = {
-  stockId: string;
-  companyName: string;
-  stockCode: string;
-  predictedPrice: number;
-  predictedChangeRate: string;
-  isUp: number;
+export type PredictionDataResponse = {
+  tickerId: string;
+  shortCompanyName: string;
+  tickerCode: string;
+  predictionStrategy: string;
+  sentiment: number;
+  newsCount: number;
 };
 
-export type StockListData = {
+export type TickerListData = {
   predictionDate: string;
-  stockList: StockItemData[];
+  predictionList: PredictionDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };
@@ -28,11 +28,11 @@ export type PageableData<T> = {
 };
 
 // 주가 상세 데이터
-export type StockDetailData = {
+export type TickerDetailData = {
   predictionDate: string;
-  stockId: string;
+  tickerId: string;
   companyName: string;
-  stockCode: string;
+  tickerCode: string;
   predictedPrice: number;
   predictedChangeRate: string;
   isUp: number;
@@ -82,9 +82,9 @@ export type RotationNewsData = {
   newsSentiment: number;
 };
 
-export type StockSearchResponse = {
-  stockId: string;
-  stockCode: string;
+export type TickerSearchResponse = {
+  tickerId: string;
+  tickerCode: string;
   companyName: string;
   fullCompanyName: string;
 };
