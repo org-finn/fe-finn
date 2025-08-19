@@ -1,77 +1,114 @@
 import { Text } from '@/components/common/typography/Text';
 import StockCharts from '@/components/Stock/StockCharts';
 import { IoLogoUsd } from 'react-icons/io5';
-import { StockDetailData } from '@/types';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { predictedData, realData } from '@/constants/dummy';
-
-const stockData: StockDetailData = {
-  stockId: 1,
-  companyName: 'Aplphabet Inc.',
-  stockCode: 'GOOGL',
-  predictedPrice: 210.5,
-  predictedChangeRate: 1.8,
-  isUp: true,
-  opinion: '내일 1.8% 상승할 것으로 예상됩니다.',
-  predDataList: predictedData, // 예측한 값
-  realDataList: realData, // 실제 값
-  detailDataList: {
-    date: '2025-06-08',
-    open: 117.7,
-    close: 118.5,
-    high: 119.1,
-    low: 116.3,
-    volume: 1,
-    news: [],
-  },
-};
+import useGetVariant from '@/hooks/useGetVariant';
+import useGetSignSymbol from '@/hooks/useGetSignSymbol';
+import { useGetStockDetail } from '@/api/hooks/useGetStockDetail';
+import { useGetPredGraph, PredGraphPeriod } from '@/api/hooks/useGetPredGraph';
+import { useGetRealGraph } from '@/api/hooks/useGetRealGraph';
+import Loading from '@/components/common/Layout/Loading';
+import { useState } from 'react';
 
 export default function DetailPage() {
-  // const { id } = useParams() as { id: string };
-  // const { data: stockData } = useGetStockData(id);
+  const { id } = useParams() as { id: string };
+  const [period, setPeriod] = useState<PredGraphPeriod>('2W');
+
+  const {
+    data: stockResponse,
+    isLoading: stockLoading,
+    error: stockError,
+  } = useGetStockDetail(id);
+  const {
+    data: predGraphResponse,
+    isLoading: predGraphLoading,
+    error: predGraphError,
+  } = useGetPredGraph({
+    stockId: id,
+    period,
+  });
+
+  const {
+    data: realGraphResponse,
+    isLoading: realGraphLoading,
+    error: realGraphError,
+  } = useGetRealGraph({
+    stockId: id,
+    period,
+  });
+
+  const stockData = stockResponse?.content;
+  const predGraphData = predGraphResponse?.content;
+  const realGraphData = realGraphResponse?.content;
+
+  const getVariant = useGetVariant(stockData?.isUp ?? 0);
+  const getSignSymbol = useGetSignSymbol(stockData?.isUp ?? 0);
+
+  const isLoading = stockLoading || predGraphLoading || realGraphLoading;
+  const error = stockError || predGraphError || realGraphError;
+
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return (
+      <ErrorMessage>데이터를 불러오는 중 오류가 발생했습니다.</ErrorMessage>
+    );
+  }
+  if (!stockData) {
+    return <ErrorMessage>주식 정보를 찾을 수 없습니다.</ErrorMessage>;
+  }
+
   return (
     <Wrapper>
       <StockTitle>
         <StockInfo>
           <Text size="m" weight="bold">
-            {stockData.stockCode}
+            {stockData.stockCode || ''}
           </Text>
           <Text size="xs" weight="normal" variant="grey">
-            {stockData.companyName}
+            {stockData.companyName || ''}
           </Text>
         </StockInfo>
         <PriceInfo>
-          <Text
-            size="m"
-            weight="bold"
-            variant={stockData.isUp ? 'red' : 'blue'}
-          >
-            {stockData.isUp ? `+` : `-`}
+          <Text size="m" weight="bold" variant={getVariant}>
+            {getSignSymbol}
             <IoLogoUsd size={18} />
-            {stockData.predictedPrice}
+            {stockData.predictedPrice || 0}
           </Text>
-          <Text
-            size="s"
-            weight="bold"
-            variant={stockData.isUp ? 'red' : 'blue'}
-          >
-            {stockData.predictedChangeRate}%
+          <Text size="s" weight="bold" variant={getVariant}>
+            {stockData.predictedChangeRate || 0}%
           </Text>
         </PriceInfo>
       </StockTitle>
-      <StockCharts
-        predData={stockData.predDataList}
-        realData={stockData.realDataList}
-        isUp={stockData.isUp}
-      />
+      <PeriodSelector>
+        {(['2W', '1M', '6M', '1Y'] as PredGraphPeriod[]).map((p) => (
+          <PeriodButton
+            key={p}
+            $active={period === p}
+            onClick={() => setPeriod(p)}
+          >
+            {p}
+          </PeriodButton>
+        ))}
+      </PeriodSelector>
+
+      {predGraphData && realGraphData && (
+        <StockCharts
+          predData={predGraphData.graphData || []}
+          realData={realGraphData.graphData || []}
+          isUp={stockData.isUp ?? 0}
+        />
+      )}
+
       <OpinionContainer>
         <Text size="s" weight="bold">
           투자 의견
         </Text>
         <Opinion>
           <Text size="xs" weight="normal">
-            {stockData.opinion}
+            {stockData.opinion || '투자 의견이 없습니다.'}
           </Text>
         </Opinion>
       </OpinionContainer>
@@ -119,4 +156,30 @@ const StockTitle = styled.div`
   justify-content: space-between;
   padding: 20px 0px;
   color: black;
+`;
+const PeriodSelector = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+`;
+const PeriodButton = styled.button<{ $active: boolean }>`
+  padding: 8px 16px;
+  border: 1px solid ${(props) => (props.$active ? '#47c8d9' : '#ddd')};
+  background-color: ${(props) => (props.$active ? '#47c8d9' : 'white')};
+  color: ${(props) => (props.$active ? 'white' : '#666')};
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #47c8d9;
+    background-color: ${(props) => (props.$active ? '#47c8d9' : '#f0f9fa')};
+  }
+`;
+const ErrorMessage = styled.div`
+  padding: 20px;
+  text-align: center;
+  color: #e74c3c;
 `;

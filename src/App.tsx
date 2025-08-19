@@ -4,7 +4,6 @@ import MainPage from './pages/Main';
 import StockPage from './pages/Stock';
 import DetailPage from './pages/Detail';
 import NewsBoardPage from './pages/NewsBoard';
-import MyPage from './pages/My';
 import GlobalStyle from './global';
 
 function App() {
@@ -17,7 +16,6 @@ function App() {
           <Route path="/stock" element={<StockPage />} />
           <Route path="/stock/:id" element={<DetailPage />} />
           <Route path="/news" element={<NewsBoardPage />} />
-          <Route path="/my" element={<MyPage />} />
         </Route>
       </Routes>
     </>
