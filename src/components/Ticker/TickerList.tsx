@@ -1,19 +1,19 @@
 import styled from 'styled-components';
-import StockItem from './StockItem';
-import { StockItemData } from '@/types';
+import TickerItem from './TickerItem';
+import { PredictionDataResponse } from '@/types';
 import Loading from '../common/Layout/Loading';
 
-interface StockListProps {
-  items?: StockItemData[];
+interface TickerListProps {
+  items?: PredictionDataResponse[];
   isLoading?: boolean;
   error?: Error | null;
 }
 
-export default function StockList({
+export default function TickerList({
   items = [],
   isLoading = false,
   error,
-}: StockListProps) {
+}: TickerListProps) {
   if (isLoading) {
     return <Loading />;
   }
@@ -28,7 +28,7 @@ export default function StockList({
   return (
     <Wrapper>
       {items.map((item) => (
-        <StockItem key={item.stockId} item={item} />
+        <TickerItem key={item.tickerId} item={item} />
       ))}
     </Wrapper>
   );

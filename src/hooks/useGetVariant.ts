@@ -1,5 +1,5 @@
-export default function usegetVariant(isUp: number) {
-  if (isUp === 1) return 'red';
-  if (isUp === 0) return 'darkgrey';
+export default function usegetVariant(sentiment: number) {
+  if (sentiment === 1) return 'red';
+  if (sentiment === 0) return 'darkgrey';
   return 'blue';
 }

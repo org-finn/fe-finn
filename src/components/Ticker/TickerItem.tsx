@@ -1,33 +1,31 @@
 import styled from 'styled-components';
-import { IoLogoUsd } from 'react-icons/io5';
 import { Text } from '../common/typography/Text';
-import { StockItemData } from '@/types';
+import { PredictionDataResponse } from '@/types';
 import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 
-export default function StockItem({ item }: { item: StockItemData }) {
-  const getVariant = useGetVariant(item.isUp);
-  const getSignSymbol = useGetSignSymbol(item.isUp);
-
+export default function TickerItem({ item }: { item: PredictionDataResponse }) {
+  const getVariant = useGetVariant(item.sentiment);
+  const getSignSymbol = useGetSignSymbol(item.sentiment);
+  const getSentiment =
+    item.sentiment > 0 ? '긍정' : item.sentiment < 0 ? '부정' : '관련';
   return (
-    <Wrapper to={`/stock/${item.stockId}`}>
-      <StockInfo>
+    <Wrapper to={`/ticker/${item.tickerId}`}>
+      <TickerInfo>
         <Text size="m" weight="bold">
-          {item.stockCode}
+          {item.tickerCode}
         </Text>
         <Text size="xs" weight="normal" variant="grey">
-          {item.companyName}
+          {item.shortCompanyName}
         </Text>
-      </StockInfo>
+      </TickerInfo>
       <PriceInfo>
         <Text size="m" weight="bold" variant={getVariant}>
-          {getSignSymbol}
-          <IoLogoUsd size={18} />
-          {item.predictedPrice}
+          {getSignSymbol} {item.predictionStrategy} 추천
         </Text>
-        <Text size="s" weight="bold" variant={getVariant}>
-          {item.predictedChangeRate}
+        <Text size="xs" weight="bold" variant={getVariant}>
+          {getSentiment} 기사 {item.newsCount}건
         </Text>
       </PriceInfo>
     </Wrapper>
@@ -46,7 +44,7 @@ const Wrapper = styled(Link)`
     background-color: #f4f7fc;
   }
 `;
-const StockInfo = styled.div`
+const TickerInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: end;

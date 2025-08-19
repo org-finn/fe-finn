@@ -34,9 +34,9 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
           뉴스보드
         </Item>
         <Item
-          aria-label="header-stock"
-          to="/stock"
-          $isActive={isActive('/stock')}
+          aria-label="header-ticker"
+          to="/ticker"
+          $isActive={isActive('/ticker')}
         >
           종목
         </Item>

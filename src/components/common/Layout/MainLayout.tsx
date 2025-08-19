@@ -9,7 +9,7 @@ import useScrollToTop from '@/hooks/useScrollToTop';
 import ErrorComponent from './Error';
 import Loading from './Loading';
 import MainSkeleton from '@/components/Main/MainSkeleton';
-import StockSkeleton from '@/components/Stock/StockSkeleton';
+import TickerSkeleton from '@/components/Ticker/TickerSkeleton';
 import SubHeader from './SubHeader';
 import useIsTouchDevice from '@/hooks/useIsTouchDevice';
 import useScrollDirection from '@/hooks/useScrollDirection';
@@ -28,8 +28,8 @@ export default function MainLayout() {
     if (location.pathname === '/') {
       return <MainSkeleton />;
     }
-    if (location.pathname.startsWith('/stock')) {
-      return <StockSkeleton />;
+    if (location.pathname.startsWith('/ticker')) {
+      return <TickerSkeleton />;
     }
     return <Loading size={50} />;
   };
