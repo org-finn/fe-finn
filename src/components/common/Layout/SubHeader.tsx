@@ -40,9 +40,6 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
         >
           종목
         </Item>
-        <Item aria-label="header-my" to="/my" $isActive={isActive('/my')}>
-          포트폴리오
-        </Item>
       </HeaderContainer>
     );
   }
