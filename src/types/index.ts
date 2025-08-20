@@ -84,10 +84,10 @@ export type ArticleDataResponse = {
   reasoning: string;
 };
 
-export type TickerSearchResponse = {
+export type TickerSearchPreviewResponse = {
   tickerId: string;
   tickerCode: string;
-  companyName: string;
+  shortCompanyName: string;
   fullCompanyName: string;
 };
 
