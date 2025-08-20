@@ -14,7 +14,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index path="/" element={<MainPage />} />
           <Route path="/ticker" element={<TickerPage />} />
-          <Route path="/stock/:id" element={<DetailPage />} />
+          <Route path="/ticker/:id" element={<DetailPage />} />
           <Route path="/news" element={<NewsBoardPage />} />
         </Route>
       </Routes>

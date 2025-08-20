@@ -31,12 +31,12 @@ export type PageableData<T> = {
 export type TickerDetailData = {
   predictionDate: string;
   tickerId: string;
-  companyName: string;
+  shortCompanyName: string;
   tickerCode: string;
-  predictedPrice: number;
-  predictedChangeRate: string;
-  isUp: number;
-  opinion: string;
+  predictionStrategy: string;
+  sentiment: number;
+  articleCount: number;
+  sentimentScore: number;
   detailData: DetailDataResponse;
 };
 
@@ -56,7 +56,7 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: RotationNewsData[];
+  news: ArticleDataResponse[];
 };
 
 export type NewsDataResponse = {
@@ -76,10 +76,11 @@ export type NewsListData = {
   hasNext: boolean;
 };
 
-export type RotationNewsData = {
-  newsId: string;
+export type ArticleDataResponse = {
+  articleId: string;
   headline: string;
-  newsSentiment: number;
+  sentiment: string;
+  reasoning: string;
 };
 
 export type TickerSearchResponse = {
