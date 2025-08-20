@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
-import { useGetStockSearch } from '@/api/hooks/useGetStockSearch';
+import { useGetTickerSearch } from '@/api/hooks/useGetTickerSearch';
 
 export default function SearchBar() {
   const [keyword, setKeyword] = useState('');
@@ -11,8 +11,8 @@ export default function SearchBar() {
   const searchBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const { data: searchData, isLoading } = useGetStockSearch(keyword);
-  const stockList = searchData?.content || [];
+  const { data: searchData, isLoading } = useGetTickerSearch(keyword);
+  const tickerList = searchData?.content || [];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -42,13 +42,13 @@ export default function SearchBar() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isDropdownOpen || stockList.length === 0) return;
+    if (!isDropdownOpen || tickerList.length === 0) return;
 
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
         setSelectedIndex((prev) =>
-          prev < stockList.length - 1 ? prev + 1 : prev
+          prev < tickerList.length - 1 ? prev + 1 : prev
         );
         break;
       case 'ArrowUp':
@@ -58,7 +58,7 @@ export default function SearchBar() {
       case 'Enter':
         e.preventDefault();
         if (selectedIndex >= 0) {
-          handleSelectStock(stockList[selectedIndex]);
+          handleSelectTicker(tickerList[selectedIndex]);
         }
         break;
       case 'Escape':
@@ -68,12 +68,12 @@ export default function SearchBar() {
     }
   };
 
-  const handleSelectStock = (stock: (typeof stockList)[0]) => {
-    setKeyword(stock.companyName);
+  const handleSelectTicker = (ticker: (typeof tickerList)[0]) => {
+    setKeyword(ticker.shortCompanyName);
     setIsDropdownOpen(false);
     setSelectedIndex(-1);
 
-    navigate(`/stock/${stock.stockId}`);
+    navigate(`/ticker/${ticker.tickerId}`);
   };
 
   return (
@@ -99,19 +99,19 @@ export default function SearchBar() {
         <DropdownContainer>
           {isLoading ? (
             <DropdownItem>검색 중...</DropdownItem>
-          ) : stockList.length > 0 ? (
-            stockList.map((stock, index) => (
+          ) : tickerList.length > 0 ? (
+            tickerList.map((ticker, index) => (
               <DropdownItem
-                key={stock.stockId}
+                key={ticker.tickerId}
                 $isSelected={index === selectedIndex}
-                onClick={() => handleSelectStock(stock)}
+                onClick={() => handleSelectTicker(ticker)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <StockInfo>
-                  <CompanyName>{stock.companyName}</CompanyName>
-                  <StockCode>{stock.stockCode}</StockCode>
-                </StockInfo>
-                <FullCompanyName>{stock.fullCompanyName}</FullCompanyName>
+                <TickerInfo>
+                  <CompanyName>{ticker.shortCompanyName}</CompanyName>
+                  <TickerCode>{ticker.tickerCode}</TickerCode>
+                </TickerInfo>
+                <FullCompanyName>{ticker.fullCompanyName}</FullCompanyName>
               </DropdownItem>
             ))
           ) : keyword.length >= 2 ? (
@@ -188,7 +188,7 @@ const DropdownItem = styled.div<{ $isSelected?: boolean }>`
   }
 `;
 
-const StockInfo = styled.div`
+const TickerInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -200,7 +200,7 @@ const CompanyName = styled.span`
   color: #333;
 `;
 
-const StockCode = styled.span`
+const TickerCode = styled.span`
   font-size: 12px;
   color: #666;
   background-color: #f0f0f0;

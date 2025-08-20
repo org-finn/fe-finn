@@ -1,101 +1,101 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 
-const mockStockSearchData = [
+const mockTickerSearchData = [
   {
-    stockId: '0-d-q-8b-95n',
-    stockCode: 'GOOGL',
-    companyName: 'Alphabet Inc.',
+    tickerId: '0-d-q-8b-95n',
+    tickerCode: 'GOOGL',
+    shortCompanyName: 'Alphabet Inc.',
     fullCompanyName: 'Alphabet Inc. Class A',
   },
   {
-    stockId: '1-d-q-8b-95n',
-    stockCode: 'AAPL',
-    companyName: 'Apple Inc.',
+    tickerId: '1-d-q-8b-95n',
+    tickerCode: 'AAPL',
+    shortCompanyName: 'Apple Inc.',
     fullCompanyName: 'Apple Inc.',
   },
   {
-    stockId: '2-d-q-8b-95n',
-    stockCode: 'META',
-    companyName: 'Meta Platforms',
+    tickerId: '2-d-q-8b-95n',
+    tickerCode: 'META',
+    shortCompanyName: 'Meta Platforms',
     fullCompanyName: 'Meta Platforms, Inc.',
   },
   {
-    stockId: '3-d-q-8b-95n',
-    stockCode: 'NFLX',
-    companyName: 'Netflix',
+    tickerId: '3-d-q-8b-95n',
+    tickerCode: 'NFLX',
+    shortCompanyName: 'Netflix',
     fullCompanyName: 'Netflix, Inc.',
   },
   {
-    stockId: '4-d-q-8b-95n',
-    stockCode: 'COIN',
-    companyName: 'Coinbase',
+    tickerId: '4-d-q-8b-95n',
+    tickerCode: 'COIN',
+    shortCompanyName: 'Coinbase',
     fullCompanyName: 'Coinbase Global, Inc.',
   },
   {
-    stockId: '5-d-q-8b-95n',
-    stockCode: 'NVDA',
-    companyName: 'NVIDIA',
+    tickerId: '5-d-q-8b-95n',
+    tickerCode: 'NVDA',
+    shortCompanyName: 'NVIDIA',
     fullCompanyName: 'NVIDIA Corporation',
   },
   {
-    stockId: '6-d-q-8b-95n',
-    stockCode: 'TSLA',
-    companyName: 'Tesla',
+    tickerId: '6-d-q-8b-95n',
+    tickerCode: 'TSLA',
+    shortCompanyName: 'Tesla',
     fullCompanyName: 'Tesla, Inc.',
   },
   {
-    stockId: '7-d-q-8b-95n',
-    stockCode: 'AMZN',
-    companyName: 'Amazon',
+    tickerId: '7-d-q-8b-95n',
+    tickerCode: 'AMZN',
+    shortCompanyName: 'Amazon',
     fullCompanyName: 'Amazon.com, Inc.',
   },
   {
-    stockId: '8-d-q-8b-95n',
-    stockCode: 'PYPL',
-    companyName: 'PayPal',
+    tickerId: '8-d-q-8b-95n',
+    tickerCode: 'PYPL',
+    shortCompanyName: 'PayPal',
     fullCompanyName: 'PayPal Holdings, Inc.',
   },
   {
-    stockId: '9-d-q-8b-95n',
-    stockCode: 'ZM',
-    companyName: 'Zoom',
+    tickerId: '9-d-q-8b-95n',
+    tickerCode: 'ZM',
+    shortCompanyName: 'Zoom',
     fullCompanyName: 'Zoom Video Communications, Inc.',
   },
   {
-    stockId: '10-d-q-8b-95n',
-    stockCode: 'MSFT',
-    companyName: 'Microsoft',
+    tickerId: '10-d-q-8b-95n',
+    tickerCode: 'MSFT',
+    shortCompanyName: 'Microsoft',
     fullCompanyName: 'Microsoft Corporation',
   },
   {
-    stockId: '11-d-q-8b-95n',
-    stockCode: 'AMD',
-    companyName: 'AMD',
+    tickerId: '11-d-q-8b-95n',
+    tickerCode: 'AMD',
+    shortCompanyName: 'AMD',
     fullCompanyName: 'Advanced Micro Devices, Inc.',
   },
   {
-    stockId: '12-d-q-8b-95n',
-    stockCode: 'INTC',
-    companyName: 'Intel',
+    tickerId: '12-d-q-8b-95n',
+    tickerCode: 'INTC',
+    shortCompanyName: 'Intel',
     fullCompanyName: 'Intel Corporation',
   },
   {
-    stockId: '13-d-q-8b-95n',
-    stockCode: 'SAMSUNG',
-    companyName: '삼성전자',
+    tickerId: '13-d-q-8b-95n',
+    tickerCode: 'SAMSUNG',
+    shortCompanyName: '삼성전자',
     fullCompanyName: '삼성전자 주식회사',
   },
   {
-    stockId: '14-d-q-8b-95n',
-    stockCode: 'SK',
-    companyName: 'SK하이닉스',
+    tickerId: '14-d-q-8b-95n',
+    tickerCode: 'SK',
+    shortCompanyName: 'SK하이닉스',
     fullCompanyName: 'SK하이닉스 주식회사',
   },
 ];
 
-export const stockSearchHandlers = [
-  http.get(`${BASE_URL}/api/search/complete`, ({ request }) => {
+export const tickerSearchHandlers = [
+  http.get(`${BASE_URL}/api/v1/search-preview/ticker`, ({ request }) => {
     const url = new URL(request.url);
     const keyword = url.searchParams.get('keyword') || '';
 
@@ -107,11 +107,11 @@ export const stockSearchHandlers = [
       });
     }
 
-    const filteredResults = mockStockSearchData.filter(
-      (stock) =>
-        stock.companyName.toLowerCase().includes(keyword.toLowerCase()) ||
-        stock.stockCode.toLowerCase().includes(keyword.toLowerCase()) ||
-        stock.fullCompanyName.toLowerCase().includes(keyword.toLowerCase())
+    const filteredResults = mockTickerSearchData.filter(
+      (ticker) =>
+        ticker.shortCompanyName.toLowerCase().includes(keyword.toLowerCase()) ||
+        ticker.tickerCode.toLowerCase().includes(keyword.toLowerCase()) ||
+        ticker.fullCompanyName.toLowerCase().includes(keyword.toLowerCase())
     );
 
     const results = filteredResults.slice(0, 5); // 결과 최대 5개까지 보여줌
@@ -124,4 +124,4 @@ export const stockSearchHandlers = [
   }),
 ];
 
-export const searchHandlers = [...stockSearchHandlers];
+export const searchHandlers = [...tickerSearchHandlers];
