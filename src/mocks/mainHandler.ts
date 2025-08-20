@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getTickerListPath } from '@/api/hooks/useGetTickerList';
-import { getHolidaysPath } from '@/api/hooks/useGetHolidays';
+import { getTodayMarketStatusPath } from '@/api/hooks/useGetTodayMarketStatus';
 
 const mockTickerData = [
   {
@@ -102,7 +102,7 @@ export const tickerHandlers = [
 ];
 
 export const holidayHandlers = [
-  http.get(`${BASE_URL}${getHolidaysPath()}`, () => {
+  http.get(`${BASE_URL}${getTodayMarketStatusPath()}`, () => {
     return HttpResponse.json(true);
   }),
 ];

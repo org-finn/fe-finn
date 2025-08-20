@@ -8,7 +8,7 @@ import {
   useGetPopularTickers,
   useGetRisingTickers,
 } from '@/api/hooks/useGetTickerList';
-import HolidayBanner from '@/components/common/Banner/HolidayBanner';
+import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function MainPage() {
     <Wrapper>
       <SearchBar />
       <TickerSection>
-        <HolidayBanner />
+        <MarketStatusBanner />
         <TickerTitle>
           <Left>
             <Paragraph size="m" weight="bold">

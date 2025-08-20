@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { MdOutlineToday } from 'react-icons/md';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import { useGetHolidays } from '@/api/hooks/useGetHolidays';
+import { useGetTodayMarketStatus } from '@/api/hooks/useGetTodayMarketStatus';
 
-export default function HolidayBanner() {
-  const { data: isHoliday, isLoading, error } = useGetHolidays();
+export default function MarketStatusBanner() {
+  const { data: isHoliday, isLoading, error } = useGetTodayMarketStatus();
 
   if (isLoading) return null;
   if (error) return null;
