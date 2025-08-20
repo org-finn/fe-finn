@@ -5,29 +5,19 @@ import styled from 'styled-components';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
-import { useGetPredGraph, PredGraphPeriod } from '@/api/hooks/useGetPredGraph';
-import { useGetRealGraph } from '@/api/hooks/useGetRealGraph';
+import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import Loading from '@/components/common/Layout/Loading';
 import { useState } from 'react';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
-  const [period, setPeriod] = useState<PredGraphPeriod>('2W');
+  const [period, setPeriod] = useState<RealGraphPeriod>('2W');
 
   const {
     data: tickerResponse,
     isLoading: tickerLoading,
     error: tickerError,
   } = useGetTickerDetail(id);
-  const {
-    data: predGraphResponse,
-    isLoading: predGraphLoading,
-    error: predGraphError,
-  } = useGetPredGraph({
-    tickerId: id,
-    period,
-  });
-
   const {
     data: realGraphResponse,
     isLoading: realGraphLoading,
@@ -38,7 +28,6 @@ export default function DetailPage() {
   });
 
   const tickerData = tickerResponse?.content;
-  const predGraphData = predGraphResponse?.content;
   const realGraphData = realGraphResponse?.content;
 
   const getVariant = useGetVariant(tickerData?.sentiment ?? 0);
@@ -49,8 +38,8 @@ export default function DetailPage() {
       : (tickerData?.sentiment ?? 0) < 0
         ? '부정'
         : '관련';
-  const isLoading = tickerLoading || predGraphLoading || realGraphLoading;
-  const error = tickerError || predGraphError || realGraphError;
+  const isLoading = tickerLoading || realGraphLoading;
+  const error = tickerError || realGraphError;
 
   if (isLoading) {
     return <Loading />;
@@ -85,7 +74,7 @@ export default function DetailPage() {
         </PriceInfo>
       </TickerTitle>
       <PeriodSelector>
-        {(['2W', '1M', '6M', '1Y'] as PredGraphPeriod[]).map((p) => (
+        {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
           <PeriodButton
             key={p}
             $active={period === p}
@@ -95,10 +84,8 @@ export default function DetailPage() {
           </PeriodButton>
         ))}
       </PeriodSelector>
-
-      {predGraphData && realGraphData && (
+      {realGraphData && (
         <TickerCharts
-          predData={predGraphData.graphData || []}
           realData={realGraphData.graphData || []}
           sentiment={tickerData.sentiment ?? 0}
         />
