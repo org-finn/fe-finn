@@ -91,6 +91,8 @@ export type TickerSearchPreviewResponse = {
   fullCompanyName: string;
 };
 
-export type HolidayData = {
+export type TodayMarketStatusResponse = {
   isHoliday: boolean;
+  tradingHours: string;
+  eventName: string;
 };
