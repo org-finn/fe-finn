@@ -1,34 +1,41 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
-import { GetStockDetailPath } from '@/api/hooks/useGetStockDetail';
+import { getTickerDetailPath } from '@/api/hooks/useGetTickerDetail';
 import { getPredGraphPath } from '@/api/hooks/useGetPredGraph';
 import { getRealGraphPath } from '@/api/hooks/useGetRealGraph';
 
 const mockNewsData = [
   {
-    newsId: '1',
-    headline: '안녕하세요 하상돔커피입니다.',
+    articleId: '1',
+    headline: '구글, AI 기술 발전으로 검색 시장 점유율 확대 전망',
+    sentiment: 'positive',
+    reasoning: 'AI 기술 개발로 인한 경쟁력 강화 및 시장 점유율 확대 가능성',
   },
   {
-    newsId: '2',
-    headline: '안녕하세요 감성돔커피입니다.',
+    articleId: '2',
+    headline: '알파벳, 클라우드 사업 성장세 지속... 아마존과 경쟁 심화',
+    sentiment: 'positive',
+    reasoning: '클라우드 사업의 지속적인 성장으로 수익성 개선 기대',
   },
   {
-    newsId: '3',
-    headline: '안녕하세요 도쿄돔커피입니다.',
+    articleId: '3',
+    headline: '구글 광고 수익 감소 우려, 경제 불황 영향으로 광고비 삭감',
+    sentiment: 'negative',
+    reasoning: '경제 불황으로 인한 광고 수익 감소가 전체 실적에 부정적 영향',
   },
 ];
-const mockStockDetail = {
+
+const mockTickerDetail = {
   predictionDate: '2025-07-22',
-  stockId: '0-d-q-8b-95n',
-  companyName: 'Aplphabet Inc.',
-  stockCode: 'GOOGL',
-  predictedPrice: 210.5,
-  predictedChangeRate: '1.8000%',
-  isUp: 1,
-  opinion: '내일 1.8% 상승할 것으로 예상됩니다.',
+  tickerId: '0-d-q-8b-95n',
+  shortCompanyName: 'Alphabet Inc.',
+  tickerCode: 'GOOGL',
+  predictionStrategy: '강한 매수',
+  sentiment: 1,
+  articleCount: 15,
+  sentimentScore: 85,
   detailData: {
-    date: '2025-06-08',
+    priceDate: '2025-06-08',
     open: 117.7,
     close: 118.5,
     high: 119.1,
@@ -108,15 +115,15 @@ const mockRealGraphData = [
 ];
 
 export const detailHandlers = [
-  http.get(`${BASE_URL}${GetStockDetailPath('1')}`, () => {
+  http.get(`${BASE_URL}${getTickerDetailPath('0-d-q-8b-95n')}`, () => {
     return HttpResponse.json({
       code: '200 OK',
-      message: '주식 리스트를 성공적으로 조회하였습니다.',
-      content: mockStockDetail,
+      message: '종목 예측 상세 정보를 성공적으로 조회하였습니다.',
+      content: mockTickerDetail,
     });
   }),
 
-  http.get(`${BASE_URL}${getPredGraphPath('1')}`, ({ request }) => {
+  http.get(`${BASE_URL}${getPredGraphPath('0-d-q-8b-95n')}`, ({ request }) => {
     const url = new URL(request.url);
     const period = url.searchParams.get('period') || '2W';
 
@@ -129,7 +136,7 @@ export const detailHandlers = [
       },
     });
   }),
-  http.get(`${BASE_URL}${getRealGraphPath('1')}`, ({ request }) => {
+  http.get(`${BASE_URL}${getRealGraphPath('0-d-q-8b-95n')}`, ({ request }) => {
     const url = new URL(request.url);
     const period = url.searchParams.get('period') || '2W';
 
