@@ -40,13 +40,14 @@ export type TickerDetailData = {
   detailData: DetailDataResponse;
 };
 
-export type GraphDataResponse = {
+export type TickerGraphDataResponse = {
   date: string;
   price: number;
+  changeRate: number;
 };
 export type GraphData = {
   period: string;
-  graphData: GraphDataResponse[];
+  graphData: TickerGraphDataResponse[];
 };
 
 export type DetailDataResponse = {

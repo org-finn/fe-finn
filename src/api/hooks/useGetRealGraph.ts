@@ -6,15 +6,15 @@ import { ApiResponse, GraphData } from '@/types';
 export type RealGraphPeriod = '2W' | '1M' | '6M' | '1Y';
 
 interface GetRealGraphParams {
-  stockId: string;
+  tickerId: string;
   period?: RealGraphPeriod;
 }
 
-export const getRealGraphPath = (stockId: string) =>
-  `/api/stocks/${stockId}/real-graph`;
+export const getRealGraphPath = (tickerId: string) =>
+  `/api/v1/prediction/ticker/${tickerId}/graph`;
 
 export const getRealGraph = async ({
-  stockId,
+  tickerId,
   period = '2W',
 }: GetRealGraphParams) => {
   const params = new URLSearchParams({
@@ -22,18 +22,18 @@ export const getRealGraph = async ({
   });
 
   const response = await fetchInstance.get<ApiResponse<GraphData>>(
-    `${getRealGraphPath(stockId)}?${params}`
+    `${getRealGraphPath(tickerId)}?${params}`
   );
   return response.data;
 };
 
 export const useGetRealGraph = ({
-  stockId,
+  tickerId,
   period = '2W',
 }: GetRealGraphParams) => {
   return useQuery({
-    queryKey: ['stocks', stockId, 'real-graph', { period }],
-    queryFn: () => getRealGraph({ stockId, period }),
+    queryKey: ['real-graph', { period }],
+    queryFn: () => getRealGraph({ tickerId, period }),
     staleTime: 1000 * 60 * 5,
   });
 };
