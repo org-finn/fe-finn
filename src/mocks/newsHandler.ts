@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
-import { getNewsListPath } from '@/api/hooks/useGetNewsList';
+import { getArticleListPath } from '@/api/hooks/useGetArticleList';
 
 const mockNewsList = [
   {
@@ -56,7 +56,7 @@ const mockNewsList = [
 ];
 
 export const newsHandlers = [
-  http.get(`${BASE_URL}${getNewsListPath()}`, ({ request }) => {
+  http.get(`${BASE_URL}${getArticleListPath()}`, ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1');
 
