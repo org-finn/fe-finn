@@ -57,27 +57,29 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: ArticleDataResponse[];
+  news: DetailArticleData[];
 };
 
-export type NewsDataResponse = {
-  newsId: string;
+export type ArticleDataResponse = {
+  articleId: string;
   title: string;
-  companyName: string;
+  description: string;
+  shortCompanyName: string;
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
   source: string;
-  newsSentiment: number;
+  sentiment: string;
+  reasoning: number;
 };
 
-export type NewsListData = {
-  newsList: NewsDataResponse[];
+export type ArticleListData = {
+  newsList: ArticleDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };
 
-export type ArticleDataResponse = {
+export type DetailArticleData = {
   articleId: string;
   headline: string;
   sentiment: string;
