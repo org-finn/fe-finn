@@ -1,25 +1,25 @@
 import SearchBar from '@/components/common/SearchBar';
 import { IoIosArrowForward } from 'react-icons/io';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import StockList from '@/components/Stock/StockList';
+import TickerList from '@/components/Ticker/TickerList';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import {
-  useGetPopularStocks,
-  useGetRisingStocks,
-} from '@/api/hooks/useGetStockList';
-import HolidayBanner from '@/components/common/Banner/HolidayBanner';
+  useGetPopularTickers,
+  useGetRisingTickers,
+} from '@/api/hooks/useGetTickerList';
+import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const { data: popularData } = useGetPopularStocks(5);
-  const { data: risingData } = useGetRisingStocks(5);
+  const { data: popularData } = useGetPopularTickers();
+  const { data: risingData } = useGetRisingTickers();
   return (
     <Wrapper>
       <SearchBar />
-      <StockSection>
-        <HolidayBanner />
-        <StockTitle>
+      <TickerSection>
+        <MarketStatusBanner />
+        <TickerTitle>
           <Left>
             <Paragraph size="m" weight="bold">
               한국인이 가장 좋아하는 종목 Top5
@@ -29,17 +29,17 @@ export default function MainPage() {
             </Paragraph>
           </Left>
           <MoreBtn
-            aria-label="more-stock-btn"
-            onClick={() => navigate('/stock')}
+            aria-label="more-ticker-btn"
+            onClick={() => navigate('/ticker')}
           >
             전체 보기
             <IoIosArrowForward />
           </MoreBtn>
-        </StockTitle>
-        <StockList items={popularData?.content.stockList || []} />
-      </StockSection>
-      <StockSection>
-        <StockTitle>
+        </TickerTitle>
+        <TickerList items={popularData?.content.predictionList || []} />
+      </TickerSection>
+      <TickerSection>
+        <TickerTitle>
           <Left>
             <Paragraph size="m" weight="bold">
               가장 많이 오르는 Top5
@@ -49,15 +49,15 @@ export default function MainPage() {
             </Paragraph>
           </Left>
           <MoreBtn
-            aria-label="more-stock-btn"
-            onClick={() => navigate('/stock')}
+            aria-label="more-ticker-btn"
+            onClick={() => navigate('/ticker')}
           >
             전체 보기
             <IoIosArrowForward />
           </MoreBtn>
-        </StockTitle>
-        <StockList items={risingData?.content.stockList || []} />
-      </StockSection>
+        </TickerTitle>
+        <TickerList items={risingData?.content.predictionList || []} />
+      </TickerSection>
 
       <BannerSection></BannerSection>
     </Wrapper>
@@ -71,7 +71,7 @@ const Wrapper = styled.div`
   gap: 36px;
   padding: 16px 0;
 `;
-const StockSection = styled.div`
+const TickerSection = styled.div`
   width: 100%;
 `;
 const MoreBtn = styled.button`
@@ -95,7 +95,7 @@ const BannerSection = styled.div`
   background-color: #f2f2f2;
 `;
 
-const StockTitle = styled.div`
+const TickerTitle = styled.div`
   padding-bottom: 20px;
   display: flex;
   justify-content: space-between;

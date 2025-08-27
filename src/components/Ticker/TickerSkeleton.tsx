@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Skeleton from '../ui/Skeleton';
 
-export default function StockSkeleton() {
+export default function TickerSkeleton() {
   return (
     <Wrapper>
-      <StockWrapper>
+      <TickerWrapper>
         <Skeleton width="960px" height="44px" borderRadius="16px" />
         <Skeleton width="960px" height="400px" borderRadius="0px" />
-      </StockWrapper>
+      </TickerWrapper>
     </Wrapper>
   );
 }
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 110px;
 `;
-const StockWrapper = styled.div`
+const TickerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 50px;

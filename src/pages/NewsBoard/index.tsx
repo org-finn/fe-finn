@@ -3,41 +3,41 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SearchBar from '@/components/common/SearchBar';
 import NewsList from '@/components/News/NewsList';
-import { useGetNewsList } from '@/api/hooks/useGetNewsList';
+import { useGetArticleList } from '@/api/hooks/useGetArticleList';
 import Loading from '@/components/common/Layout/Loading';
 
-type NewsOption = 'all' | 'positive' | 'negative';
+type NewsFilter = 'all' | 'positive' | 'negative';
 type NewsSort = 'recent';
 
 export default function NewsBoardPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getInitialOption = useCallback((): NewsOption => {
+  const getInitialFilter = useCallback((): NewsFilter => {
     const searchParams = new URLSearchParams(location.search);
-    return (searchParams.get('option') as NewsOption) || 'all';
+    return (searchParams.get('filter') as NewsFilter) || 'all';
   }, [location.search]);
 
-  const [option, setOption] = useState<NewsOption>(getInitialOption());
+  const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
   const [sort] = useState<NewsSort>('recent');
-  const [size] = useState(10);
+  const [page] = useState<number>(1);
 
   const {
     data: newsList,
     isLoading,
     error,
-  } = useGetNewsList({ option, sort, size });
+  } = useGetArticleList({ filter, sort, page });
 
-  const handleOptionChange = (newOption: NewsOption) => {
+  const handleFilterChange = (newFilter: NewsFilter) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set('option', newOption);
+    searchParams.set('filter', newFilter);
     navigate(`${location.pathname}?${searchParams.toString()}`);
-    setOption(newOption);
+    setFilter(newFilter);
   };
 
   useEffect(() => {
-    setOption(getInitialOption());
-  }, [getInitialOption]);
+    setFilter(getInitialFilter());
+  }, [getInitialFilter]);
 
   if (isLoading) {
     return <Loading />;
@@ -56,24 +56,24 @@ export default function NewsBoardPage() {
       <SearchBar />
 
       <FilterContainer>
-        <OptionTab
-          $active={option === 'all'}
-          onClick={() => handleOptionChange('all')}
+        <FilterTab
+          $active={filter === 'all'}
+          onClick={() => handleFilterChange('all')}
         >
           전체
-        </OptionTab>
-        <OptionTab
-          $active={option === 'positive'}
-          onClick={() => handleOptionChange('positive')}
+        </FilterTab>
+        <FilterTab
+          $active={filter === 'positive'}
+          onClick={() => handleFilterChange('positive')}
         >
           긍정
-        </OptionTab>
-        <OptionTab
-          $active={option === 'negative'}
-          onClick={() => handleOptionChange('negative')}
+        </FilterTab>
+        <FilterTab
+          $active={filter === 'negative'}
+          onClick={() => handleFilterChange('negative')}
         >
           부정
-        </OptionTab>
+        </FilterTab>
       </FilterContainer>
 
       <NewsList items={newsList.content.newsList} />
@@ -95,7 +95,7 @@ const FilterContainer = styled.div`
   margin-top: -30px;
 `;
 
-const OptionTab = styled.button<{ $active: boolean }>`
+const FilterTab = styled.button<{ $active: boolean }>`
   padding: 12px 24px;
   font-size: 16px;
   font-weight: bold;

@@ -5,18 +5,18 @@ export type ApiResponse<T> = {
 };
 
 // 주가 아이템 컴포넌트
-export type StockItemData = {
-  stockId: string;
-  companyName: string;
-  stockCode: string;
-  predictedPrice: number;
-  predictedChangeRate: string;
-  isUp: number;
+export type PredictionDataResponse = {
+  tickerId: string;
+  shortCompanyName: string;
+  tickerCode: string;
+  predictionStrategy: string;
+  sentiment: number;
+  newsCount: number;
 };
 
-export type StockListData = {
+export type TickerListData = {
   predictionDate: string;
-  stockList: StockItemData[];
+  predictionList: PredictionDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };
@@ -28,25 +28,26 @@ export type PageableData<T> = {
 };
 
 // 주가 상세 데이터
-export type StockDetailData = {
+export type TickerDetailData = {
   predictionDate: string;
-  stockId: string;
-  companyName: string;
-  stockCode: string;
-  predictedPrice: number;
-  predictedChangeRate: string;
-  isUp: number;
-  opinion: string;
+  tickerId: string;
+  shortCompanyName: string;
+  tickerCode: string;
+  predictionStrategy: string;
+  sentiment: number;
+  articleCount: number;
+  sentimentScore: number;
   detailData: DetailDataResponse;
 };
 
-export type GraphDataResponse = {
+export type TickerGraphDataResponse = {
   date: string;
   price: number;
+  changeRate: number;
 };
 export type GraphData = {
   period: string;
-  graphData: GraphDataResponse[];
+  graphData: TickerGraphDataResponse[];
 };
 
 export type DetailDataResponse = {
@@ -56,39 +57,44 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: RotationNewsData[];
+  news: DetailArticleData[];
 };
 
-export type NewsDataResponse = {
-  newsId: string;
+export type ArticleDataResponse = {
+  articleId: string;
   title: string;
-  companyName: string;
+  description: string;
+  shortCompanyName: string;
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
   source: string;
-  newsSentiment: number;
+  sentiment: string;
+  reasoning: number;
 };
 
-export type NewsListData = {
-  newsList: NewsDataResponse[];
+export type ArticleListData = {
+  newsList: ArticleDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };
 
-export type RotationNewsData = {
-  newsId: string;
+export type DetailArticleData = {
+  articleId: string;
   headline: string;
-  newsSentiment: number;
+  sentiment: string;
+  reasoning: string;
 };
 
-export type StockSearchResponse = {
-  stockId: string;
-  stockCode: string;
-  companyName: string;
+export type TickerSearchPreviewResponse = {
+  tickerId: string;
+  tickerCode: string;
+  shortCompanyName: string;
   fullCompanyName: string;
 };
 
-export type HolidayData = {
+export type TodayMarketStatusResponse = {
   isHoliday: boolean;
+  tradingHours: string;
+  eventName: string;
 };

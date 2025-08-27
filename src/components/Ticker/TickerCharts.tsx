@@ -1,12 +1,11 @@
 import ApexChart from 'react-apexcharts';
 import styled from 'styled-components';
 import { ApexOptions } from 'apexcharts';
-import { GraphDataResponse } from '@/types';
+import { TickerGraphDataResponse } from '@/types';
 
 type ChartProps = {
-  predData: GraphDataResponse[];
-  realData: GraphDataResponse[];
-  isUp: number;
+  realData: TickerGraphDataResponse[];
+  sentiment: number;
 };
 
 function formatShortDate(dateStr: string) {
@@ -14,19 +13,19 @@ function formatShortDate(dateStr: string) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-function transformDataForLineChart(data: GraphDataResponse[]) {
+function transformDataForLineChart(data: TickerGraphDataResponse[]) {
   return data.map((entry) => ({
     x: entry.date,
     y: entry.price,
+    changeRate: entry.changeRate,
   }));
 }
 
-export default function StockCharts({ predData, realData, isUp }: ChartProps) {
-  const transformedPredData = transformDataForLineChart(predData);
+export default function TickerCharts({ realData, sentiment }: ChartProps) {
   const transformedRealData = transformDataForLineChart(realData);
 
   // 날짜 동적으로 계산하기 위해
-  const allDates = [...predData, ...realData].map((d) => d.date);
+  const allDates = [...realData].map((d) => d.date);
   const uniqueDates = [...new Set(allDates)].sort();
   const shownDates = uniqueDates.filter((_, index, arr) => {
     const step = Math.floor(arr.length / 4);
@@ -65,39 +64,60 @@ export default function StockCharts({ predData, realData, isUp }: ChartProps) {
         },
       },
     },
-    annotations: {
-      xaxis:
-        predData.length > 0
-          ? [
-              {
-                x: predData[predData.length - 1]?.date,
-                borderColor: 'transparent',
-                label: {
-                  text: 'Finn의 예측!',
-                  style: {
-                    color: '#0074FF',
-                    background: 'transparent',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                  },
-                  offsetY: -20,
-                  offsetX: -10,
-                },
-              },
-            ]
-          : [],
-    },
     tooltip: {
-      x: {
-        show: true,
-        formatter: function (val: string | number) {
-          return formatShortDate(String(val));
-        },
-      },
-      y: {
-        formatter: function (val: number) {
-          return `$${val.toFixed(2)}`;
-        },
+      enabled: true,
+      shared: false,
+      intersect: false,
+      followCursor: true,
+      custom: function ({ series, seriesIndex, dataPointIndex }) {
+        const price = series[seriesIndex][dataPointIndex];
+        const changeRate = realData[dataPointIndex]?.changeRate || 0;
+
+        const changeRateColor =
+          changeRate > 0 ? 'red' : changeRate < 0 ? 'blue' : 'darkgrey';
+        const changeRateSign = changeRate > 0 ? '+' : '';
+
+        return `
+          <div style="
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 12px;
+            min-width: 120px;
+          ">
+            <div style="
+              font-weight: 600;
+              color: #374151;
+              margin-bottom: 6px;
+              font-size: 13px;
+            ">
+              Real Data
+            </div>
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 2px;
+            ">
+              <span style="color: #6b7280;">가격:</span>
+              <span style="font-weight: 600; color: #111827;">$${price.toFixed(2)}</span>
+            </div>
+            <div style="
+              display: flex;
+              justify-content: space-between;
+            ">
+              <span style="color: #6b7280;">등락률:</span>
+              <span style="
+                font-weight: 600;
+                color: ${changeRateColor};
+              ">
+                ${changeRateSign}${changeRate.toFixed(2)}%
+              </span>
+            </div>
+          </div>
+        `;
       },
     },
     yaxis: {
@@ -129,30 +149,18 @@ export default function StockCharts({ predData, realData, isUp }: ChartProps) {
       strokeDashArray: 3,
     },
     legend: {
-      show: true,
-      position: 'top',
-      horizontalAlign: 'right',
+      show: false,
     },
   } as const;
 
   return (
-    <Wrapper $isUp={isUp}>
+    <Wrapper $sentiment={sentiment}>
       <ApexChart
         options={options}
         series={[
-          ...(transformedPredData.length > 0
-            ? [
-                {
-                  name: 'Predicted Data',
-                  data: transformedPredData,
-                  color: '#f9dc4a',
-                },
-              ]
-            : []),
           ...(transformedRealData.length > 0
             ? [
                 {
-                  name: 'Real Data',
                   data: transformedRealData,
                   color: '#ff6b6b',
                 },
@@ -166,7 +174,7 @@ export default function StockCharts({ predData, realData, isUp }: ChartProps) {
   );
 }
 
-const Wrapper = styled.div<{ $isUp: number }>`
+const Wrapper = styled.div<{ $sentiment: number }>`
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.05) 0%,
@@ -175,15 +183,6 @@ const Wrapper = styled.div<{ $isUp: number }>`
   );
   border-radius: 8px;
   padding: 16px;
-
-  .apexcharts-xaxis-annotation-label {
-    writing-mode: horizontal-tb !important;
-    transform: rotate(0deg) !important;
-  }
-
-  .apexcharts-xaxis-annotations rect {
-    stroke: none !important;
-  }
 
   .apexcharts-canvas {
     background: linear-gradient(
