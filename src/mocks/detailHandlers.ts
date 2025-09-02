@@ -27,7 +27,7 @@ const mockNewsData = [
 const mockTickerDetail = {
   predictionDate: '2025-07-22',
   tickerId: '0-d-q-8b-95n',
-  shortCompanyName: 'Alphabet Inc.',
+  shortCompanyName: 'Google',
   tickerCode: 'GOOGL',
   predictionStrategy: '강한 매수',
   sentiment: 1,
@@ -38,8 +38,8 @@ const mockTickerDetail = {
     open: 117.7,
     close: 118.5,
     high: 119.1,
-    low: 116.3,
-    volume: 1,
+    low: 16.3,
+    volume: 1539200,
     news: mockNewsData,
   },
 };

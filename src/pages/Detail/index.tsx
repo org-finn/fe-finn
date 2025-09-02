@@ -2,8 +2,6 @@ import { Text } from '@/components/common/typography/Text';
 import TickerCharts from '@/components/Ticker/TickerCharts';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import useGetVariant from '@/hooks/useGetVariant';
-import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import Loading from '@/components/common/Layout/Loading';
@@ -30,14 +28,6 @@ export default function DetailPage() {
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
 
-  const getVariant = useGetVariant(tickerData?.sentiment ?? 0);
-  const getSignSymbol = useGetSignSymbol(tickerData?.sentiment ?? 0);
-  const getSentiment =
-    (tickerData?.sentiment ?? 0) > 0
-      ? '긍정'
-      : (tickerData?.sentiment ?? 0) < 0
-        ? '부정'
-        : '관련';
   const isLoading = tickerLoading || realGraphLoading;
   const error = tickerError || realGraphError;
 
@@ -56,23 +46,66 @@ export default function DetailPage() {
   return (
     <Wrapper>
       <TickerTitle>
-        <TickerInfo>
-          <Text size="m" weight="bold">
-            {tickerData.tickerCode || ''}
-          </Text>
-          <Text size="xs" weight="normal" variant="grey">
-            {tickerData.shortCompanyName || ''}
-          </Text>
-        </TickerInfo>
-        <PriceInfo>
-          <Text size="m" weight="bold" variant={getVariant}>
-            {getSignSymbol} {tickerData.predictionStrategy} 추천
-          </Text>
-          <Text size="xs" weight="bold" variant={getVariant}>
-            {getSentiment} 기사 {tickerData.articleCount}건
-          </Text>
-        </PriceInfo>
+        <Text size="l" weight="bold">
+          {tickerData.shortCompanyName}
+        </Text>
+        <Text size="s" weight="normal" variant="grey">
+          {tickerData.tickerCode}
+        </Text>
       </TickerTitle>
+      <TickerInfo>
+        <InfoGrid>
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              시가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.open}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              종가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.close}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              고가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.high}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              저가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.low}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              거래량
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              {tickerData.detailData.volume.toLocaleString()}주
+            </Text>
+          </InfoItem>
+          <ItemDate>
+            <Text size="xxs" weight="normal" variant="grey">
+              * 8월 1일 기준
+            </Text>
+          </ItemDate>
+        </InfoGrid>
+      </TickerInfo>
       <PeriodSelector>
         {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
           <PeriodButton
@@ -98,31 +131,50 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding: 16px 0;
+`;
+const TickerTitle = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 `;
 const TickerInfo = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: end;
-  gap: 6px;
+  padding: 10px 0px;
 `;
-const PriceInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 340px;
+  border-radius: 8px;
+  gap: 24px;
+  padding-top: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
 
-  span {
-    display: inline-flex;
-    justify-content: end;
+const InfoItem = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0px 26px;
+
+  &:nth-child(5) {
+    grid-column: span 2;
+    justify-content: flex-start;
+    gap: 24px;
+    margin: 0 0 0 26px;
   }
-  svg {
-    margin-right: -3px;
+
+  &:nth-child(6) {
+    justify-content: flex-end;
   }
 `;
-const TickerTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 0px;
-  color: black;
+const ItemDate = styled.div`
+  grid-column: span 2;
+  text-align: right;
+  margin-right: 26px;
+  margin-top: -40px;
 `;
 const PeriodSelector = styled.div`
   display: flex;
