@@ -18,7 +18,7 @@ export default function MainLayout() {
   const isTouch = useIsTouchDevice();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(true);
-  const [isHover, setIsHover] = useState(false);
+  const [isHover, setIsHover] = useState(true);
   const [forceClose, setForceClose] = useState(false);
   const subHeaderRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
