@@ -26,9 +26,9 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
           <Image src={item.thumbnailUrl} alt={item.title} />
         </ImageContainer>
         <TextContainer>
-          <Text size="m" weight="bold">
+          <TitleText size="m" weight="bold">
             {item.title}
-          </Text>
+          </TitleText>
           <DateAndCompany>
             <Text size="xs" weight="normal" variant="grey">
               {item.publishedDate}
@@ -117,6 +117,17 @@ const TextContainer = styled.div`
   flex-direction: column;
   gap: 6px;
   justify-content: center;
+`;
+
+const TitleText = styled(Text)`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  word-break: break-all;
+  white-space: normal;
 `;
 
 const DateAndCompany = styled.div`
