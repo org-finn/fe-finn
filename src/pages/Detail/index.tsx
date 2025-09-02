@@ -8,6 +8,7 @@ import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import Loading from '@/components/common/Layout/Loading';
 import { useState } from 'react';
+import { Paragraph } from '@/components/common/typography/Paragraph';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
@@ -58,9 +59,9 @@ export default function DetailPage() {
           </Text>
         </CompanyInfo>
         <ScoreTitleContainer>
-          <Text size="s" weight="bold">
+          <Paragraph size="s" weight="bold">
             종목 점수
-          </Text>
+          </Paragraph>
           <TooltipContainer
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
@@ -133,6 +134,9 @@ export default function DetailPage() {
           title="점수"
         />
       </TickerInfo>
+      <Paragraph size="s" weight="bold">
+        예측 주가
+      </Paragraph>
       <PeriodSelector>
         {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
           <PeriodButton
@@ -150,6 +154,9 @@ export default function DetailPage() {
           sentiment={tickerData.sentiment ?? 0}
         />
       )}
+      <Paragraph size="s" weight="bold">
+        실시간 기사
+      </Paragraph>
     </Wrapper>
   );
 }
