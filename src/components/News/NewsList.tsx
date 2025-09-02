@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import NewsItem from './NewsItem';
-import { NewsDataResponse } from '@/types';
+import { ArticleDataResponse } from '@/types';
 
 export default function NewsList({
   items = [],
 }: {
-  items: NewsDataResponse[];
+  items: ArticleDataResponse[];
 }) {
   return (
     <Wrapper>
       {items.map((item) => (
-        <NewsItem key={item.newsId} item={item} />
+        <NewsItem key={item.articleId} item={item} />
       ))}
     </Wrapper>
   );

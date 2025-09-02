@@ -60,17 +60,21 @@ export type DetailDataResponse = {
   news: DetailArticleData[];
 };
 
+export type CompanyNameList = {
+  shortCompanyName: string;
+};
+
 export type ArticleDataResponse = {
   articleId: string;
   title: string;
   description: string;
-  shortCompanyName: string;
+  shortCompanyNames: CompanyNameList[];
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
   source: string;
-  sentiment: string;
-  reasoning: number;
+  // sentiment: string;
+  // reasoning: string;
 };
 
 export type ArticleListData = {
