@@ -1,5 +1,7 @@
 import { Text } from '@/components/common/typography/Text';
+import { BsFillQuestionCircleFill } from 'react-icons/bs';
 import TickerCharts from '@/components/Ticker/TickerCharts';
+import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
@@ -10,6 +12,7 @@ import { useState } from 'react';
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const {
     data: tickerResponse,
@@ -46,12 +49,31 @@ export default function DetailPage() {
   return (
     <Wrapper>
       <TickerTitle>
-        <Text size="l" weight="bold">
-          {tickerData.shortCompanyName}
-        </Text>
-        <Text size="s" weight="normal" variant="grey">
-          {tickerData.tickerCode}
-        </Text>
+        <CompanyInfo>
+          <Text size="l" weight="bold">
+            {tickerData.shortCompanyName}
+          </Text>
+          <Text size="s" weight="normal" variant="grey">
+            {tickerData.tickerCode}
+          </Text>
+        </CompanyInfo>
+        <ScoreTitleContainer>
+          <Text size="s" weight="bold">
+            종목 점수
+          </Text>
+          <TooltipContainer
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            <BsFillQuestionCircleFill size={16} color="#BCC7D9" />
+            {showTooltip && (
+              <Tooltip>
+                수집된 기사의 감정(긍정/부정) 비율에 추세를 반영하여 계산된
+                점수입니다.
+              </Tooltip>
+            )}
+          </TooltipContainer>
+        </ScoreTitleContainer>
       </TickerTitle>
       <TickerInfo>
         <InfoGrid>
@@ -105,6 +127,11 @@ export default function DetailPage() {
             </Text>
           </ItemDate>
         </InfoGrid>
+        <ScoreGaugeChart
+          value={tickerData.sentimentScore}
+          maxValue={100}
+          title="점수"
+        />
       </TickerInfo>
       <PeriodSelector>
         {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
@@ -135,13 +162,67 @@ const Wrapper = styled.div`
 `;
 const TickerTitle = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+`;
+
+const CompanyInfo = styled.div`
+  display: flex;
   align-items: baseline;
   gap: 8px;
+  margin-right: 20px;
+`;
+
+const ScoreTitleContainer = styled.div`
+  display: flex;
+  gap: 6px;
+  margin-right: 180px;
+`;
+
+const TooltipContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  z-index: 1000;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    border: 6px solid transparent;
+    border-top-color: white;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    border: 7px solid transparent;
+    border-top-color: #ddd;
+    margin-top: 1px;
+  }
 `;
 const TickerInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  padding: 10px 0px;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 8px 0px 12px 0px;
 `;
 const InfoGrid = styled.div`
   display: grid;
@@ -149,7 +230,7 @@ const InfoGrid = styled.div`
   width: 340px;
   border-radius: 8px;
   gap: 24px;
-  padding-top: 30px;
+  padding: 24px 0 0 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
