@@ -1,17 +1,19 @@
 import { Text } from '@/components/common/typography/Text';
+import { BsFillQuestionCircleFill } from 'react-icons/bs';
 import TickerCharts from '@/components/Ticker/TickerCharts';
+import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import useGetVariant from '@/hooks/useGetVariant';
-import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import Loading from '@/components/common/Layout/Loading';
 import { useState } from 'react';
+import { Paragraph } from '@/components/common/typography/Paragraph';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const {
     data: tickerResponse,
@@ -30,14 +32,6 @@ export default function DetailPage() {
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
 
-  const getVariant = useGetVariant(tickerData?.sentiment ?? 0);
-  const getSignSymbol = useGetSignSymbol(tickerData?.sentiment ?? 0);
-  const getSentiment =
-    (tickerData?.sentiment ?? 0) > 0
-      ? '긍정'
-      : (tickerData?.sentiment ?? 0) < 0
-        ? '부정'
-        : '관련';
   const isLoading = tickerLoading || realGraphLoading;
   const error = tickerError || realGraphError;
 
@@ -56,23 +50,93 @@ export default function DetailPage() {
   return (
     <Wrapper>
       <TickerTitle>
-        <TickerInfo>
-          <Text size="m" weight="bold">
-            {tickerData.tickerCode || ''}
+        <CompanyInfo>
+          <Text size="l" weight="bold">
+            {tickerData.shortCompanyName}
           </Text>
-          <Text size="xs" weight="normal" variant="grey">
-            {tickerData.shortCompanyName || ''}
+          <Text size="s" weight="normal" variant="grey">
+            {tickerData.tickerCode}
           </Text>
-        </TickerInfo>
-        <PriceInfo>
-          <Text size="m" weight="bold" variant={getVariant}>
-            {getSignSymbol} {tickerData.predictionStrategy} 추천
-          </Text>
-          <Text size="xs" weight="bold" variant={getVariant}>
-            {getSentiment} 기사 {tickerData.articleCount}건
-          </Text>
-        </PriceInfo>
+        </CompanyInfo>
+        <ScoreTitleContainer>
+          <Paragraph size="s" weight="bold">
+            종목 점수
+          </Paragraph>
+          <TooltipContainer
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            <BsFillQuestionCircleFill size={16} color="#BCC7D9" />
+            {showTooltip && (
+              <Tooltip>
+                수집된 기사의 감정(긍정/부정) 비율에 추세를 반영하여 계산된
+                점수입니다.
+              </Tooltip>
+            )}
+          </TooltipContainer>
+        </ScoreTitleContainer>
       </TickerTitle>
+      <TickerInfo>
+        <InfoGrid>
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              시가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.open}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              종가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.close}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              고가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.high}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              저가
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              $ {tickerData.detailData.low}
+            </Text>
+          </InfoItem>
+
+          <InfoItem>
+            <Text size="xs" weight="normal">
+              거래량
+            </Text>
+            <Text size="xs" weight="normal" variant="grey">
+              {tickerData.detailData.volume.toLocaleString()}주
+            </Text>
+          </InfoItem>
+          <ItemDate>
+            <Text size="xxs" weight="normal" variant="grey">
+              * 8월 1일 기준
+            </Text>
+          </ItemDate>
+        </InfoGrid>
+        <ScoreGaugeChart
+          value={tickerData.sentimentScore}
+          maxValue={100}
+          title="점수"
+        />
+      </TickerInfo>
+      <Paragraph size="s" weight="bold">
+        예측 주가
+      </Paragraph>
       <PeriodSelector>
         {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
           <PeriodButton
@@ -90,6 +154,9 @@ export default function DetailPage() {
           sentiment={tickerData.sentiment ?? 0}
         />
       )}
+      <Paragraph size="s" weight="bold">
+        실시간 기사
+      </Paragraph>
     </Wrapper>
   );
 }
@@ -98,31 +165,104 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-`;
-const TickerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  gap: 6px;
-`;
-const PriceInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  span {
-    display: inline-flex;
-    justify-content: end;
-  }
-  svg {
-    margin-right: -3px;
-  }
+  padding: 16px 0;
 `;
 const TickerTitle = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 20px 0px;
-  color: black;
+  align-items: baseline;
+`;
+
+const CompanyInfo = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-right: 20px;
+`;
+
+const ScoreTitleContainer = styled.div`
+  display: flex;
+  gap: 6px;
+  margin-right: 180px;
+`;
+
+const TooltipContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  z-index: 1000;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    border: 6px solid transparent;
+    border-top-color: white;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    border: 7px solid transparent;
+    border-top-color: #ddd;
+    margin-top: 1px;
+  }
+`;
+const TickerInfo = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 8px 0px 12px 0px;
+`;
+const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 340px;
+  border-radius: 8px;
+  gap: 24px;
+  padding: 24px 0 0 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const InfoItem = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0px 26px;
+
+  &:nth-child(5) {
+    grid-column: span 2;
+    justify-content: flex-start;
+    gap: 24px;
+    margin: 0 0 0 26px;
+  }
+
+  &:nth-child(6) {
+    justify-content: flex-end;
+  }
+`;
+const ItemDate = styled.div`
+  grid-column: span 2;
+  text-align: right;
+  margin-right: 26px;
+  margin-top: -40px;
 `;
 const PeriodSelector = styled.div`
   display: flex;

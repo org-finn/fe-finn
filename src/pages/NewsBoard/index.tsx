@@ -62,7 +62,7 @@ export default function NewsBoardPage() {
         >
           전체
         </FilterTab>
-        <FilterTab
+        {/* <FilterTab
           $active={filter === 'positive'}
           onClick={() => handleFilterChange('positive')}
         >
@@ -73,7 +73,7 @@ export default function NewsBoardPage() {
           onClick={() => handleFilterChange('negative')}
         >
           부정
-        </FilterTab>
+        </FilterTab> */}
       </FilterContainer>
 
       <NewsList items={newsList.content.newsList} />
@@ -100,10 +100,10 @@ const FilterTab = styled.button<{ $active: boolean }>`
   font-size: 16px;
   font-weight: bold;
   border: none;
-  border-bottom: 3px solid ${(props) => (props.$active ? '#47c8d9' : '#8c8c8c')};
+  border-bottom: 3px solid ${(props) => (props.$active ? '#2d70d3' : '#8c8c8c')};
   background: none;
   cursor: pointer;
-  color: ${(props) => (props.$active ? '#47c8d9' : '#8c8c8c')};
+  color: ${(props) => (props.$active ? '#2d70d3' : '#8c8c8c')};
 `;
 
 const ErrorMessage = styled.div`
