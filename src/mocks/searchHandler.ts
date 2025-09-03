@@ -103,7 +103,9 @@ export const tickerSearchHandlers = [
       return HttpResponse.json({
         code: '200 OK',
         message: '종목 검색 결과를 성공적으로 조회하였습니다.',
-        content: [],
+        content: {
+          tickerSearchList: [],
+        },
       });
     }
 
@@ -119,7 +121,9 @@ export const tickerSearchHandlers = [
     return HttpResponse.json({
       code: '200 OK',
       message: '종목 검색 결과를 성공적으로 조회하였습니다.',
-      content: results,
+      content: {
+        tickerSearchList: results,
+      },
     });
   }),
 ];

@@ -7,7 +7,7 @@ export const getTickerSearchPath = (keyword: string) =>
 
 export const getTickerSearch = async (keyword: string) => {
   const response = await fetchInstance.get<
-    ApiResponse<TickerSearchPreviewResponse[]>
+    ApiResponse<{ tickerSearchList: TickerSearchPreviewResponse[] }>
   >(getTickerSearchPath(keyword));
   return response.data;
 };

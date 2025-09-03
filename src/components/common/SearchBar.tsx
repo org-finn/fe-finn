@@ -12,7 +12,7 @@ export default function SearchBar() {
   const navigate = useNavigate();
 
   const { data: searchData, isLoading } = useGetTickerSearch(keyword);
-  const tickerList = searchData?.content || [];
+  const tickerList = searchData?.content.tickerSearchList || [];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
