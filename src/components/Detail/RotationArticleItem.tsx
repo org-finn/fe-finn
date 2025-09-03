@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { DetailArticleData } from '@/types';
 
-export default function NewsItem({ item }: { item: DetailArticleData }) {
+export default function RotationArticleItem({
+  item,
+}: {
+  item: DetailArticleData;
+}) {
   const handleClick = () => {
     return location.pathname === '/news';
   };

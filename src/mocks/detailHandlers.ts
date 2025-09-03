@@ -43,7 +43,7 @@ const mockTickerDetail = {
     high: 119.1,
     low: 16.3,
     volume: 1539200,
-    news: mockNewsData,
+    article: mockNewsData,
   },
 };
 

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import NewsItem from './NewsItem';
+import ArticleItem from './ArticleItem';
 import { ArticleDataResponse } from '@/types';
 
-export default function NewsList({
+export default function ArticleList({
   items = [],
 }: {
   items: ArticleDataResponse[];
@@ -10,7 +10,7 @@ export default function NewsList({
   return (
     <Wrapper>
       {items.map((item) => (
-        <NewsItem key={item.articleId} item={item} />
+        <ArticleItem key={item.articleId} item={item} />
       ))}
     </Wrapper>
   );

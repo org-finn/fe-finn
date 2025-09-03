@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SearchBar from '@/components/common/SearchBar';
-import NewsList from '@/components/News/NewsList';
+import ArticleList from '@/components/News/ArticleList';
 import { useGetArticleList } from '@/api/hooks/useGetArticleList';
 import Loading from '@/components/common/Layout/Loading';
 
@@ -23,7 +23,7 @@ export default function NewsBoardPage() {
   const [page] = useState<number>(1);
 
   const {
-    data: newsList,
+    data: articleList,
     isLoading,
     error,
   } = useGetArticleList({ filter, sort, page });
@@ -47,7 +47,7 @@ export default function NewsBoardPage() {
       <ErrorMessage>데이터를 불러오는 중 오류가 발생했습니다.</ErrorMessage>
     );
   }
-  if (!newsList?.content.newsList) {
+  if (!articleList?.content.articleList) {
     return <ErrorMessage>뉴스 정보를 찾을 수 없습니다.</ErrorMessage>;
   }
 
@@ -76,7 +76,7 @@ export default function NewsBoardPage() {
         </FilterTab> */}
       </FilterContainer>
 
-      <NewsList items={newsList.content.newsList} />
+      <ArticleList items={articleList.content.articleList} />
     </Wrapper>
   );
 }

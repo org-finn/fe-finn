@@ -141,7 +141,7 @@ export const newsHandlers = [
       code: '200 OK',
       message: '뉴스 목록을 성공적으로 조회하였습니다.',
       content: {
-        newsList: mockNewsList,
+        articleList: mockNewsList,
         pageNumber: page,
         hasNext: false,
       },

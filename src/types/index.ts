@@ -60,7 +60,7 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: DetailArticleData[];
+  article: DetailArticleData[];
 };
 
 export type CompanyNameList = {
@@ -81,7 +81,7 @@ export type ArticleDataResponse = {
 };
 
 export type ArticleListData = {
-  newsList: ArticleDataResponse[];
+  articleList: ArticleDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };

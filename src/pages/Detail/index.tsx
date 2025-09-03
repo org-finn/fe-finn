@@ -14,7 +14,7 @@ import Loading from '@/components/common/Layout/Loading';
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import RotationNewsItem from '@/components/Detail/RotationNewsItem';
+import RotationArticleItem from '@/components/Detail/RotationArticleItem';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
@@ -53,7 +53,7 @@ export default function DetailPage() {
   const error = tickerError || realGraphError || realTimePriceError;
 
   useEffect(() => {
-    const newsCount = tickerData?.detailData.news?.length || 0;
+    const newsCount = tickerData?.detailData.article?.length || 0;
     if (newsCount > 1) {
       const interval = setInterval(() => {
         setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsCount);
@@ -61,7 +61,7 @@ export default function DetailPage() {
 
       return () => clearInterval(interval);
     }
-  }, [tickerData?.detailData.news?.length]);
+  }, [tickerData?.detailData.article?.length]);
 
   const handleRefresh = () => {
     if (isLiveMode) {
@@ -215,12 +215,13 @@ export default function DetailPage() {
       <Paragraph size="s" weight="bold">
         실시간 기사
       </Paragraph>
-      {tickerData?.detailData.news && tickerData.detailData.news.length > 0 && (
-        <RotationNewsItem
-          key={currentNewsIndex}
-          item={tickerData.detailData.news[currentNewsIndex]}
-        />
-      )}
+      {tickerData?.detailData.article &&
+        tickerData.detailData.article.length > 0 && (
+          <RotationArticleItem
+            key={currentNewsIndex}
+            item={tickerData.detailData.article[currentNewsIndex]}
+          />
+        )}
     </Wrapper>
   );
 }
