@@ -11,15 +11,17 @@ import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
 import Loading from '@/components/common/Layout/Loading';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import RotationNewsItem from '@/components/Detail/RotationNewsItem';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const queryClient = useQueryClient();
 
   const {
@@ -49,6 +51,17 @@ export default function DetailPage() {
 
   const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
   const error = tickerError || realGraphError || realTimePriceError;
+
+  useEffect(() => {
+    const newsCount = tickerData?.detailData.news?.length || 0;
+    if (newsCount > 1) {
+      const interval = setInterval(() => {
+        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsCount);
+      }, 15000);
+
+      return () => clearInterval(interval);
+    }
+  }, [tickerData?.detailData.news?.length]);
 
   const handleRefresh = () => {
     if (isLiveMode) {
@@ -202,6 +215,12 @@ export default function DetailPage() {
       <Paragraph size="s" weight="bold">
         실시간 기사
       </Paragraph>
+      {tickerData?.detailData.news && tickerData.detailData.news.length > 0 && (
+        <RotationNewsItem
+          key={currentNewsIndex}
+          item={tickerData.detailData.news[currentNewsIndex]}
+        />
+      )}
     </Wrapper>
   );
 }

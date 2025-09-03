@@ -6,21 +6,23 @@ import { getRealTimePricePath } from '@/api/hooks/useGetRealTimePrice';
 
 const mockNewsData = [
   {
-    articleId: '1',
-    headline: '구글, AI 기술 발전으로 검색 시장 점유율 확대 전망',
-    sentiment: '0',
-    reasoning: 'AI 기술 개발로 인한 경쟁력 강화 및 시장 점유율 확대 가능성',
+    articleId: '9587a419-392e-4e38-b990-785fcbdbe665',
+    headline:
+      "This 'Small' 7.2% Dividend Is An Oasis of Cheap in a Pricey Market",
+    sentiment: 'neutral',
+    reasoning:
+      'Part of the large-cap tech group that has dominated market performance, potentially overvalued and due for a correction',
   },
   {
     articleId: '2',
     headline: '알파벳, 클라우드 사업 성장세 지속... 아마존과 경쟁 심화',
-    sentiment: '1',
+    sentiment: 'positive',
     reasoning: '클라우드 사업의 지속적인 성장으로 수익성 개선 기대',
   },
   {
     articleId: '3',
     headline: '구글 광고 수익 감소 우려, 경제 불황 영향으로 광고비 삭감',
-    sentiment: '-1',
+    sentiment: 'negative',
     reasoning: '경제 불황으로 인한 광고 수익 감소가 전체 실적에 부정적 영향',
   },
 ];
