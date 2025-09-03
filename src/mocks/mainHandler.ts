@@ -103,7 +103,15 @@ export const tickerHandlers = [
 
 export const holidayHandlers = [
   http.get(`${BASE_URL}${getTodayMarketStatusPath()}`, () => {
-    return HttpResponse.json(true);
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '오늘의 마켓 상태를 성공적으로 조회하였습니다.',
+      content: {
+        isHoliday: false,
+        tradingHours: '22:30~05:00',
+        eventName: null,
+      },
+    });
   }),
 ];
 
