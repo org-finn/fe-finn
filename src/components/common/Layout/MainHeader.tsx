@@ -18,7 +18,11 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
         onMouseLeave={props.onMouseLeave}
         onClick={props.onClick}
       >
-        <LogoWrapper src={Logo} alt="Articker Logo" onClick={() => navigate('/')} />
+        <LogoWrapper
+          src={Logo}
+          alt="Articker Logo"
+          onClick={() => navigate('/')}
+        />
       </HeaderContainer>
     );
   }
