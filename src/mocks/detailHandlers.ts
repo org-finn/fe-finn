@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getTickerDetailPath } from '@/api/hooks/useGetTickerDetail';
 import { getRealGraphPath } from '@/api/hooks/useGetRealGraph';
+import { getRealTimePricePath } from '@/api/hooks/useGetRealTimePrice';
 
 const mockNewsData = [
   {
@@ -95,6 +96,213 @@ const baseMockRealGraphData = [
   { date: '2025-06-07', price: 117.7 },
   { date: '2025-06-08', price: 118.5 },
 ];
+const realTimeGraphData = {
+  priceDate: '2025-09-02',
+  tickerId: '0-d-q-8b-95n',
+  priceDataList: [
+    {
+      price: 501.075,
+      hours: '15:25:00',
+      index: 23,
+    },
+    {
+      price: 500.94,
+      hours: '15:30:00',
+      index: 24,
+    },
+    {
+      price: 500.915,
+      hours: '15:35:00',
+      index: 25,
+    },
+    {
+      price: 500.48,
+      hours: '15:40:00',
+      index: 26,
+    },
+    {
+      price: 500.81,
+      hours: '15:45:00',
+      index: 27,
+    },
+    {
+      price: 500.71,
+      hours: '15:50:00',
+      index: 28,
+    },
+    {
+      price: 500.61,
+      hours: '15:55:00',
+      index: 29,
+    },
+    {
+      price: 500.77,
+      hours: '16:00:00',
+      index: 30,
+    },
+    {
+      price: 500.69,
+      hours: '16:05:00',
+      index: 31,
+    },
+    {
+      price: 500.935,
+      hours: '16:10:00',
+      index: 32,
+    },
+    {
+      price: 501.03,
+      hours: '16:15:00',
+      index: 33,
+    },
+    {
+      price: 501.44,
+      hours: '16:20:00',
+      index: 34,
+    },
+    {
+      price: 501.39,
+      hours: '16:25:00',
+      index: 35,
+    },
+    {
+      price: 500.965,
+      hours: '16:30:00',
+      index: 36,
+    },
+    {
+      price: 501.07,
+      hours: '16:35:00',
+      index: 37,
+    },
+    {
+      price: 500.82,
+      hours: '16:40:00',
+      index: 38,
+    },
+    {
+      price: 501.25,
+      hours: '16:45:00',
+      index: 39,
+    },
+    {
+      price: 501.07,
+      hours: '16:50:00',
+      index: 40,
+    },
+    {
+      price: 501.32,
+      hours: '16:55:00',
+      index: 41,
+    },
+    {
+      price: 501.53,
+      hours: '17:00:00',
+      index: 42,
+    },
+    {
+      price: 501.36,
+      hours: '17:05:00',
+      index: 43,
+    },
+    {
+      price: 501,
+      hours: '17:10:00',
+      index: 44,
+    },
+    {
+      price: 500.45,
+      hours: '17:15:00',
+      index: 45,
+    },
+    {
+      price: 500.81,
+      hours: '17:20:00',
+      index: 46,
+    },
+    {
+      price: 501.45,
+      hours: '17:25:00',
+      index: 47,
+    },
+    {
+      price: 501.96,
+      hours: '17:30:00',
+      index: 48,
+    },
+    {
+      price: 502.725,
+      hours: '17:35:00',
+      index: 49,
+    },
+    {
+      price: 502.78,
+      hours: '17:40:00',
+      index: 50,
+    },
+    {
+      price: 502.54,
+      hours: '17:45:00',
+      index: 51,
+    },
+    {
+      price: 502.6301,
+      hours: '17:50:00',
+      index: 52,
+    },
+    {
+      price: 502.54,
+      hours: '17:55:00',
+      index: 53,
+    },
+    {
+      price: 502.29,
+      hours: '18:00:00',
+      index: 54,
+    },
+    {
+      price: 502.76,
+      hours: '18:05:00',
+      index: 55,
+    },
+    {
+      price: 502.315,
+      hours: '18:10:00',
+      index: 56,
+    },
+    {
+      price: 502.6475,
+      hours: '18:15:00',
+      index: 57,
+    },
+    {
+      price: 501.85,
+      hours: '18:20:00',
+      index: 58,
+    },
+    {
+      price: 501.775,
+      hours: '18:25:00',
+      index: 59,
+    },
+    {
+      price: 501.44,
+      hours: '18:30:00',
+      index: 60,
+    },
+    {
+      price: 501.6875,
+      hours: '18:35:00',
+      index: 61,
+    },
+    {
+      price: 501.85,
+      hours: '18:40:00',
+      index: 62,
+    },
+  ],
+  maxLen: 240,
+};
 
 const mockRealGraphData = generateGraphDataWithChangeRate(
   baseMockRealGraphData
@@ -120,6 +328,38 @@ export const detailHandlers = [
       },
     });
   }),
+  http.get(
+    `${BASE_URL}${getRealTimePricePath('0-d-q-8b-95n')}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const gte = url.searchParams.get('gte');
+      const missing = url.searchParams.getAll('missing').map(Number);
+
+      let filteredPriceDataList = [...realTimeGraphData.priceDataList];
+
+      if (gte !== null) {
+        const gteValue = Number(gte);
+        filteredPriceDataList = filteredPriceDataList.filter(
+          (item) => item.index >= gteValue
+        );
+      }
+
+      if (missing && missing.length > 0) {
+        filteredPriceDataList = filteredPriceDataList.filter((item) =>
+          missing.includes(item.index)
+        );
+      }
+
+      return HttpResponse.json({
+        code: '200 OK',
+        message: '실시간 종목 주가 데이터를 성공적으로 조회하였습니다.',
+        content: {
+          ...realTimeGraphData,
+          priceDataList: filteredPriceDataList,
+        },
+      });
+    }
+  ),
 ];
 
 export default detailHandlers;

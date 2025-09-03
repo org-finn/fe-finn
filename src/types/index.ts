@@ -102,3 +102,16 @@ export type TodayMarketStatusResponse = {
   tradingHours: string;
   eventName: string;
 };
+
+export type TickerRealTimeGraphResponse = {
+  price: number;
+  hours: string;
+  index: number;
+};
+
+export type RealTimePriceData = {
+  priceDate: string;
+  tickerId: string;
+  priceDataList: TickerRealTimeGraphResponse[];
+  maxLen: number;
+};
