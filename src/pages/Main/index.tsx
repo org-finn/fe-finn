@@ -58,8 +58,6 @@ export default function MainPage() {
         </TickerTitle>
         <TickerList items={risingData?.content.predictionList || []} />
       </TickerSection>
-
-      <BannerSection></BannerSection>
     </Wrapper>
   );
 }
@@ -87,12 +85,6 @@ const MoreBtn = styled.button`
   &:hover {
     text-decoration: underline;
   }
-`;
-const BannerSection = styled.div`
-  width: 100%;
-  border-radius: 10px;
-  height: 120px;
-  background-color: #f2f2f2;
 `;
 
 const TickerTitle = styled.div`

@@ -24,14 +24,6 @@ function transformDataForLineChart(data: TickerGraphDataResponse[]) {
 export default function TickerCharts({ realData, sentiment }: ChartProps) {
   const transformedRealData = transformDataForLineChart(realData);
 
-  // 날짜 동적으로 계산하기 위해
-  const allDates = [...realData].map((d) => d.date);
-  const uniqueDates = [...new Set(allDates)].sort();
-  const shownDates = uniqueDates.filter((_, index, arr) => {
-    const step = Math.floor(arr.length / 4);
-    return index % step === 0 || index === arr.length - 1;
-  });
-
   const options: ApexOptions = {
     chart: {
       type: 'area',
@@ -56,13 +48,47 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
       curve: 'smooth',
       width: 2,
     },
+    markers: {
+      size: realData.map((item) => {
+        const hasArticles =
+          (item.positiveArticleCount || 0) > 0 ||
+          (item.negativeArticleCount || 0) > 0;
+        return hasArticles ? 1 : 4;
+      }),
+      colors: ['#ff6b6b'],
+      strokeColors: ['#ff6b6b'],
+      strokeWidth: 0,
+      discrete: realData
+        .map((item, index) => {
+          const hasArticles =
+            (item.positiveArticleCount || 0) > 0 ||
+            (item.negativeArticleCount || 0) > 0;
+          return hasArticles
+            ? {
+                seriesIndex: 0,
+                dataPointIndex: index,
+                fillColor: '#ff6b6b',
+                strokeColor: '#ff6b6b',
+                size: 4,
+                shape: 'circle' as const,
+              }
+            : null;
+        })
+        .filter(
+          (marker): marker is NonNullable<typeof marker> => marker !== null
+        ),
+    },
     xaxis: {
       type: 'category',
+      categories: realData.map((item) => item.date),
       labels: {
         formatter: function (val: string) {
-          return shownDates.includes(val) ? formatShortDate(val) : '';
+          return formatShortDate(val);
         },
+        showDuplicates: false,
+        maxHeight: 50,
       },
+      tickAmount: Math.min(5, realData.length),
     },
     tooltip: {
       enabled: true,
@@ -72,10 +98,16 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
       custom: function ({ series, seriesIndex, dataPointIndex }) {
         const price = series[seriesIndex][dataPointIndex];
         const changeRate = realData[dataPointIndex]?.changeRate || 0;
+        const positiveCount =
+          realData[dataPointIndex]?.positiveArticleCount || 0;
+        const negativeCount =
+          realData[dataPointIndex]?.negativeArticleCount || 0;
 
         const changeRateColor =
           changeRate > 0 ? 'red' : changeRate < 0 ? 'blue' : 'darkgrey';
         const changeRateSign = changeRate > 0 ? '+' : '';
+
+        const hasArticles = positiveCount > 0 || negativeCount > 0;
 
         return `
           <div style="
@@ -107,6 +139,7 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
             <div style="
               display: flex;
               justify-content: space-between;
+              ${hasArticles ? 'margin-bottom: 6px;' : ''}
             ">
               <span style="color: #6b7280;">등락률:</span>
               <span style="
@@ -116,6 +149,23 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
                 ${changeRateSign}${changeRate.toFixed(2)}%
               </span>
             </div>
+            ${
+              hasArticles
+                ? `
+            <div style="
+              border-top: 1px solid #e5e7eb;
+              padding-top: 6px;
+              margin-top: 6px;
+              text-align: center;
+            ">
+              <span style="color: #6b7280;">긍정 기사: </span>
+              <span style="font-weight: 600; color: red;">${positiveCount}개</span>
+              <span style="color: #6b7280; margin-left: 8px;">/ 부정 기사: </span>
+              <span style="font-weight: 600; color: blue;">${negativeCount}개</span>
+            </div>
+            `
+                : ''
+            }
           </div>
         `;
       },

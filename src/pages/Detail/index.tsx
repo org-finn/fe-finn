@@ -1,19 +1,28 @@
 import { Text } from '@/components/common/typography/Text';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
+import { IoMdRefresh } from 'react-icons/io';
 import TickerCharts from '@/components/Ticker/TickerCharts';
+import RealTimeTickerCharts from '@/components/Ticker/RealTimeTickerCharts';
 import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
+import Button from '@/components/common/Button';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
+import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
 import Loading from '@/components/common/Layout/Loading';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import RotationNewsItem from '@/components/Detail/RotationNewsItem';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
+  const [isLiveMode, setIsLiveMode] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const queryClient = useQueryClient();
 
   const {
     data: tickerResponse,
@@ -28,12 +37,43 @@ export default function DetailPage() {
     tickerId: id,
     period,
   });
+  const {
+    data: realTimePriceResponse,
+    isLoading: realTimePriceLoading,
+    error: realTimePriceError,
+  } = useGetRealTimePrice({
+    tickerId: id,
+  });
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
+  const realTimePriceData = realTimePriceResponse?.content;
 
-  const isLoading = tickerLoading || realGraphLoading;
-  const error = tickerError || realGraphError;
+  const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
+  const error = tickerError || realGraphError || realTimePriceError;
+
+  useEffect(() => {
+    const newsCount = tickerData?.detailData.news?.length || 0;
+    if (newsCount > 1) {
+      const interval = setInterval(() => {
+        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsCount);
+      }, 15000);
+
+      return () => clearInterval(interval);
+    }
+  }, [tickerData?.detailData.news?.length]);
+
+  const handleRefresh = () => {
+    if (isLiveMode) {
+      queryClient.invalidateQueries({
+        queryKey: ['real-time-price', { tickerId: id }],
+      });
+    } else {
+      queryClient.invalidateQueries({
+        queryKey: ['real-graph', { period }],
+      });
+    }
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -137,26 +177,50 @@ export default function DetailPage() {
       <Paragraph size="s" weight="bold">
         예측 주가
       </Paragraph>
-      <PeriodSelector>
-        {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
-          <PeriodButton
-            key={p}
-            $active={period === p}
-            onClick={() => setPeriod(p)}
-          >
-            {p}
-          </PeriodButton>
-        ))}
-      </PeriodSelector>
-      {realGraphData && (
-        <TickerCharts
-          realData={realGraphData.graphData || []}
-          sentiment={tickerData.sentiment ?? 0}
+      <PeriodSelectorContainer>
+        <PeriodSelector>
+          {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
+            <PeriodButton
+              key={p}
+              $active={period === p && !isLiveMode}
+              onClick={() => {
+                setPeriod(p);
+                setIsLiveMode(false);
+              }}
+            >
+              {p}
+            </PeriodButton>
+          ))}
+          <LiveButton $active={isLiveMode} onClick={() => setIsLiveMode(true)}>
+            live
+            <LiveDot />
+          </LiveButton>
+        </PeriodSelector>
+        <RefreshButton onClick={handleRefresh} variant="grey" size="small">
+          <IoMdRefresh size={16} />
+        </RefreshButton>
+      </PeriodSelectorContainer>
+      {isLiveMode && realTimePriceData ? (
+        <RealTimeTickerCharts
+          realTimeData={realTimePriceData.priceDataList || []}
         />
+      ) : (
+        realGraphData && (
+          <TickerCharts
+            realData={realGraphData.graphData || []}
+            sentiment={tickerData.sentiment ?? 0}
+          />
+        )
       )}
       <Paragraph size="s" weight="bold">
         실시간 기사
       </Paragraph>
+      {tickerData?.detailData.news && tickerData.detailData.news.length > 0 && (
+        <RotationNewsItem
+          key={currentNewsIndex}
+          item={tickerData.detailData.news[currentNewsIndex]}
+        />
+      )}
     </Wrapper>
   );
 }
@@ -267,7 +331,6 @@ const ItemDate = styled.div`
 const PeriodSelector = styled.div`
   display: flex;
   gap: 12px;
-  margin-bottom: 10px;
 `;
 const PeriodButton = styled.button<{ $active: boolean }>`
   padding: 8px 16px;
@@ -285,6 +348,62 @@ const PeriodButton = styled.button<{ $active: boolean }>`
     background-color: ${(props) => (props.$active ? '#47c8d9' : '#f0f9fa')};
   }
 `;
+
+const LiveButton = styled.button<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 8px 8px 8px 12px;
+  border: 1px solid ${(props) => (props.$active ? '#47c8d9' : '#ddd')};
+  background-color: ${(props) => (props.$active ? '#47c8d9' : 'white')};
+  color: ${(props) => (props.$active ? 'white' : '#666')};
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 2px;
+
+  &:hover {
+    border-color: #47c8d9;
+    background-color: ${(props) => (props.$active ? '#47c8d9' : '#f0f9fa')};
+  }
+`;
+
+const LiveDot = styled.div`
+  width: 6px;
+  height: 6px;
+  position: relative;
+  top: -8px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+  }
+`;
+const PeriodSelectorContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const RefreshButton = styled(Button)`
+  width: 40px;
+  height: 34px;
+  margin-right: 24px;
+`;
+
 const ErrorMessage = styled.div`
   padding: 20px;
   text-align: center;

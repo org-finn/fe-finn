@@ -28,6 +28,7 @@ const FooterContainer = styled.footer`
   width: 100%;
   padding: 24px 30px;
   box-sizing: border-box;
+  margin-top: 20px;
 `;
 
 const FooterSection = styled.div`

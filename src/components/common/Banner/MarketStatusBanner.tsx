@@ -13,7 +13,9 @@ export default function MarketStatusBanner() {
   return (
     <BannerWrapper>
       <BannerContent>
-        <MdOutlineToday size={24} />
+        <IconWrapper>
+          <MdOutlineToday size={20} />
+        </IconWrapper>
         <TextContainer>
           <Paragraph size="s" weight="normal" variant="black">
             오늘은 휴장일이에요!
@@ -25,17 +27,20 @@ export default function MarketStatusBanner() {
 }
 
 const BannerWrapper = styled.div`
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 16px 20px;
-  background: #f6f6f6;
+  background: linear-gradient(135deg, #f8f9fe 0%, #f0f4ff 100%);
+  border: 1px solid #e6efff;
   margin-bottom: 36px;
   margin-top: -16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease-in-out;
 `;
 
 const BannerContent = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 `;
 
 const TextContainer = styled.div`
@@ -43,4 +48,16 @@ const TextContainer = styled.div`
   flex-direction: column;
   gap: 4px;
   flex: 1;
+`;
+
+const IconWrapper = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 `;

@@ -44,7 +44,10 @@ export type TickerGraphDataResponse = {
   date: string;
   price: number;
   changeRate: number;
+  positiveArticleCount: number;
+  negativeArticleCount: number;
 };
+
 export type GraphData = {
   period: string;
   graphData: TickerGraphDataResponse[];
@@ -101,4 +104,17 @@ export type TodayMarketStatusResponse = {
   isHoliday: boolean;
   tradingHours: string;
   eventName: string;
+};
+
+export type TickerRealTimeGraphResponse = {
+  price: number;
+  hours: string;
+  index: number;
+};
+
+export type RealTimePriceData = {
+  priceDate: string;
+  tickerId: string;
+  priceDataList: TickerRealTimeGraphResponse[];
+  maxLen: number;
 };

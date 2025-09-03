@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type Props = {
-  variant?: 'kakao' | 'outline' | 'white' | 'mint' | 'visit' | 'blackOutline';
+  variant?: 'outline' | 'white' | 'mint' | 'blackOutline' | 'grey';
   size?: 'large' | 'small' | 'responsive';
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -76,6 +76,17 @@ const variantStyles = (variant: Props['variant'] = 'mint') => {
 
       '&:hover': {
         backgroundColor: '#959595',
+      },
+    };
+  }
+
+  if (variant === 'grey') {
+    return {
+      color: '#ffffff',
+      backgroundColor: '#BCC7D9',
+
+      '&:hover': {
+        backgroundColor: '#afbcd1',
       },
     };
   }
