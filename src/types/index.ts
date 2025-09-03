@@ -44,7 +44,10 @@ export type TickerGraphDataResponse = {
   date: string;
   price: number;
   changeRate: number;
+  positiveArticleCount: number;
+  negativeArticleCount: number;
 };
+
 export type GraphData = {
   period: string;
   graphData: TickerGraphDataResponse[];

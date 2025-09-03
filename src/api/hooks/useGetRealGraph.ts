@@ -11,7 +11,7 @@ interface GetRealGraphParams {
 }
 
 export const getRealGraphPath = (tickerId: string) =>
-  `/api/v1/prediction/ticker/${tickerId}/graph`;
+  `/api/v1/price/ticker/${tickerId}/graph`;
 
 export const getRealGraph = async ({
   tickerId,

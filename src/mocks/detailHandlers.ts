@@ -48,7 +48,12 @@ const mockTickerDetail = {
 };
 
 const generateGraphDataWithChangeRate = (
-  baseData: Array<{ date: string; price: number }>
+  baseData: Array<{
+    date: string;
+    price: number;
+    positiveArticleCount: number;
+    negativeArticleCount: number;
+  }>
 ) => {
   return baseData.map((item, index) => {
     let changeRate = 0;
@@ -61,42 +66,199 @@ const generateGraphDataWithChangeRate = (
       date: item.date,
       price: item.price,
       changeRate: Number(changeRate.toFixed(2)),
+      positiveArticleCount: item.positiveArticleCount,
+      negativeArticleCount: item.negativeArticleCount,
     };
   });
 };
 
 const baseMockRealGraphData = [
-  { date: '2025-05-09', price: 102.7 },
-  { date: '2025-05-10', price: 101.5 },
-  { date: '2025-05-11', price: 100.9 },
-  { date: '2025-05-12', price: 101.2 },
-  { date: '2025-05-13', price: 103.7 },
-  { date: '2025-05-14', price: 105.2 },
-  { date: '2025-05-15', price: 106.7 },
-  { date: '2025-05-16', price: 108.2 },
-  { date: '2025-05-17', price: 107.5 },
-  { date: '2025-05-18', price: 106.3 },
-  { date: '2025-05-19', price: 105.1 },
-  { date: '2025-05-20', price: 104.7 },
-  { date: '2025-05-21', price: 103.5 },
-  { date: '2025-05-22', price: 102.1 },
-  { date: '2025-05-23', price: 101.9 },
-  { date: '2025-05-24', price: 104.2 },
-  { date: '2025-05-25', price: 104.6 },
-  { date: '2025-05-26', price: 107.3 },
-  { date: '2025-05-27', price: 106.8 },
-  { date: '2025-05-28', price: 108.9 },
-  { date: '2025-05-29', price: 109.7 },
-  { date: '2025-05-30', price: 110.2 },
-  { date: '2025-05-31', price: 101.4 },
-  { date: '2025-06-01', price: 111.9 },
-  { date: '2025-06-02', price: 112.6 },
-  { date: '2025-06-03', price: 113.2 },
-  { date: '2025-06-04', price: 124.7 },
-  { date: '2025-06-05', price: 115.9 },
-  { date: '2025-06-06', price: 116.4 },
-  { date: '2025-06-07', price: 117.7 },
-  { date: '2025-06-08', price: 118.5 },
+  {
+    date: '2025-05-09',
+    price: 102.7,
+    positiveArticleCount: 2,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-10',
+    price: 101.5,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-11',
+    price: 100.9,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-12',
+    price: 101.2,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-13',
+    price: 103.7,
+    positiveArticleCount: 1,
+    negativeArticleCount: 2,
+  },
+  {
+    date: '2025-05-14',
+    price: 105.2,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-15',
+    price: 106.7,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-16',
+    price: 108.2,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-17',
+    price: 107.5,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-18',
+    price: 106.3,
+    positiveArticleCount: 3,
+    negativeArticleCount: 1,
+  },
+  {
+    date: '2025-05-19',
+    price: 105.1,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-20',
+    price: 104.7,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-21',
+    price: 103.5,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-22',
+    price: 102.1,
+    positiveArticleCount: 1,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-23',
+    price: 101.9,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-24',
+    price: 104.2,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-25',
+    price: 104.6,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-26',
+    price: 107.3,
+    positiveArticleCount: 2,
+    negativeArticleCount: 3,
+  },
+  {
+    date: '2025-05-27',
+    price: 106.8,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-28',
+    price: 108.9,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-29',
+    price: 109.7,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-05-30',
+    price: 110.2,
+    positiveArticleCount: 1,
+    negativeArticleCount: 1,
+  },
+  {
+    date: '2025-05-31',
+    price: 101.4,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-01',
+    price: 111.9,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-02',
+    price: 112.6,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-03',
+    price: 113.2,
+    positiveArticleCount: 4,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-04',
+    price: 124.7,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-05',
+    price: 115.9,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-06',
+    price: 116.4,
+    positiveArticleCount: 0,
+    negativeArticleCount: 2,
+  },
+  {
+    date: '2025-06-07',
+    price: 117.7,
+    positiveArticleCount: 0,
+    negativeArticleCount: 0,
+  },
+  {
+    date: '2025-06-08',
+    price: 118.5,
+    positiveArticleCount: 2,
+    negativeArticleCount: 1,
+  },
 ];
 const realTimeGraphData = {
   priceDate: '2025-09-02',
