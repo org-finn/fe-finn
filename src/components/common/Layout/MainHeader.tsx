@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Logo from '@/assets/images/Finn.png';
+import Logo from '@/assets/images/Articker.png';
 import { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
         onMouseLeave={props.onMouseLeave}
         onClick={props.onClick}
       >
-        <LogoWrapper src={Logo} alt="Finn Logo" onClick={() => navigate('/')} />
+        <LogoWrapper src={Logo} alt="Articker Logo" onClick={() => navigate('/')} />
       </HeaderContainer>
     );
   }
@@ -37,7 +37,7 @@ const HeaderContainer = styled.header`
   align-items: center;
 `;
 const LogoWrapper = styled.img`
-  width: 60px;
+  width: 100px;
   margin-left: 20px;
   cursor: pointer;
 `;

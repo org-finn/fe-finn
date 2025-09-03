@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AxiosError } from 'axios';
-import Logo from '@/assets/images/Finn.png';
+import Logo from '@/assets/images/Articker.png';
 import { Paragraph } from '../typography/Paragraph';
 import Button from '../Button';
 
@@ -92,7 +92,7 @@ export default function ErrorComponent({
   return (
     <Wrapper>
       <TextWrapper>
-        <LogoImage src={Logo} alt="Finn Logo" />
+        <LogoImage src={Logo} alt="Articker Logo" />
         <Paragraph size="xl" weight="bold">
           {message.title}
         </Paragraph>
