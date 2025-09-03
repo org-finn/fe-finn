@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SearchBar from '@/components/common/SearchBar';
-import ArticleList from '@/components/News/ArticleList';
+import ArticleList from '@/components/Article/ArticleList';
 import { useGetArticleList } from '@/api/hooks/useGetArticleList';
 import Loading from '@/components/common/Layout/Loading';
 

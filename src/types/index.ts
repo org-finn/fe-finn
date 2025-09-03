@@ -11,7 +11,7 @@ export type PredictionDataResponse = {
   tickerCode: string;
   predictionStrategy: string;
   sentiment: number;
-  newsCount: number;
+  articleCount: number;
 };
 
 export type TickerListData = {

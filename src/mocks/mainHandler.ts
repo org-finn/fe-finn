@@ -10,7 +10,7 @@ const mockTickerData = [
     tickerCode: 'GOOGL',
     predictionStrategy: '약한매수',
     sentiment: 1,
-    newsCount: 15,
+    articleCount: 15,
   },
   {
     tickerId: '1-d-q-8b-95n',
@@ -18,7 +18,7 @@ const mockTickerData = [
     tickerCode: 'AAPL',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 22,
+    articleCount: 22,
   },
   {
     tickerId: '2-d-q-8b-95n',
@@ -26,7 +26,7 @@ const mockTickerData = [
     tickerCode: 'META',
     predictionStrategy: '약한매수',
     sentiment: 1,
-    newsCount: 18,
+    articleCount: 18,
   },
   {
     tickerId: '3-d-q-8b-95n',
@@ -34,7 +34,7 @@ const mockTickerData = [
     tickerCode: 'NFLX',
     predictionStrategy: '강한매수',
     sentiment: 1,
-    newsCount: 12,
+    articleCount: 12,
   },
   {
     tickerId: '4-d-q-8b-95n',
@@ -42,7 +42,7 @@ const mockTickerData = [
     tickerCode: 'COIN',
     predictionStrategy: '약한매도',
     sentiment: -1,
-    newsCount: 8,
+    articleCount: 8,
   },
   {
     tickerId: '5-d-q-8b-95n',
@@ -50,7 +50,7 @@ const mockTickerData = [
     tickerCode: 'NVDA',
     predictionStrategy: '강한매도',
     sentiment: -1,
-    newsCount: 35,
+    articleCount: 35,
   },
   {
     tickerId: '6-d-q-8b-95n',
@@ -58,7 +58,7 @@ const mockTickerData = [
     tickerCode: 'TSLA',
     predictionStrategy: '강한매수',
     sentiment: 1,
-    newsCount: 28,
+    articleCount: 28,
   },
   {
     tickerId: '7-d-q-8b-95n',
@@ -66,7 +66,7 @@ const mockTickerData = [
     tickerCode: 'AMZN',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 19,
+    articleCount: 19,
   },
   {
     tickerId: '8-d-q-8b-95n',
@@ -74,7 +74,7 @@ const mockTickerData = [
     tickerCode: 'PYPL',
     predictionStrategy: '약한매도',
     sentiment: -1,
-    newsCount: 7,
+    articleCount: 7,
   },
   {
     tickerId: '9-d-q-8b-95n',
@@ -82,7 +82,7 @@ const mockTickerData = [
     tickerCode: 'ZM',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 5,
+    articleCount: 5,
   },
 ];
 

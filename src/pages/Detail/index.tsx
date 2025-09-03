@@ -53,10 +53,10 @@ export default function DetailPage() {
   const error = tickerError || realGraphError || realTimePriceError;
 
   useEffect(() => {
-    const newsCount = tickerData?.detailData.article?.length || 0;
-    if (newsCount > 1) {
+    const articleCount = tickerData?.detailData.article?.length || 0;
+    if (articleCount > 1) {
       const interval = setInterval(() => {
-        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsCount);
+        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % articleCount);
       }, 15000);
 
       return () => clearInterval(interval);
