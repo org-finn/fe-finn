@@ -75,6 +75,11 @@ export default function DetailPage() {
     }
   };
 
+  const formatDate = (priceDate: string) => {
+    const [, month, day] = priceDate.split('-');
+    return `${Number(month)}월 ${Number(day)}일`;
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -164,7 +169,7 @@ export default function DetailPage() {
           </InfoItem>
           <ItemDate>
             <Text size="xxs" weight="normal" variant="grey">
-              * 8월 1일 기준
+              * {formatDate(tickerData.detailData.priceDate)} 기준
             </Text>
           </ItemDate>
         </InfoGrid>
@@ -175,7 +180,7 @@ export default function DetailPage() {
         />
       </TickerInfo>
       <Paragraph size="s" weight="bold">
-        예측 주가
+        실제 주가
       </Paragraph>
       <PeriodSelectorContainer>
         <PeriodSelector>
