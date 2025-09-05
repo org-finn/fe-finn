@@ -212,15 +212,17 @@ export default function DetailPage() {
           />
         )
       )}
-      <Paragraph size="s" weight="bold">
-        실시간 기사
-      </Paragraph>
       {tickerData?.detailData.article &&
         tickerData.detailData.article.length > 0 && (
-          <RotationArticleItem
-            key={currentNewsIndex}
-            item={tickerData.detailData.article[currentNewsIndex]}
-          />
+          <>
+            <Paragraph size="s" weight="bold">
+              실시간 기사
+            </Paragraph>
+            <RotationArticleItem
+              key={currentNewsIndex}
+              item={tickerData.detailData.article[currentNewsIndex]}
+            />
+          </>
         )}
     </Wrapper>
   );
