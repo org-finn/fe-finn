@@ -21,6 +21,7 @@ export default function DetailPage() {
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const queryClient = useQueryClient();
 
@@ -73,6 +74,10 @@ export default function DetailPage() {
         queryKey: ['real-graph', { period }],
       });
     }
+    setShowRefreshTooltip(true);
+    setTimeout(() => {
+      setShowRefreshTooltip(false);
+    }, 3000);
   };
 
   const formatDate = (priceDate: string) => {
@@ -201,9 +206,14 @@ export default function DetailPage() {
             <LiveDot />
           </LiveButton>
         </PeriodSelector>
-        <RefreshButton onClick={handleRefresh} variant="grey" size="small">
-          <IoMdRefresh size={16} />
-        </RefreshButton>
+        <RefreshContainer>
+          <RefreshButton onClick={handleRefresh} variant="grey" size="small">
+            <IoMdRefresh size={16} />
+          </RefreshButton>
+          {showRefreshTooltip && (
+            <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
+          )}
+        </RefreshContainer>
       </PeriodSelectorContainer>
       {isLiveMode && realTimePriceData ? (
         <RealTimeTickerCharts
@@ -406,10 +416,55 @@ const PeriodSelectorContainer = styled.div`
   align-items: center;
 `;
 
+const RefreshContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
 const RefreshButton = styled(Button)`
   width: 40px;
   height: 34px;
   margin-right: 24px;
+
+  &:hover {
+    svg {
+      transform: rotate(60deg);
+      transition: transform 0.3s ease;
+    }
+  }
+`;
+
+const RefreshTooltip = styled(Tooltip)`
+  padding: 10px;
+  right: 72px;
+  left: auto;
+  top: 0px;
+  bottom: auto;
+  animation: tooltipSlideLeft 3s ease-in-out forwards;
+
+  &::after,
+  &::before {
+    display: none;
+  }
+
+  @keyframes tooltipSlideLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    15% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    85% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+  }
 `;
 
 const ErrorMessage = styled.div`
