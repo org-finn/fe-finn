@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
-import { getTickerListPath } from '@/api/hooks/useGetTickerList';
+import { getInfiniteTickerListPath } from '@/api/hooks/useGetInfiniteTickerList';
 import { getTodayMarketStatusPath } from '@/api/hooks/useGetTodayMarketStatus';
 
 const mockTickerData = [
@@ -84,18 +84,68 @@ const mockTickerData = [
     sentiment: 0,
     articleCount: 5,
   },
+  {
+    tickerId: '0-d-q-8b-95n',
+    shortCompanyName: 'Google',
+    tickerCode: 'GOOGL',
+    predictionStrategy: '약한매수',
+    sentiment: 1,
+    articleCount: 15,
+  },
+  {
+    tickerId: '1-d-q-8b-95n',
+    shortCompanyName: 'Apple',
+    tickerCode: 'AAPL',
+    predictionStrategy: '관망',
+    sentiment: 0,
+    articleCount: 22,
+  },
+  {
+    tickerId: '2-d-q-8b-95n',
+    shortCompanyName: 'Meta',
+    tickerCode: 'META',
+    predictionStrategy: '약한매수',
+    sentiment: 1,
+    articleCount: 18,
+  },
+  {
+    tickerId: '3-d-q-8b-95n',
+    shortCompanyName: 'Netflix',
+    tickerCode: 'NFLX',
+    predictionStrategy: '강한매수',
+    sentiment: 1,
+    articleCount: 12,
+  },
+  {
+    tickerId: '4-d-q-8b-95n',
+    shortCompanyName: 'Coinbase',
+    tickerCode: 'COIN',
+    predictionStrategy: '약한매도',
+    sentiment: -1,
+    articleCount: 8,
+  },
 ];
 
 export const tickerHandlers = [
-  http.get(`${BASE_URL}${getTickerListPath()}`, () => {
+  http.get(`${BASE_URL}${getInfiniteTickerListPath()}`, ({ request }) => {
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '0');
+    const pageSize = 10;
+    const totalItems = mockTickerData.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    const startIndex = page * pageSize;
+    const endIndex = startIndex + pageSize;
+    const pageData = mockTickerData.slice(startIndex, endIndex);
+
     return HttpResponse.json({
       code: '200 OK',
       message: '주식 리스트를 성공적으로 조회하였습니다.',
       content: {
         predictionDate: '2025-07-22',
-        predictionList: mockTickerData,
-        pageNumber: 0,
-        hasNext: false,
+        predictionList: pageData,
+        pageNumber: page,
+        hasNext: page < totalPages - 1,
       },
     });
   }),

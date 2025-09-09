@@ -4,7 +4,7 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import TickerList from '@/components/Ticker/TickerList';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useGetPopularTickers } from '@/api/hooks/useGetTickerList';
+import { useGetPopularTickers } from '@/api/hooks/useGetInfiniteTickerList';
 import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 
 export default function MainPage() {
