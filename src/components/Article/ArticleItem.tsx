@@ -41,10 +41,10 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
                 </Text>
               </SentimentTag>
             )} */}
-            {item.shortCompanyNames?.map((company, index) => (
-              <CompanyTag key={index}>
+            {item.shortCompanyNames?.map((company) => (
+              <CompanyTag key={company}>
                 <Text size="xs" weight="normal">
-                  {company.shortCompanyName}
+                  {company}
                 </Text>
               </CompanyTag>
             ))}

@@ -35,11 +35,7 @@ const mockNewsList = [
     title: 'The Best ETFs to Invest In Right Now',
     description:
       'The article explores two promising ETF investment opportunities: the iShares Semiconductor ETF for capitalizing on the AI chip market growth, and the Vanguard High Dividend Yield ETF for generating passive income through diversified dividend stocks.',
-    shortCompanyNames: [
-      { shortCompanyName: 'NVDA' },
-      { shortCompanyName: 'AMD' },
-      { shortCompanyName: 'INTC' },
-    ],
+    shortCompanyNames: ['NVDA', 'AMD', 'INTC'],
     thumbnailUrl:
       'https://g.foolcdn.com/editorial/images/831487/artifical-intelligence-gettyimages-1276832742.jpg',
     contentUrl:

@@ -63,15 +63,11 @@ export type DetailDataResponse = {
   article: DetailArticleData[];
 };
 
-export type CompanyNameList = {
-  shortCompanyName: string;
-};
-
 export type ArticleDataResponse = {
   articleId: string;
   title: string;
   description: string;
-  shortCompanyNames: CompanyNameList[];
+  shortCompanyNames: string[];
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
