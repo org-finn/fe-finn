@@ -5,6 +5,7 @@ import { ApexOptions } from 'apexcharts';
 type GaugeChartProps = {
   value: number;
   maxValue?: number;
+  predictionStrategy: string;
   title?: string;
   colors?: string[];
 };
@@ -12,6 +13,7 @@ type GaugeChartProps = {
 export default function GaugeChart({
   value,
   maxValue = 100,
+  predictionStrategy,
   colors = ['#20E647', '#87D4F9'],
 }: GaugeChartProps) {
   const options: ApexOptions = {
@@ -76,6 +78,7 @@ export default function GaugeChart({
         height={170}
       />
       <ScoreLabel>{value}점</ScoreLabel>
+      <StrategyLabel>{predictionStrategy}</StrategyLabel>
     </Wrapper>
   );
 }
@@ -92,6 +95,10 @@ const Wrapper = styled.div`
   height: 144px;
   width: 204px;
 
+  .apexcharts-svg {
+    margin-top: -6px;
+  }
+
   .apexcharts-canvas {
     background: transparent;
   }
@@ -99,9 +106,16 @@ const Wrapper = styled.div`
 
 const ScoreLabel = styled.div`
   position: absolute;
-  bottom: 42px;
+  bottom: 38px;
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  text-align: center;
+`;
+
+const StrategyLabel = styled.div`
+  position: absolute;
+  font-size: 14px;
+  color: #666;
   text-align: center;
 `;

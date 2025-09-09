@@ -182,6 +182,7 @@ export default function DetailPage() {
           value={tickerData.sentimentScore}
           maxValue={100}
           title="점수"
+          predictionStrategy={tickerData.predictionStrategy}
         />
       </TickerInfo>
       <Paragraph size="s" weight="bold">
