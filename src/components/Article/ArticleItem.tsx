@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { ArticleDataResponse } from '@/types';
+import FallbackImage from '../common/Item/FallbackImage';
 
 export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   const handleClick = () => {
@@ -23,7 +24,7 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
     <Wrapper onClick={handleClick}>
       <NewsContent>
         <ImageContainer>
-          <Image src={item.thumbnailUrl} alt={item.title} />
+          <FallbackImage src={item.thumbnailUrl} alt={item.title} />
         </ImageContainer>
         <TextContainer>
           <TitleText size="m" weight="bold">
@@ -103,13 +104,6 @@ const ImageContainer = styled.div`
     width: 70px;
     height: 70px;
   }
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
 `;
 
 const TextContainer = styled.div`
