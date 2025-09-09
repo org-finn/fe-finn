@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
-import { useGetArticleList } from '@/api/hooks/useGetArticleList';
+import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
 import Loading from '@/components/common/Layout/Loading';
 
 type NewsFilter = 'all' | 'positive' | 'negative';
@@ -20,13 +21,17 @@ export default function NewsBoardPage() {
 
   const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
   const [sort] = useState<NewsSort>('recent');
-  const [page] = useState<number>(1);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const { ref, inView } = useInView();
 
   const {
     data: articleList,
     isLoading,
     error,
-  } = useGetArticleList({ filter, sort, page });
+    hasNextPage: hasNext,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetInfiniteArticleList({ filter, sort });
 
   const handleFilterChange = (newFilter: NewsFilter) => {
     const searchParams = new URLSearchParams(location.search);
@@ -34,6 +39,18 @@ export default function NewsBoardPage() {
     navigate(`${location.pathname}?${searchParams.toString()}`);
     setFilter(newFilter);
   };
+
+  useEffect(() => {
+    if (articleList?.pages && articleList.pages.length > 0) {
+      setIsInitialLoad(false);
+    }
+  }, [articleList?.pages]);
+
+  useEffect(() => {
+    if (inView && hasNext && !isFetchingNextPage && !isInitialLoad) {
+      fetchNextPage();
+    }
+  }, [inView, hasNext, isFetchingNextPage, fetchNextPage, isInitialLoad]);
 
   useEffect(() => {
     setFilter(getInitialFilter());
@@ -47,9 +64,13 @@ export default function NewsBoardPage() {
       <ErrorMessage>데이터를 불러오는 중 오류가 발생했습니다.</ErrorMessage>
     );
   }
-  if (!articleList?.content.articleList) {
+  if (!articleList?.pages || articleList.pages.length === 0) {
     return <ErrorMessage>뉴스 정보를 찾을 수 없습니다.</ErrorMessage>;
   }
+
+  const allArticles = articleList.pages.flatMap(
+    (page) => page.content.articleList
+  );
 
   return (
     <Wrapper>
@@ -76,7 +97,9 @@ export default function NewsBoardPage() {
         </FilterTab> */}
       </FilterContainer>
 
-      <ArticleList items={articleList.content.articleList} />
+      <ArticleList items={allArticles} />
+      <div ref={ref} style={{ height: '50px' }} />
+      {isFetchingNextPage && <Loading />}
     </Wrapper>
   );
 }
