@@ -32,7 +32,9 @@ export default function MainPage() {
             <IoIosArrowForward />
           </MoreBtn>
         </TickerTitle>
-        <TickerList items={popularData?.content.predictionList || []} />
+        <TickerList
+          items={popularData?.pages[0].content.predictionList || []}
+        />
       </TickerSection>
     </Wrapper>
   );
