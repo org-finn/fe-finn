@@ -17,5 +17,6 @@ export const useGetTickerDetail = (id: string) => {
     queryKey: ['tickerDetail', id],
     queryFn: () => getTickerDetail(id),
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 15,
   });
 };
