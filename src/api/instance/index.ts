@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
-export const BASE_URL = 'https://api.example.com';
+export const BASE_URL = 'https://dsvt1su3.articker.kr';
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({

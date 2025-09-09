@@ -17,13 +17,6 @@ export default function RealTimeTickerCharts({
 }) {
   const transformedRealTimeData = transformDataForLineChart(realTimeData);
 
-  const allTimes = [...realTimeData].map((d) => d.hours);
-  const uniqueTimes = [...new Set(allTimes)].sort();
-  const shownTimes = uniqueTimes.filter((_, index, arr) => {
-    const step = Math.floor(arr.length / 4);
-    return index % step === 0 || index === arr.length - 1;
-  });
-
   const options: ApexOptions = {
     chart: {
       type: 'area',
@@ -50,11 +43,13 @@ export default function RealTimeTickerCharts({
     },
     xaxis: {
       type: 'category',
+      categories: realTimeData.map((item) => item.hours),
       labels: {
         formatter: function (val: string) {
-          return shownTimes.includes(val) ? val.slice(0, 5) : '';
+          return val?.slice(0, 5) || '';
         },
       },
+      tickAmount: Math.min(5, realTimeData.length),
     },
     tooltip: {
       enabled: true,

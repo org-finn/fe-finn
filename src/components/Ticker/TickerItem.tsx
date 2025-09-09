@@ -25,7 +25,7 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
           {getSignSymbol} {item.predictionStrategy} 추천
         </Text>
         <Text size="xs" weight="bold" variant={getVariant}>
-          {getSentiment} 기사 {item.newsCount}건
+          {getSentiment} 기사 {item.articleCount}건
         </Text>
       </PriceInfo>
     </Wrapper>

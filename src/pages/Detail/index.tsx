@@ -14,13 +14,14 @@ import Loading from '@/components/common/Layout/Loading';
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import RotationNewsItem from '@/components/Detail/RotationNewsItem';
+import RotationArticleItem from '@/components/Detail/RotationArticleItem';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const queryClient = useQueryClient();
 
@@ -53,15 +54,15 @@ export default function DetailPage() {
   const error = tickerError || realGraphError || realTimePriceError;
 
   useEffect(() => {
-    const newsCount = tickerData?.detailData.news?.length || 0;
-    if (newsCount > 1) {
+    const articleCount = tickerData?.detailData.article?.length || 0;
+    if (articleCount > 1) {
       const interval = setInterval(() => {
-        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsCount);
+        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % articleCount);
       }, 15000);
 
       return () => clearInterval(interval);
     }
-  }, [tickerData?.detailData.news?.length]);
+  }, [tickerData?.detailData.article?.length]);
 
   const handleRefresh = () => {
     if (isLiveMode) {
@@ -73,6 +74,15 @@ export default function DetailPage() {
         queryKey: ['real-graph', { period }],
       });
     }
+    setShowRefreshTooltip(true);
+    setTimeout(() => {
+      setShowRefreshTooltip(false);
+    }, 3000);
+  };
+
+  const formatDate = (priceDate: string) => {
+    const [, month, day] = priceDate.split('-');
+    return `${Number(month)}월 ${Number(day)}일`;
   };
 
   if (isLoading) {
@@ -164,7 +174,7 @@ export default function DetailPage() {
           </InfoItem>
           <ItemDate>
             <Text size="xxs" weight="normal" variant="grey">
-              * 8월 1일 기준
+              * {formatDate(tickerData.detailData.priceDate)} 기준
             </Text>
           </ItemDate>
         </InfoGrid>
@@ -172,10 +182,11 @@ export default function DetailPage() {
           value={tickerData.sentimentScore}
           maxValue={100}
           title="점수"
+          predictionStrategy={tickerData.predictionStrategy}
         />
       </TickerInfo>
       <Paragraph size="s" weight="bold">
-        예측 주가
+        실제 주가
       </Paragraph>
       <PeriodSelectorContainer>
         <PeriodSelector>
@@ -196,9 +207,14 @@ export default function DetailPage() {
             <LiveDot />
           </LiveButton>
         </PeriodSelector>
-        <RefreshButton onClick={handleRefresh} variant="grey" size="small">
-          <IoMdRefresh size={16} />
-        </RefreshButton>
+        <RefreshContainer>
+          <RefreshButton onClick={handleRefresh} variant="grey" size="small">
+            <IoMdRefresh size={16} />
+          </RefreshButton>
+          {showRefreshTooltip && (
+            <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
+          )}
+        </RefreshContainer>
       </PeriodSelectorContainer>
       {isLiveMode && realTimePriceData ? (
         <RealTimeTickerCharts
@@ -212,15 +228,18 @@ export default function DetailPage() {
           />
         )
       )}
-      <Paragraph size="s" weight="bold">
-        실시간 기사
-      </Paragraph>
-      {tickerData?.detailData.news && tickerData.detailData.news.length > 0 && (
-        <RotationNewsItem
-          key={currentNewsIndex}
-          item={tickerData.detailData.news[currentNewsIndex]}
-        />
-      )}
+      {tickerData?.detailData.article &&
+        tickerData.detailData.article.length > 0 && (
+          <>
+            <Paragraph size="s" weight="bold">
+              실시간 기사
+            </Paragraph>
+            <RotationArticleItem
+              key={currentNewsIndex}
+              item={tickerData.detailData.article[currentNewsIndex]}
+            />
+          </>
+        )}
     </Wrapper>
   );
 }
@@ -398,10 +417,55 @@ const PeriodSelectorContainer = styled.div`
   align-items: center;
 `;
 
+const RefreshContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
 const RefreshButton = styled(Button)`
   width: 40px;
   height: 34px;
   margin-right: 24px;
+
+  &:hover {
+    svg {
+      transform: rotate(60deg);
+      transition: transform 0.3s ease;
+    }
+  }
+`;
+
+const RefreshTooltip = styled(Tooltip)`
+  padding: 10px;
+  right: 72px;
+  left: auto;
+  top: 0px;
+  bottom: auto;
+  animation: tooltipSlideLeft 3s ease-in-out forwards;
+
+  &::after,
+  &::before {
+    display: none;
+  }
+
+  @keyframes tooltipSlideLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    15% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    85% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+  }
 `;
 
 const ErrorMessage = styled.div`

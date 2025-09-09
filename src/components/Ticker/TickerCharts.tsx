@@ -53,30 +53,33 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
         const hasArticles =
           (item.positiveArticleCount || 0) > 0 ||
           (item.negativeArticleCount || 0) > 0;
-        return hasArticles ? 1 : 4;
+        return hasArticles ? 4 : 1;
       }),
       colors: ['#ff6b6b'],
       strokeColors: ['#ff6b6b'],
       strokeWidth: 0,
-      discrete: realData
-        .map((item, index) => {
-          const hasArticles =
-            (item.positiveArticleCount || 0) > 0 ||
-            (item.negativeArticleCount || 0) > 0;
-          return hasArticles
-            ? {
-                seriesIndex: 0,
-                dataPointIndex: index,
-                fillColor: '#ff6b6b',
-                strokeColor: '#ff6b6b',
-                size: 4,
-                shape: 'circle' as const,
-              }
-            : null;
-        })
-        .filter(
-          (marker): marker is NonNullable<typeof marker> => marker !== null
-        ),
+      discrete: realData.map((item, index) => {
+        const hasArticles =
+          (item.positiveArticleCount || 0) > 0 ||
+          (item.negativeArticleCount || 0) > 0;
+        return hasArticles
+          ? {
+              seriesIndex: 0,
+              dataPointIndex: index,
+              fillColor: '#ff6b6b',
+              strokeColor: '#ff6b6b',
+              size: 4,
+              shape: 'circle' as const,
+            }
+          : {
+              seriesIndex: 0,
+              dataPointIndex: index,
+              fillColor: '#ff6b6b',
+              strokeColor: '#ff6b6b',
+              size: 1,
+              shape: 'circle' as const,
+            };
+      }),
     },
     xaxis: {
       type: 'category',

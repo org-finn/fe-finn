@@ -11,7 +11,7 @@ export type PredictionDataResponse = {
   tickerCode: string;
   predictionStrategy: string;
   sentiment: number;
-  newsCount: number;
+  articleCount: number;
 };
 
 export type TickerListData = {
@@ -60,18 +60,14 @@ export type DetailDataResponse = {
   high: number;
   low: number;
   volume: number;
-  news: DetailArticleData[];
-};
-
-export type CompanyNameList = {
-  shortCompanyName: string;
+  article: DetailArticleData[];
 };
 
 export type ArticleDataResponse = {
   articleId: string;
   title: string;
   description: string;
-  shortCompanyNames: CompanyNameList[];
+  shortCompanyNames: string[];
   thumbnailUrl: string;
   contentUrl: string;
   publishedDate: string;
@@ -81,7 +77,7 @@ export type ArticleDataResponse = {
 };
 
 export type ArticleListData = {
-  newsList: ArticleDataResponse[];
+  articleList: ArticleDataResponse[];
   pageNumber: number;
   hasNext: boolean;
 };

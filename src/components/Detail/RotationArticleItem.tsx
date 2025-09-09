@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { DetailArticleData } from '@/types';
 
-export default function NewsItem({ item }: { item: DetailArticleData }) {
+export default function RotationArticleItem({
+  item,
+}: {
+  item: DetailArticleData;
+}) {
   const handleClick = () => {
     return location.pathname === '/news';
   };
@@ -37,8 +41,7 @@ export default function NewsItem({ item }: { item: DetailArticleData }) {
             )}
           </TitleRow>
           <DescriptionText size="xs" weight="normal" variant="grey">
-            Provides AI chips and hardware, positioned in a high-growth industry
-            with significant potential
+            {item.reasoning}
           </DescriptionText>
         </TextContainer>
       </NewsContent>
@@ -58,7 +61,7 @@ const Wrapper = styled.div`
   animation: fadeIn 0.5s ease-in-out;
 
   &:hover {
-    background-color: #f4f7fc;
+    background-color: #f4f7fc; // 추후 호버 시 해당 stock 필터링한 뉴스보드로 이동 추가
   }
 
   @keyframes fadeIn {

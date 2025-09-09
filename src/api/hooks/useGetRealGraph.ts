@@ -32,7 +32,7 @@ export const useGetRealGraph = ({
   period = '2W',
 }: GetRealGraphParams) => {
   return useQuery({
-    queryKey: ['real-graph', { period }],
+    queryKey: ['real-graph', { tickerId, period }],
     queryFn: () => getRealGraph({ tickerId, period }),
     staleTime: 1000 * 60 * 5,
   });

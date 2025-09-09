@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
-import { getTickerListPath } from '@/api/hooks/useGetTickerList';
+import { getInfiniteTickerListPath } from '@/api/hooks/useGetInfiniteTickerList';
 import { getTodayMarketStatusPath } from '@/api/hooks/useGetTodayMarketStatus';
 
 const mockTickerData = [
@@ -10,7 +10,7 @@ const mockTickerData = [
     tickerCode: 'GOOGL',
     predictionStrategy: '약한매수',
     sentiment: 1,
-    newsCount: 15,
+    articleCount: 15,
   },
   {
     tickerId: '1-d-q-8b-95n',
@@ -18,7 +18,7 @@ const mockTickerData = [
     tickerCode: 'AAPL',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 22,
+    articleCount: 22,
   },
   {
     tickerId: '2-d-q-8b-95n',
@@ -26,7 +26,7 @@ const mockTickerData = [
     tickerCode: 'META',
     predictionStrategy: '약한매수',
     sentiment: 1,
-    newsCount: 18,
+    articleCount: 18,
   },
   {
     tickerId: '3-d-q-8b-95n',
@@ -34,7 +34,7 @@ const mockTickerData = [
     tickerCode: 'NFLX',
     predictionStrategy: '강한매수',
     sentiment: 1,
-    newsCount: 12,
+    articleCount: 12,
   },
   {
     tickerId: '4-d-q-8b-95n',
@@ -42,7 +42,7 @@ const mockTickerData = [
     tickerCode: 'COIN',
     predictionStrategy: '약한매도',
     sentiment: -1,
-    newsCount: 8,
+    articleCount: 8,
   },
   {
     tickerId: '5-d-q-8b-95n',
@@ -50,7 +50,7 @@ const mockTickerData = [
     tickerCode: 'NVDA',
     predictionStrategy: '강한매도',
     sentiment: -1,
-    newsCount: 35,
+    articleCount: 35,
   },
   {
     tickerId: '6-d-q-8b-95n',
@@ -58,7 +58,7 @@ const mockTickerData = [
     tickerCode: 'TSLA',
     predictionStrategy: '강한매수',
     sentiment: 1,
-    newsCount: 28,
+    articleCount: 28,
   },
   {
     tickerId: '7-d-q-8b-95n',
@@ -66,7 +66,7 @@ const mockTickerData = [
     tickerCode: 'AMZN',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 19,
+    articleCount: 19,
   },
   {
     tickerId: '8-d-q-8b-95n',
@@ -74,7 +74,7 @@ const mockTickerData = [
     tickerCode: 'PYPL',
     predictionStrategy: '약한매도',
     sentiment: -1,
-    newsCount: 7,
+    articleCount: 7,
   },
   {
     tickerId: '9-d-q-8b-95n',
@@ -82,20 +82,70 @@ const mockTickerData = [
     tickerCode: 'ZM',
     predictionStrategy: '관망',
     sentiment: 0,
-    newsCount: 5,
+    articleCount: 5,
+  },
+  {
+    tickerId: '0-d-q-8b-95n',
+    shortCompanyName: 'Google',
+    tickerCode: 'GOOGL',
+    predictionStrategy: '약한매수',
+    sentiment: 1,
+    articleCount: 15,
+  },
+  {
+    tickerId: '1-d-q-8b-95n',
+    shortCompanyName: 'Apple',
+    tickerCode: 'AAPL',
+    predictionStrategy: '관망',
+    sentiment: 0,
+    articleCount: 22,
+  },
+  {
+    tickerId: '2-d-q-8b-95n',
+    shortCompanyName: 'Meta',
+    tickerCode: 'META',
+    predictionStrategy: '약한매수',
+    sentiment: 1,
+    articleCount: 18,
+  },
+  {
+    tickerId: '3-d-q-8b-95n',
+    shortCompanyName: 'Netflix',
+    tickerCode: 'NFLX',
+    predictionStrategy: '강한매수',
+    sentiment: 1,
+    articleCount: 12,
+  },
+  {
+    tickerId: '4-d-q-8b-95n',
+    shortCompanyName: 'Coinbase',
+    tickerCode: 'COIN',
+    predictionStrategy: '약한매도',
+    sentiment: -1,
+    articleCount: 8,
   },
 ];
 
 export const tickerHandlers = [
-  http.get(`${BASE_URL}${getTickerListPath()}`, () => {
+  http.get(`${BASE_URL}${getInfiniteTickerListPath()}`, ({ request }) => {
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '0');
+    const pageSize = 10;
+    const totalItems = mockTickerData.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    const startIndex = page * pageSize;
+    const endIndex = startIndex + pageSize;
+    const pageData = mockTickerData.slice(startIndex, endIndex);
+
     return HttpResponse.json({
       code: '200 OK',
       message: '주식 리스트를 성공적으로 조회하였습니다.',
       content: {
         predictionDate: '2025-07-22',
-        predictionList: mockTickerData,
-        pageNumber: 0,
-        hasNext: false,
+        predictionList: pageData,
+        pageNumber: page,
+        hasNext: page < totalPages - 1,
       },
     });
   }),
@@ -103,7 +153,15 @@ export const tickerHandlers = [
 
 export const holidayHandlers = [
   http.get(`${BASE_URL}${getTodayMarketStatusPath()}`, () => {
-    return HttpResponse.json(true);
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '오늘의 마켓 상태를 성공적으로 조회하였습니다.',
+      content: {
+        isHoliday: false,
+        tradingHours: '22:30~05:00',
+        eventName: null,
+      },
+    });
   }),
 ];
 

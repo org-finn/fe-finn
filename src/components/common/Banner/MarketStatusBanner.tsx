@@ -4,11 +4,11 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import { useGetTodayMarketStatus } from '@/api/hooks/useGetTodayMarketStatus';
 
 export default function MarketStatusBanner() {
-  const { data: isHoliday, isLoading, error } = useGetTodayMarketStatus();
+  const { data, isLoading, error } = useGetTodayMarketStatus();
 
   if (isLoading) return null;
   if (error) return null;
-  if (!isHoliday) return null;
+  if (!data?.content.isHoliday) return null;
 
   return (
     <BannerWrapper>
