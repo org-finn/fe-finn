@@ -4,8 +4,10 @@ import { PredictionDataResponse } from '@/types';
 import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function TickerItem({ item }: { item: PredictionDataResponse }) {
+  const isMobile = useIsMobile();
   const getVariant = useGetVariant(item.sentiment);
   const getSignSymbol = useGetSignSymbol(item.sentiment);
   const getSentiment =
@@ -13,18 +15,18 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
       <TickerInfo>
-        <Text size="m" weight="bold">
+        <Text size={isMobile ? 's' : 'm'} weight="bold">
           {item.tickerCode}
         </Text>
-        <Text size="xs" weight="normal" variant="grey">
+        <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
           {item.shortCompanyName}
         </Text>
       </TickerInfo>
       <PriceInfo>
-        <Text size="m" weight="bold" variant={getVariant}>
+        <Text size={isMobile ? 's' : 'm'} weight="bold" variant={getVariant}>
           {getSignSymbol} {item.predictionStrategy} 추천
         </Text>
-        <Text size="xs" weight="bold" variant={getVariant}>
+        <Text size={isMobile ? 'xxs' : 'xs'} weight="bold" variant={getVariant}>
           {getSentiment} 기사 {item.articleCount}건
         </Text>
       </PriceInfo>
@@ -42,6 +44,10 @@ const Wrapper = styled(Link)`
   cursor: pointer;
   &:hover {
     background-color: #f4f7fc;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 18px 28px;
   }
 `;
 const TickerInfo = styled.div`

@@ -6,10 +6,12 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useGetPopularTickers } from '@/api/hooks/useGetInfiniteTickerList';
 import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const { data: popularData } = useGetPopularTickers();
+  const isMobile = useIsMobile();
   return (
     <Wrapper>
       <SearchBar />
@@ -17,10 +19,14 @@ export default function MainPage() {
         <MarketStatusBanner />
         <TickerTitle>
           <Left>
-            <Paragraph size="m" weight="bold">
+            <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
               한국인이 가장 좋아하는 종목 Top5
             </Paragraph>
-            <Paragraph size="xxs" weight="normal" variant="grey">
+            <Paragraph
+              size={isMobile ? '12px' : 'xxs'}
+              weight="normal"
+              variant="grey"
+            >
               여러분이 가장 좋아하는 종목을 예측했어요!
             </Paragraph>
           </Left>
@@ -46,6 +52,12 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 36px;
   padding: 16px 0;
+
+  @media screen and (max-width: 768px) {
+    width: 80%;
+    gap: 30px;
+    padding: 12px 0;
+  }
 `;
 const TickerSection = styled.div`
   width: 100%;
@@ -63,6 +75,12 @@ const MoreBtn = styled.button`
   &:hover {
     text-decoration: underline;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 6px 8px;
+    font-size: 12px;
+    align-items: center;
+  }
 `;
 
 const TickerTitle = styled.div`
@@ -70,9 +88,17 @@ const TickerTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: end;
+
+  @media screen and (max-width: 768px) {
+    padding-bottom: 18px;
+  }
 `;
 const Left = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  @media screen and (max-width: 768px) {
+    gap: 4px;
+  }
 `;
