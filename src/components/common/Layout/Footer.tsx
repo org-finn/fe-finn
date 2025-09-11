@@ -14,7 +14,7 @@ export default function Footer() {
               대구광역시 북구 대학로 80
             </Text>
             <Text size="xxs" weight="normal" variant="#979797">
-              finn.official@gmail.com
+              articker.kr.official@gmail.com
             </Text>
           </CompanyInfo>
         </FooterInfo>
