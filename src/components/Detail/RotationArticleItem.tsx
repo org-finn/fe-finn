@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { DetailArticleData } from '@/types';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function RotationArticleItem({
   item,
 }: {
   item: DetailArticleData;
 }) {
+  const isMobile = useIsMobile();
   const handleClick = () => {
     return location.pathname === '/news';
   };
@@ -28,19 +30,23 @@ export default function RotationArticleItem({
       <NewsContent>
         <TextContainer>
           <TitleRow>
-            <TitleText size="m" weight="bold">
+            <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
               {item.headline}
             </TitleText>
             {item.sentiment !== null && (
               <SentimentTag $color={sentimentInfo.color}>
                 <span>{sentimentInfo.emoji}</span>
-                <Text size="xs" weight="bold">
+                <Text size={isMobile ? 'xxs' : 'xs'} weight="bold">
                   {sentimentInfo.label}
                 </Text>
               </SentimentTag>
             )}
           </TitleRow>
-          <DescriptionText size="xs" weight="normal" variant="grey">
+          <DescriptionText
+            size={isMobile ? 'xxs' : 'xs'}
+            weight="normal"
+            variant="grey"
+          >
             {item.reasoning}
           </DescriptionText>
         </TextContainer>
@@ -62,6 +68,10 @@ const Wrapper = styled.div`
 
   &:hover {
     background-color: #f4f7fc; // 추후 호버 시 해당 stock 필터링한 뉴스보드로 이동 추가
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 16px 16px 16px 20px;
   }
 
   @keyframes fadeIn {
@@ -98,12 +108,20 @@ const TextContainer = styled.div`
   flex-direction: column;
   gap: 12px;
   justify-content: flex-start;
+
+  @media screen and (max-width: 768px) {
+    gap: 8px;
+  }
 `;
 
 const TitleRow = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  @media screen and (max-width: 768px) {
+    gap: 6px;
+  }
 `;
 
 const TitleText = styled(Text)`
@@ -137,5 +155,14 @@ const SentimentTag = styled.div<{ $color: string }>`
 
   & > *:last-child {
     color: ${(props) => props.$color} !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 4px 6px;
+    gap: 2px;
+
+    span {
+      font-size: 10px;
+    }
   }
 `;
