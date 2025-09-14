@@ -209,8 +209,8 @@ export default function DetailPage() {
             />
             {showTooltip && (
               <Tooltip>
-                수집된 기사의 감정(긍정/부정) 비율에 추세를 반영하여 계산된
-                점수입니다.
+                수집된 기사의 감정(긍정/부정) 비율에
+                <br /> 추세를 반영하여 계산된 점수입니다.
               </Tooltip>
             )}
           </TooltipContainer>
@@ -367,6 +367,10 @@ const Tooltip = styled.div`
     border: 7px solid transparent;
     border-top-color: #ddd;
     margin-top: 1px;
+  }
+
+  @media screen and (max-width: 768px) {
+    line-height: 1.4;
   }
 `;
 const TickerInfo = styled.div`
