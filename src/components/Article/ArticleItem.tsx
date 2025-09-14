@@ -51,17 +51,12 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
                     </CompanyTag>
                   )}
               </CompanyContainer>
-              <DateContainer>
-                <Text size="12px" weight="normal" variant="grey">
-                  {item.publishedDate}
-                </Text>
-              </DateContainer>
-            </>
-          ) : (
-            <DateAndCompany>
-              <Text size="xs" weight="normal" variant="grey">
+              <Text size="12px" weight="normal" variant="grey">
                 {item.publishedDate}
               </Text>
+            </>
+          ) : (
+            <>
               {/* {item.sentiment !== null && (
                 <SentimentTag $color={sentimentInfo.color}>
                   <span>{sentimentInfo.emoji}</span>
@@ -70,21 +65,27 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
                   </Text>
                 </SentimentTag>
               )} */}
-              {item.shortCompanyNames?.slice(0, 5).map((company) => (
-                <CompanyTag key={company}>
-                  <Text size="xs" weight="normal">
-                    {company}
-                  </Text>
-                </CompanyTag>
-              ))}
-              {item.shortCompanyNames && item.shortCompanyNames.length > 5 && (
-                <CompanyTag>
-                  <Text size="xs" weight="normal">
-                    ...
-                  </Text>
-                </CompanyTag>
-              )}
-            </DateAndCompany>
+              <CompanyContainer>
+                {item.shortCompanyNames?.slice(0, 5).map((company) => (
+                  <CompanyTag key={company}>
+                    <Text size="xs" weight="normal">
+                      {company}
+                    </Text>
+                  </CompanyTag>
+                ))}
+                {item.shortCompanyNames &&
+                  item.shortCompanyNames.length > 4 && (
+                    <CompanyTag>
+                      <Text size="xs" weight="normal">
+                        ...
+                      </Text>
+                    </CompanyTag>
+                  )}
+              </CompanyContainer>
+              <Text size="xs" weight="normal" variant="grey">
+                {item.publishedDate}
+              </Text>
+            </>
           )}
         </TextContainer>
       </NewsContent>
@@ -158,22 +159,15 @@ const TitleText = styled(Text)`
   white-space: normal;
 `;
 
-const DateAndCompany = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 6px;
-`;
-
-const DateContainer = styled.div`
-  padding-top: 2px;
-`;
-
 const CompanyContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-top: 4px;
+  padding: 4px 0;
+
+  @media screen and (max-width: 768px) {
+    padding: 2px 0;
+  }
 `;
 
 const CompanyTag = styled.div`
