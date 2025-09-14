@@ -51,10 +51,19 @@ const HeaderContainer = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    padding: 0 16px;
+  }
 `;
 const LogoWrapper = styled.img`
   width: 100px;
   cursor: pointer;
+
+  @media screen and (max-width: 768px) {
+    width: 80px;
+  }
 `;
 const NavButton = styled.button`
   background: none;
