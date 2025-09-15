@@ -110,12 +110,23 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 50px;
   padding: 16px 0;
+
+  @media screen and (max-width: 768px) {
+    width: 84%;
+    gap: 40px;
+    padding: 12px 0;
+  }
 `;
 
 const FilterContainer = styled.div`
   display: flex;
   gap: 20px;
   margin-top: -30px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: -32px;
+    margin-bottom: -10px;
+  }
 `;
 
 const FilterTab = styled.button<{ $active: boolean }>`
@@ -127,6 +138,11 @@ const FilterTab = styled.button<{ $active: boolean }>`
   background: none;
   cursor: pointer;
   color: ${(props) => (props.$active ? '#2d70d3' : '#8c8c8c')};
+
+  @media screen and (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
 `;
 
 const ErrorMessage = styled.div`

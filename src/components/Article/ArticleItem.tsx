@@ -2,8 +2,10 @@ import styled from 'styled-components';
 import { Text } from '../common/typography/Text';
 import { ArticleDataResponse } from '@/types';
 import FallbackImage from '../common/Item/FallbackImage';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function NewsItem({ item }: { item: ArticleDataResponse }) {
+  const isMobile = useIsMobile();
   const handleClick = () => {
     window.open(item.contentUrl, '_blank');
   };
@@ -27,29 +29,64 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
           <FallbackImage src={item.thumbnailUrl} alt={item.title} />
         </ImageContainer>
         <TextContainer>
-          <TitleText size="m" weight="bold">
+          <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
             {item.title}
           </TitleText>
-          <DateAndCompany>
-            <Text size="xs" weight="normal" variant="grey">
-              {item.publishedDate}
-            </Text>
-            {/* {item.sentiment !== null && (
-              <SentimentTag $color={sentimentInfo.color}>
-                <span>{sentimentInfo.emoji}</span>
-                <Text size="xs" weight="bold">
-                  {sentimentInfo.label}
-                </Text>
-              </SentimentTag>
-            )} */}
-            {item.shortCompanyNames?.map((company) => (
-              <CompanyTag key={company}>
-                <Text size="xs" weight="normal">
-                  {company}
-                </Text>
-              </CompanyTag>
-            ))}
-          </DateAndCompany>
+          {isMobile ? (
+            <>
+              <CompanyContainer>
+                {item.shortCompanyNames?.slice(0, 2).map((company) => (
+                  <CompanyTag key={company}>
+                    <Text size="12px" weight="normal">
+                      {company}
+                    </Text>
+                  </CompanyTag>
+                ))}
+                {item.shortCompanyNames &&
+                  item.shortCompanyNames.length > 2 && (
+                    <CompanyTag>
+                      <Text size="12px" weight="normal">
+                        ...
+                      </Text>
+                    </CompanyTag>
+                  )}
+              </CompanyContainer>
+              <Text size="12px" weight="normal" variant="grey">
+                {item.publishedDate}
+              </Text>
+            </>
+          ) : (
+            <>
+              {/* {item.sentiment !== null && (
+                <SentimentTag $color={sentimentInfo.color}>
+                  <span>{sentimentInfo.emoji}</span>
+                  <Text size="xs" weight="bold">
+                    {sentimentInfo.label}
+                  </Text>
+                </SentimentTag>
+              )} */}
+              <CompanyContainer>
+                {item.shortCompanyNames?.slice(0, 5).map((company) => (
+                  <CompanyTag key={company}>
+                    <Text size="xs" weight="normal">
+                      {company}
+                    </Text>
+                  </CompanyTag>
+                ))}
+                {item.shortCompanyNames &&
+                  item.shortCompanyNames.length > 4 && (
+                    <CompanyTag>
+                      <Text size="xs" weight="normal">
+                        ...
+                      </Text>
+                    </CompanyTag>
+                  )}
+              </CompanyContainer>
+              <Text size="xs" weight="normal" variant="grey">
+                {item.publishedDate}
+              </Text>
+            </>
+          )}
         </TextContainer>
       </NewsContent>
     </Wrapper>
@@ -71,8 +108,7 @@ const Wrapper = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    height: 100%;
-    gap: 12px;
+    padding: 12px 16px;
   }
 `;
 
@@ -80,11 +116,11 @@ const NewsContent = styled.div`
   position: relative;
   width: 90%;
   display: flex;
-  height: 100%;
   gap: 16px;
 
   @media screen and (max-width: 768px) {
-    gap: 8px;
+    gap: 12px;
+    align-items: center;
   }
 `;
 
@@ -96,13 +132,8 @@ const ImageContainer = styled.div`
   flex-shrink: 0;
 
   @media screen and (max-width: 768px) {
-    width: 60px;
+    width: 90px;
     height: 60px;
-  }
-
-  @media screen and (max-width: 430px) {
-    width: 70px;
-    height: 70px;
   }
 `;
 
@@ -111,6 +142,10 @@ const TextContainer = styled.div`
   flex-direction: column;
   gap: 6px;
   justify-content: center;
+
+  @media screen and (max-width: 768px) {
+    gap: 4px;
+  }
 `;
 
 const TitleText = styled(Text)`
@@ -124,14 +159,14 @@ const TitleText = styled(Text)`
   white-space: normal;
 `;
 
-const DateAndCompany = styled.div`
+const CompanyContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-top: 6px;
+  padding: 4px 0;
 
   @media screen and (max-width: 768px) {
-    padding-top: 2px;
+    padding: 2px 0;
   }
 `;
 

@@ -23,6 +23,16 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
           alt="Articker Logo"
           onClick={() => navigate('/')}
         />
+        <NavButton
+          onClick={() =>
+            window.open(
+              'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
+              '_blank'
+            )
+          }
+        >
+          피드백 남기기
+        </NavButton>
       </HeaderContainer>
     );
   }
@@ -39,9 +49,31 @@ const HeaderContainer = styled.header`
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    padding: 0 16px;
+  }
 `;
 const LogoWrapper = styled.img`
   width: 100px;
-  margin-left: 20px;
   cursor: pointer;
+
+  @media screen and (max-width: 768px) {
+    width: 80px;
+  }
+`;
+const NavButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #292929;
+
+  &:hover {
+    color: #2d70d3;
+  }
 `;

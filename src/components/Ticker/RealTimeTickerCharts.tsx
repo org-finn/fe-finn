@@ -171,4 +171,8 @@ const Wrapper = styled.div`
   .apexcharts-area-series .apexcharts-series-0 .apexcharts-area {
     fill: url(#SvgjsLinearGradient1000) !important;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 0px;
+  }
 `;

@@ -4,6 +4,7 @@ import { useGetPopularTickers } from '@/api/hooks/useGetInfiniteTickerList';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Loading from '@/components/common/Layout/Loading';
+import SearchBar from '@/components/common/SearchBar';
 
 export default function TickerPage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -46,6 +47,7 @@ export default function TickerPage() {
 
   return (
     <Wrapper>
+      <SearchBar />
       <TickerList items={allTickers} />
       <div ref={ref} style={{ height: '50px' }} />
       {isFetchingNextPage && <Loading />}
@@ -57,6 +59,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 0;
+  gap: 36px;
+
+  @media screen and (max-width: 768px) {
+    width: 84%;
+    gap: 30px;
+    padding: 12px 0;
+  }
 `;
 
 const ErrorMessage = styled.div`
