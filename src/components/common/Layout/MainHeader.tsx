@@ -26,7 +26,7 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
         <NavButton
           onClick={() =>
             window.open(
-              'https://docs.google.com/forms/d/e/1FAIpQLSdAmupkmABBlR6YZN_RxBjRGxUVnSkpEOvBWKTHvl04wQCXxA/viewform?usp=dialog',
+              'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
               '_blank'
             )
           }
