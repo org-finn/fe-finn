@@ -6,7 +6,7 @@
 
 **Articker**는 Article(뉴스)과 Ticker(종목)의 합성어로, 실시간으로 뉴스를 분석하여 주식 종목의 등락 여부를 예측해 주는 서비스입니다.
 
-**목적**
+### 목적
 
 현재 수많은 투자자들이 주식 시장의 실시간 지표인 뉴스를 참고하여 투자 결정을 내리고 있습니다.
 
@@ -65,13 +65,34 @@ Articker는 이러한 투자자들의 행동 패턴에 착안하여, 복잡한 �
 ## 기술 스택
 
 - **Front-end**
-    - React, Vite, Typescript, pnpm, Axios, TanStack Query, apexcharts
+
+  ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+  ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+  ![TanStack Query](https://img.shields.io/badge/TanStack%20Query-FF4154?style=flat-square&logo=react-query&logoColor=white)
+  ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=flat-square&logo=axios&logoColor=white)
+ 
 - **Back-end**
-    - Kotlin/Spring Boot, Exposed(ORM), PostgreSQL, AWS DynamoDB, Kotest
+
+  ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+  ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+  ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+  ![AmazonDynamoDB](https://img.shields.io/badge/Amazon%20DynamoDB-4053D6?style=for-the-badge&logo=Amazon%20DynamoDB&logoColor=white)
+  ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
+  
 - **Infra**
-    - AWS, Docker
+
+  ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+  ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+
 - **CI/CD**
-    - GitHub Action
+
+  ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
+
+- **Monitoring**
+
+  ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)
+  ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 
 ## 아키텍처
 ### 서비스 아키텍처
