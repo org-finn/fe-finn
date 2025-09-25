@@ -19,10 +19,16 @@ export default function NewsBoardPage() {
     return (searchParams.get('filter') as NewsFilter) || 'all';
   }, [location.search]);
 
+  const getTickerId = useCallback((): string | undefined => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get('tickerId') || undefined;
+  }, [location.search]);
+
   const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
   const [sort] = useState<NewsSort>('recent');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { ref, inView } = useInView();
+  const tickerId = getTickerId();
 
   const {
     data: articleList,
@@ -31,7 +37,7 @@ export default function NewsBoardPage() {
     hasNextPage: hasNext,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetInfiniteArticleList({ filter, sort });
+  } = useGetInfiniteArticleList({ filter, sort, tickerId });
 
   const handleFilterChange = (newFilter: NewsFilter) => {
     const searchParams = new URLSearchParams(location.search);
