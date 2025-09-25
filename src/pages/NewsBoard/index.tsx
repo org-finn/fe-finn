@@ -83,7 +83,7 @@ export default function NewsBoardPage() {
         >
           전체
         </FilterTab>
-        {/* <FilterTab
+        <FilterTab
           $active={filter === 'positive'}
           onClick={() => handleFilterChange('positive')}
         >
@@ -94,7 +94,7 @@ export default function NewsBoardPage() {
           onClick={() => handleFilterChange('negative')}
         >
           부정
-        </FilterTab> */}
+        </FilterTab>
       </FilterContainer>
 
       <ArticleList items={allArticles} />
