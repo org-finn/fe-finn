@@ -4,13 +4,13 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import TickerList from '@/components/Ticker/TickerList';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useGetPopularTickers } from '@/api/hooks/useGetInfiniteTickerList';
+import { useGetInfiniteTickerList } from '@/api/hooks/useGetInfiniteTickerList';
 import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 import useIsMobile from '@/hooks/useIsMobile';
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const { data: popularData } = useGetPopularTickers();
+  const { data: popularData } = useGetInfiniteTickerList({ sort: 'popular' });
   const isMobile = useIsMobile();
   return (
     <Wrapper>
