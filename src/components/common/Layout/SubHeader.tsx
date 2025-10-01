@@ -5,12 +5,10 @@ import { HEADER_HEIGHT } from './MainHeader';
 
 type SubHeaderProps = {
   visible: boolean;
-  onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
 };
 
 export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
-  ({ visible, onMouseEnter, onMouseLeave }, ref) => {
+  ({ visible }, ref) => {
     const location = useLocation();
 
     const isActive = (path: string) => {
@@ -21,12 +19,7 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
       return location.pathname.startsWith(path);
     };
     return (
-      <HeaderContainer
-        $show={visible}
-        ref={ref}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
+      <HeaderContainer $show={visible} ref={ref}>
         <Item aria-label="header-home" to="/" $isActive={isActive('/')}>
           홈
         </Item>

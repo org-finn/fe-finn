@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -18,8 +18,6 @@ export default function MainLayout() {
   const isTouch = useIsTouchDevice();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(true);
-  const [isHover, setIsHover] = useState(true);
-  const [forceClose, setForceClose] = useState(false);
   const subHeaderRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const scrollDirection = useScrollDirection();
@@ -35,64 +33,19 @@ export default function MainLayout() {
   };
 
   useScrollToTop();
-  const handleMouseEnter = () => {
-    if (!isTouch) setIsHover(true);
-  };
-  const handleMouseLeave = () => {
-    if (!isTouch) setIsHover(false);
-  };
   const handleHeaderClick = () => {
     if (isTouch) {
-      setForceClose(false);
       if (!menuOpen) setMenuOpen(true);
     }
   };
-  const showHeader = isTouch
-    ? !forceClose && (menuOpen || scrollDirection === 'up')
-    : isHover || scrollDirection === 'up';
-
-  useEffect(() => {
-    if (scrollDirection === 'down') setForceClose(false);
-  }, [scrollDirection]);
+  const showHeader = scrollDirection === 'up' || scrollDirection === null;
 
   // 바깥 클릭 시 메뉴 닫기
-  useEffect(() => {
-    if (!showHeader) return;
-    const handleClick = (event: MouseEvent | TouchEvent) => {
-      if (!isTouch) return;
-      if (
-        (subHeaderRef.current &&
-          subHeaderRef.current.contains(event.target as Node)) ||
-        (headerRef.current && headerRef.current.contains(event.target as Node))
-      ) {
-        return;
-      }
-      setMenuOpen(false);
-      setForceClose(true);
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('touchstart', handleClick);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('touchstart', handleClick);
-    };
-  }, [showHeader, isTouch]);
 
   return (
     <Wrapper>
-      <MainHeader
-        ref={headerRef}
-        onClick={handleHeaderClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      />
-      <SubHeader
-        visible={showHeader}
-        ref={subHeaderRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      />
+      <MainHeader ref={headerRef} onClick={handleHeaderClick} />
+      <SubHeader visible={showHeader} ref={subHeaderRef} />
       <InnerWrapper>
         <QueryErrorResetBoundary>
           {({ reset }) => (
