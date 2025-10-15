@@ -6,7 +6,7 @@ import { ArticleListData, PageableData } from '@/types';
 interface ArticleListParams {
   filter: 'all' | 'positive' | 'negative';
   sort: 'recent';
-  tickerId?: string;
+  tickerCode?: string[];
 }
 
 export const getInfiniteArticleListPath = () => `/api/v1/article`;
@@ -15,7 +15,7 @@ export const getInfiniteArticleList = async ({
   filter,
   sort,
   page,
-  tickerId,
+  tickerCode,
 }: ArticleListParams & { page: number }) => {
   const params = new URLSearchParams({
     filter,
@@ -23,8 +23,10 @@ export const getInfiniteArticleList = async ({
     page: page.toString(),
   });
 
-  if (tickerId) {
-    params.append('tickerId', tickerId);
+  if (tickerCode && tickerCode.length > 0) {
+    tickerCode.forEach((code) => {
+      params.append('tickerCode', code);
+    });
   }
 
   const response = await fetchInstance.get<PageableData<ArticleListData>>(
@@ -36,12 +38,12 @@ export const getInfiniteArticleList = async ({
 export const useGetInfiniteArticleList = ({
   filter,
   sort,
-  tickerId,
+  tickerCode,
 }: ArticleListParams) => {
   return useInfiniteQuery({
-    queryKey: ['articleList', { filter, sort, tickerId }],
+    queryKey: ['articleList'],
     queryFn: ({ pageParam = 0 }) =>
-      getInfiniteArticleList({ filter, sort, page: pageParam, tickerId }),
+      getInfiniteArticleList({ filter, sort, page: pageParam, tickerCode }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.content.hasNext) {

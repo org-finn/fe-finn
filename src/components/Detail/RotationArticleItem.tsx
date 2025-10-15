@@ -6,15 +6,15 @@ import useIsMobile from '@/hooks/useIsMobile';
 
 export default function RotationArticleItem({
   item,
-  tickerId,
+  tickerCode,
 }: {
   item: DetailArticleData;
-  tickerId: string;
+  tickerCode: string;
 }) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/news?tickerId=${tickerId}`);
+    navigate(`/news?tickerCode=${tickerCode}`);
   };
 
   const getSentimentInfo = () => {

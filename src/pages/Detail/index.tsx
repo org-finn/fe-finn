@@ -295,7 +295,7 @@ export default function DetailPage() {
             <RotationArticleItem
               key={currentNewsIndex}
               item={tickerData.detailData.article[currentNewsIndex]}
-              tickerId={tickerData.tickerId}
+              tickerCode={tickerData.tickerCode}
             />
           </>
         )}

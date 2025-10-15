@@ -19,16 +19,16 @@ export default function NewsBoardPage() {
     return (searchParams.get('filter') as NewsFilter) || 'all';
   }, [location.search]);
 
-  const getTickerId = useCallback((): string | undefined => {
+  const getTickerCodes = useCallback((): string[] => {
     const searchParams = new URLSearchParams(location.search);
-    return searchParams.get('tickerId') || undefined;
+    return searchParams.getAll('tickerCode');
   }, [location.search]);
 
   const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
   const [sort] = useState<NewsSort>('recent');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { ref, inView } = useInView();
-  const tickerId = getTickerId();
+  const currentTickerCodes = getTickerCodes();
 
   const {
     data: articleList,
@@ -37,7 +37,11 @@ export default function NewsBoardPage() {
     hasNextPage: hasNext,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetInfiniteArticleList({ filter, sort, tickerId });
+  } = useGetInfiniteArticleList({
+    filter,
+    sort,
+    tickerCode: currentTickerCodes.length > 0 ? currentTickerCodes : undefined,
+  });
 
   const handleFilterChange = (newFilter: NewsFilter) => {
     const searchParams = new URLSearchParams(location.search);
@@ -60,7 +64,7 @@ export default function NewsBoardPage() {
 
   useEffect(() => {
     setFilter(getInitialFilter());
-  }, [getInitialFilter]);
+  }, [getInitialFilter, location.search]);
 
   if (isLoading) {
     return <Loading />;

@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getInfiniteArticleListPath } from '@/api/hooks/useGetInfiniteArticleList';
+import { getFilterTickerListPath } from '@/api/hooks/useGetFilterTickerList';
 
 const mockNewsList = [
   {
@@ -211,6 +212,171 @@ const mockNewsList = [
   },
 ];
 
+const mockTickerTypes = [
+  {
+    code: '200 OK',
+    content: {
+      tickerList: [
+        {
+          tickerId: '2b86190f-ac3f-4154-9532-dfecb99017f2',
+          shortCompanyName: 'AMD',
+          tickerCode: 'AMD',
+        },
+        {
+          tickerId: '338ce24f-af29-47f2-9e65-495609181621',
+          shortCompanyName: 'Apple',
+          tickerCode: 'AAPL',
+        },
+        {
+          tickerId: '0cd501a6-b759-4b34-ad65-981d7d587bc7',
+          shortCompanyName: 'Microsoft',
+          tickerCode: 'MSFT',
+        },
+        {
+          tickerId: '1378939e-14dc-4067-a4ff-d5ffc22d1ece',
+          shortCompanyName: 'Amazon',
+          tickerCode: 'AMZN',
+        },
+        {
+          tickerId: '96ead7db-621b-4bd6-874f-ce490c420d20',
+          shortCompanyName: 'Tesla',
+          tickerCode: 'TSLA',
+        },
+        {
+          tickerId: 'bacdf2ae-6243-41b1-a8ec-41f4262cd832',
+          shortCompanyName: 'Walmart',
+          tickerCode: 'WMT',
+        },
+        {
+          tickerId: 'b687c355-d177-474a-aa69-1e8d93dd791f',
+          shortCompanyName: 'JPMorgan Chase',
+          tickerCode: 'JPM',
+        },
+        {
+          tickerId: '192ab252-9d3e-4761-aa44-3e7c1f8e42ee',
+          shortCompanyName: 'Johnson & Johnson',
+          tickerCode: 'JNJ',
+        },
+        {
+          tickerId: '168a0492-3189-487a-8f0a-77b71d6b8a0a',
+          shortCompanyName: 'Visa',
+          tickerCode: 'V',
+        },
+        {
+          tickerId: '57e07ebc-d3c9-46da-bd29-22e30a98be1d',
+          shortCompanyName: 'Exxon Mobil',
+          tickerCode: 'XOM',
+        },
+        {
+          tickerId: '19617ed1-34f0-4a81-baca-277c2bac88c7',
+          shortCompanyName: 'Coca-Cola',
+          tickerCode: 'KO',
+        },
+        {
+          tickerId: 'e65bd0db-c2c2-4168-8f42-2d9b50388337',
+          shortCompanyName: 'NVIDIA',
+          tickerCode: 'NVDA',
+        },
+        {
+          tickerId: '8536c00b-be96-4538-8723-878ec00695df',
+          shortCompanyName: 'Netflix',
+          tickerCode: 'NFLX',
+        },
+        {
+          tickerId: 'c22fd3b6-f11d-4f83-a3e6-477f91b9b4f4',
+          shortCompanyName: 'Adobe',
+          tickerCode: 'ADBE',
+        },
+        {
+          tickerId: '31985023-9e72-4a72-98c9-8066a5fb3e62',
+          shortCompanyName: 'Salesforce',
+          tickerCode: 'CRM',
+        },
+        {
+          tickerId: '1fa28e50-f396-42fe-9fa7-6092145e57ff',
+          shortCompanyName: 'Qualcomm',
+          tickerCode: 'QCOM',
+        },
+        {
+          tickerId: 'b9a88e4b-45db-44c1-8f90-f2ec37ced1dd',
+          shortCompanyName: 'Intel',
+          tickerCode: 'INTC',
+        },
+        {
+          tickerId: 'e41d6afd-2cd7-4b97-9169-cab48e98bce0',
+          shortCompanyName: 'Oracle',
+          tickerCode: 'ORCL',
+        },
+        {
+          tickerId: '57b62038-4a9f-467a-96f3-4cbd1e619b4b',
+          shortCompanyName: 'Bank of America',
+          tickerCode: 'BAC',
+        },
+        {
+          tickerId: 'eeabb4ed-daab-4de4-a524-53b52c2c6cca',
+          shortCompanyName: 'Goldman Sachs',
+          tickerCode: 'GS',
+        },
+        {
+          tickerId: 'fefe2e62-ad94-4b94-935a-912e6fc3581c',
+          shortCompanyName: 'P&G',
+          tickerCode: 'PG',
+        },
+        {
+          tickerId: '7f99d78b-3070-4c42-80f3-5710ffe4ca15',
+          shortCompanyName: 'Home Depot',
+          tickerCode: 'HD',
+        },
+        {
+          tickerId: '1a5ef443-f436-49d4-b816-807bb754190d',
+          shortCompanyName: "McDonald's",
+          tickerCode: 'MCD',
+        },
+        {
+          tickerId: 'a02ce5ec-d634-4485-8c4f-d9104e02c651',
+          shortCompanyName: 'Eli Lilly',
+          tickerCode: 'LLY',
+        },
+        {
+          tickerId: 'e4603a9e-1745-4530-85e1-8e2d425e0f41',
+          shortCompanyName: 'UnitedHealth',
+          tickerCode: 'UNH',
+        },
+        {
+          tickerId: 'f3009712-f9a5-4ac2-a67e-2476d658f0b5',
+          shortCompanyName: 'Pfizer',
+          tickerCode: 'PFE',
+        },
+        {
+          tickerId: '463348b5-e166-4cc4-bfb9-f13b405ca1ec',
+          shortCompanyName: 'Broadcom',
+          tickerCode: 'AVGO',
+        },
+        {
+          tickerId: 'abec59d2-7c6e-414f-9994-c4c30331ffc6',
+          shortCompanyName: 'Costco',
+          tickerCode: 'COST',
+        },
+        {
+          tickerId: '4bf3ab58-23e8-4d63-a151-530f530d3e51',
+          shortCompanyName: 'Disney',
+          tickerCode: 'DIS',
+        },
+        {
+          tickerId: '75124d2c-e7d3-4ee6-bcae-3a0786294345',
+          shortCompanyName: 'Google',
+          tickerCode: 'GOOGL',
+        },
+        {
+          tickerId: '67fdafec-a741-425e-bc8e-d86249b4642b',
+          shortCompanyName: 'Meta',
+          tickerCode: 'META',
+        },
+      ],
+    },
+  },
+];
+
 export const newsHandlers = [
   http.get(`${BASE_URL}${getInfiniteArticleListPath()}`, ({ request }) => {
     const url = new URL(request.url);
@@ -231,6 +397,13 @@ export const newsHandlers = [
         pageNumber: page,
         hasNext: page < totalPages - 1,
       },
+    });
+  }),
+  http.get(`${BASE_URL}${getFilterTickerListPath()}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '아티클 티커 필터링 - 티커 목록을 성공적으로 조회하였습니다.',
+      content: mockTickerTypes[0].content.tickerList,
     });
   }),
 ];
