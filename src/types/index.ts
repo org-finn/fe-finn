@@ -114,3 +114,9 @@ export type RealTimePriceData = {
   priceDataList: TickerRealTimeGraphResponse[];
   maxLen: number;
 };
+
+export type ArticleTickerFilteringResponse = {
+  tickerId: string;
+  shortCompanyName: string;
+  tickerCode: string;
+};
