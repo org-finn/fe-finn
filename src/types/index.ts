@@ -115,6 +115,10 @@ export type RealTimePriceData = {
   maxLen: number;
 };
 
+export type ArticleTickerListData = {
+  tickerList: ArticleTickerFilteringResponse[];
+};
+
 export type ArticleTickerFilteringResponse = {
   tickerId: string;
   shortCompanyName: string;

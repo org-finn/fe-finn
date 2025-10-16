@@ -80,7 +80,7 @@ export default function NewsBoardPage() {
         id: 'ticker-filter',
         props: {
           options:
-            filterTickerData?.content?.map((ticker) => ({
+            filterTickerData?.content?.tickerList.map((ticker) => ({
               label: ticker.shortCompanyName,
               id: ticker.tickerCode,
             })) || [],
@@ -164,7 +164,7 @@ export default function NewsBoardPage() {
       <ChipContainer>
         <Chip
           selectedTickers={
-            filterTickerData?.content?.filter((ticker) =>
+            filterTickerData?.content?.tickerList.filter((ticker) =>
               currentTickerCodes.includes(ticker.tickerCode)
             ) || []
           }

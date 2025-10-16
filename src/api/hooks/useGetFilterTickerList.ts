@@ -1,12 +1,12 @@
 import { fetchInstance } from '@/api/instance';
-import { ApiResponse, ArticleTickerFilteringResponse } from '@/types';
+import { ApiResponse, ArticleTickerListData } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 
 export const getFilterTickerListPath = () => `/api/v1/article/ticker-list`;
 export const getFilterTickerList = async () => {
-  const response = await fetchInstance.get<
-    ApiResponse<ArticleTickerFilteringResponse[]>
-  >(getFilterTickerListPath());
+  const response = await fetchInstance.get<ApiResponse<ArticleTickerListData>>(
+    getFilterTickerListPath()
+  );
   return response.data;
 };
 

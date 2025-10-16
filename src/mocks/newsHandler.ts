@@ -403,7 +403,9 @@ export const newsHandlers = [
     return HttpResponse.json({
       code: '200 OK',
       message: '아티클 티커 필터링 - 티커 목록을 성공적으로 조회하였습니다.',
-      content: mockTickerTypes[0].content.tickerList,
+      content: {
+        tickerList: mockTickerTypes[0].content.tickerList,
+      },
     });
   }),
 ];
