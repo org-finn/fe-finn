@@ -1,8 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-
-export const BASE_URL = 'https://dsvt1su3.articker.kr';
+import getCurrentConfig from '../config';
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
@@ -33,6 +32,7 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   return instance;
 };
 
+export const BASE_URL = getCurrentConfig().baseURL;
 export const fetchInstance = initInstance({
   baseURL: BASE_URL,
 });
