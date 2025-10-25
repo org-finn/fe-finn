@@ -3,9 +3,7 @@ on:
   push:
     branches:
       - "**"
-    paths:
-      - "src/**"
-      - ".github/**"
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
