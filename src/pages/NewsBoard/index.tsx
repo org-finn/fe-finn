@@ -11,7 +11,7 @@ import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
 import Chip from '@/components/Article/FilterChip';
 import useIsMobile from '@/hooks/useIsMobile';
 
-type NewsFilter = 'all' | 'positive' | 'negative';
+type NewsSentiment = 'positive' | 'negative';
 type NewsSort = 'recent';
 
 export default function NewsBoardPage() {
@@ -19,9 +19,9 @@ export default function NewsBoardPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const getInitialFilter = useCallback((): NewsFilter => {
+  const getInitialSentiment = useCallback((): NewsSentiment | null => {
     const searchParams = new URLSearchParams(location.search);
-    return (searchParams.get('filter') as NewsFilter) || 'all';
+    return (searchParams.get('sentiment') as NewsSentiment) || null;
   }, [location.search]);
 
   const getTickerCodes = useCallback((): string[] => {
@@ -29,7 +29,9 @@ export default function NewsBoardPage() {
     return searchParams.getAll('tickerCode');
   }, [location.search]);
 
-  const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
+  const [sentiment, setSentiment] = useState<NewsSentiment | null>(
+    getInitialSentiment()
+  );
   const [sort] = useState<NewsSort>('recent');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { ref, inView } = useInView();
@@ -43,9 +45,9 @@ export default function NewsBoardPage() {
     isFetchingNextPage,
     fetchNextPage,
   } = useGetInfiniteArticleList({
-    filter,
-    sort,
     tickerCode: currentTickerCodes.length > 0 ? currentTickerCodes : undefined,
+    sentiment: sentiment || undefined,
+    sort,
   });
 
   const { data: filterTickerData } = useGetFilterTickerList();
@@ -94,11 +96,15 @@ export default function NewsBoardPage() {
     ];
   }, [filterTickerData, handleTickerChange, currentTickerCodes, isMobile]);
 
-  const handleFilterChange = (newFilter: NewsFilter) => {
+  const handleFilterChange = (newFilter: NewsSentiment | null) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set('filter', newFilter);
+    if (newFilter) {
+      searchParams.set('sentiment', newFilter);
+    } else {
+      searchParams.delete('sentiment');
+    }
     navigate(`${location.pathname}?${searchParams.toString()}`);
-    setFilter(newFilter);
+    setSentiment(newFilter);
   };
 
   useEffect(() => {
@@ -114,8 +120,8 @@ export default function NewsBoardPage() {
   }, [inView, hasNext, isFetchingNextPage, fetchNextPage, isInitialLoad]);
 
   useEffect(() => {
-    setFilter(getInitialFilter());
-  }, [getInitialFilter, location.search]);
+    setSentiment(getInitialSentiment());
+  }, [getInitialSentiment, location.search]);
 
   if (isLoading) {
     return <Loading />;
@@ -140,19 +146,19 @@ export default function NewsBoardPage() {
       <FilterContainer>
         <FilterTabsGroup>
           <FilterTab
-            $active={filter === 'all'}
-            onClick={() => handleFilterChange('all')}
+            $active={sentiment === null}
+            onClick={() => handleFilterChange(null)}
           >
             전체
           </FilterTab>
           <FilterTab
-            $active={filter === 'positive'}
+            $active={sentiment === 'positive'}
             onClick={() => handleFilterChange('positive')}
           >
             긍정
           </FilterTab>
           <FilterTab
-            $active={filter === 'negative'}
+            $active={sentiment === 'negative'}
             onClick={() => handleFilterChange('negative')}
           >
             부정
