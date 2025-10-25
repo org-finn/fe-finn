@@ -40,7 +40,12 @@ jobs:
         run: npm install
 
       - name: Build project
-        run: npm run build
+        run: |
+          if [[ $${{ github.ref }} == 'refs/heads/main']]; then
+            npm run build
+          elif [[ ${{github.ref}} == 'refs/heads/dev']]; then
+            npm run build:dev
+          fi
         env:
           VITE_GOOGLE_TAG: ${{ secrets.VITE_GOOGLE_TAG }}
 
@@ -53,6 +58,12 @@ jobs:
 
       - name: Deploy to S3
         run: |
-            # production 배포
+          # production 배포
+          if [[ $${{ github.ref }} == 'refs/heads/main']]; then
             aws s3 sync dist/ s3://articker.kr --delete
             aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
+          # dev 배포
+          elif [[ ${{github.ref}} == 'refs/heads/dev']]; then
+            aws s3 sync dist/ s3://mr3kl2s.articker.kr --delete
+            aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DEV_CLOIDFRONT_ID }} --paths "/*"
+          fi
