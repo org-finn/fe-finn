@@ -19,7 +19,14 @@ const DEFAULT_CONFIGS: Record<Environment, Config> = {
 const getCurrentConfig = (): Config => {
   // Vite 환경용 (빌드 시점에 교체됨)
   const currentMode = import.meta.env.MODE as Environment;
-  return DEFAULT_CONFIGS[currentMode];
+  const config = DEFAULT_CONFIGS[currentMode];
+
+  if (!config) {
+    console.warn(`Unknown environment mode: ${currentMode}.`);
+    return DEFAULT_CONFIGS.development;
+  }
+
+  return config;
 };
 
 export default getCurrentConfig;
