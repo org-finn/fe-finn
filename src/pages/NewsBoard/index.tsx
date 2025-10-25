@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
@@ -6,23 +6,36 @@ import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
 import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
 import Loading from '@/components/common/Layout/Loading';
+import DropdownFilterBar from '@/components/Article/FilterDrowndown';
+import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
+import Chip from '@/components/Article/FilterChip';
+import useIsMobile from '@/hooks/useIsMobile';
 
-type NewsFilter = 'all' | 'positive' | 'negative';
+type NewsSentiment = 'positive' | 'negative';
 type NewsSort = 'recent';
 
 export default function NewsBoardPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
-  const getInitialFilter = useCallback((): NewsFilter => {
+  const getInitialSentiment = useCallback((): NewsSentiment | null => {
     const searchParams = new URLSearchParams(location.search);
-    return (searchParams.get('filter') as NewsFilter) || 'all';
+    return (searchParams.get('sentiment') as NewsSentiment) || null;
   }, [location.search]);
 
-  const [filter, setFilter] = useState<NewsFilter>(getInitialFilter());
+  const getTickerCodes = useCallback((): string[] => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.getAll('tickerCode');
+  }, [location.search]);
+
+  const [sentiment, setSentiment] = useState<NewsSentiment | null>(
+    getInitialSentiment()
+  );
   const [sort] = useState<NewsSort>('recent');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { ref, inView } = useInView();
+  const currentTickerCodes = getTickerCodes();
 
   const {
     data: articleList,
@@ -31,13 +44,67 @@ export default function NewsBoardPage() {
     hasNextPage: hasNext,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetInfiniteArticleList({ filter, sort });
+  } = useGetInfiniteArticleList({
+    tickerCode: currentTickerCodes.length > 0 ? currentTickerCodes : undefined,
+    sentiment: sentiment || undefined,
+    sort,
+  });
 
-  const handleFilterChange = (newFilter: NewsFilter) => {
+  const { data: filterTickerData } = useGetFilterTickerList();
+
+  const handleTickerChange = useCallback(
+    (selectedTickerId: string) => {
+      const searchParams = new URLSearchParams(location.search);
+      const existingCodes = searchParams.getAll('tickerCode');
+
+      searchParams.delete('tickerCode');
+
+      let newCodes: string[];
+      if (existingCodes.includes(selectedTickerId)) {
+        newCodes = existingCodes.filter((code) => code !== selectedTickerId);
+      } else {
+        newCodes = [...existingCodes, selectedTickerId];
+      }
+
+      newCodes.forEach((code) => {
+        searchParams.append('tickerCode', code);
+      });
+
+      navigate(`${location.pathname}?${searchParams.toString()}`);
+    },
+    [location, navigate]
+  );
+
+  const dropdownFilterTypeList = useMemo(() => {
+    return [
+      {
+        type: 'dropdown' as const,
+        id: 'ticker-filter',
+        props: {
+          options:
+            filterTickerData?.content?.tickerList.map((ticker) => ({
+              label: ticker.shortCompanyName,
+              id: ticker.tickerCode,
+            })) || [],
+          onChange: (value: { id: string }) => handleTickerChange(value.id),
+          isMobileOpen: false,
+          placeholder: isMobile ? '필터' : '종목 선택',
+          width: 120,
+          selectedOptions: currentTickerCodes,
+        },
+      },
+    ];
+  }, [filterTickerData, handleTickerChange, currentTickerCodes, isMobile]);
+
+  const handleFilterChange = (newFilter: NewsSentiment | null) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set('filter', newFilter);
+    if (newFilter) {
+      searchParams.set('sentiment', newFilter);
+    } else {
+      searchParams.delete('sentiment');
+    }
     navigate(`${location.pathname}?${searchParams.toString()}`);
-    setFilter(newFilter);
+    setSentiment(newFilter);
   };
 
   useEffect(() => {
@@ -53,8 +120,8 @@ export default function NewsBoardPage() {
   }, [inView, hasNext, isFetchingNextPage, fetchNextPage, isInitialLoad]);
 
   useEffect(() => {
-    setFilter(getInitialFilter());
-  }, [getInitialFilter]);
+    setSentiment(getInitialSentiment());
+  }, [getInitialSentiment, location.search]);
 
   if (isLoading) {
     return <Loading />;
@@ -77,25 +144,51 @@ export default function NewsBoardPage() {
       <SearchBar />
 
       <FilterContainer>
-        <FilterTab
-          $active={filter === 'all'}
-          onClick={() => handleFilterChange('all')}
-        >
-          전체
-        </FilterTab>
-        {/* <FilterTab
-          $active={filter === 'positive'}
-          onClick={() => handleFilterChange('positive')}
-        >
-          긍정
-        </FilterTab>
-        <FilterTab
-          $active={filter === 'negative'}
-          onClick={() => handleFilterChange('negative')}
-        >
-          부정
-        </FilterTab> */}
+        <FilterTabsGroup>
+          <FilterTab
+            $active={sentiment === null}
+            onClick={() => handleFilterChange(null)}
+          >
+            전체
+          </FilterTab>
+          <FilterTab
+            $active={sentiment === 'positive'}
+            onClick={() => handleFilterChange('positive')}
+          >
+            긍정
+          </FilterTab>
+          <FilterTab
+            $active={sentiment === 'negative'}
+            onClick={() => handleFilterChange('negative')}
+          >
+            부정
+          </FilterTab>
+        </FilterTabsGroup>
+        <DropdownFilterBar items={dropdownFilterTypeList} />
       </FilterContainer>
+
+      <ChipContainer>
+        <Chip
+          selectedTickers={
+            filterTickerData?.content?.tickerList.filter((ticker) =>
+              currentTickerCodes.includes(ticker.tickerCode)
+            ) || []
+          }
+          onClearTicker={(tickerCode) => {
+            const searchParams = new URLSearchParams(location.search);
+            const existingCodes = searchParams.getAll('tickerCode');
+            const newCodes = existingCodes.filter(
+              (code) => code !== tickerCode
+            );
+
+            searchParams.delete('tickerCode');
+            newCodes.forEach((code) => {
+              searchParams.append('tickerCode', code);
+            });
+            navigate(`${location.pathname}?${searchParams.toString()}`);
+          }}
+        />
+      </ChipContainer>
 
       <ArticleList items={allArticles} />
       <div ref={ref} style={{ height: '50px' }} />
@@ -120,13 +213,20 @@ const Wrapper = styled.div`
 
 const FilterContainer = styled.div`
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
   margin-top: -30px;
 
   @media screen and (max-width: 768px) {
+    align-items: end;
     margin-top: -32px;
     margin-bottom: -10px;
   }
+`;
+
+const FilterTabsGroup = styled.div`
+  display: flex;
+  gap: 20px;
 `;
 
 const FilterTab = styled.button<{ $active: boolean }>`
@@ -142,6 +242,17 @@ const FilterTab = styled.button<{ $active: boolean }>`
   @media screen and (max-width: 768px) {
     padding: 10px 20px;
     font-size: 14px;
+  }
+`;
+
+const ChipContainer = styled.div`
+  display: flex;
+  height: 10px;
+  align-items: center;
+  margin: -22px 0;
+
+  @media screen and (max-width: 768px) {
+    margin: -6px 0 -16px 0;
   }
 `;
 

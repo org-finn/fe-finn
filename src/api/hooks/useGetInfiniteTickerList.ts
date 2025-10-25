@@ -39,15 +39,3 @@ export const useGetInfiniteTickerList = ({ sort }: GetTickerListParams) => {
     staleTime: 1000 * 60 * 5,
   });
 };
-
-export const useGetPopularTickers = () => {
-  return useGetInfiniteTickerList({ sort: 'popular' });
-};
-
-export const useGetRisingTickers = () => {
-  return useGetInfiniteTickerList({ sort: 'upward' });
-};
-
-export const useGetFallingTickers = () => {
-  return useGetInfiniteTickerList({ sort: 'downward' });
-};

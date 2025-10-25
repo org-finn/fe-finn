@@ -11,7 +11,7 @@ import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
 import Loading from '@/components/common/Layout/Loading';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import RotationArticleItem from '@/components/Detail/RotationArticleItem';
@@ -24,6 +24,7 @@ export default function DetailPage() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const scrollPositionRef = useRef(0);
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
 
@@ -80,6 +81,27 @@ export default function DetailPage() {
     setTimeout(() => {
       setShowRefreshTooltip(false);
     }, 3000);
+  };
+
+  const handlePeriodChange = (newPeriod: RealGraphPeriod) => {
+    scrollPositionRef.current = window.scrollY;
+    setPeriod(newPeriod);
+    setIsLiveMode(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollPositionRef.current);
+      });
+    });
+  };
+
+  const handleLiveMode = () => {
+    scrollPositionRef.current = window.scrollY;
+    setIsLiveMode(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollPositionRef.current);
+      });
+    });
   };
 
   const formatDate = (priceDate: string) => {
@@ -233,15 +255,12 @@ export default function DetailPage() {
             <PeriodButton
               key={p}
               $active={period === p && !isLiveMode}
-              onClick={() => {
-                setPeriod(p);
-                setIsLiveMode(false);
-              }}
+              onClick={() => handlePeriodChange(p)}
             >
               {p}
             </PeriodButton>
           ))}
-          <LiveButton $active={isLiveMode} onClick={() => setIsLiveMode(true)}>
+          <LiveButton $active={isLiveMode} onClick={handleLiveMode}>
             live
             <LiveDot />
           </LiveButton>
@@ -276,6 +295,7 @@ export default function DetailPage() {
             <RotationArticleItem
               key={currentNewsIndex}
               item={tickerData.detailData.article[currentNewsIndex]}
+              tickerCode={tickerData.tickerCode}
             />
           </>
         )}

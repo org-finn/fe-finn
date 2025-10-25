@@ -4,20 +4,13 @@ import { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type HeaderProps = {
-  onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
   onClick: () => void;
 };
 export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
   (props, ref) => {
     const navigate = useNavigate();
     return (
-      <HeaderContainer
-        ref={ref}
-        onMouseEnter={props.onMouseEnter}
-        onMouseLeave={props.onMouseLeave}
-        onClick={props.onClick}
-      >
+      <HeaderContainer ref={ref} onClick={props.onClick}>
         <LogoWrapper
           src={Logo}
           alt="Articker Logo"

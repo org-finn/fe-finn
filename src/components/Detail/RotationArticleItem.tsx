@@ -1,16 +1,20 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { Text } from '../common/typography/Text';
 import { DetailArticleData } from '@/types';
 import useIsMobile from '@/hooks/useIsMobile';
 
 export default function RotationArticleItem({
   item,
+  tickerCode,
 }: {
   item: DetailArticleData;
+  tickerCode: string;
 }) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const handleClick = () => {
-    return location.pathname === '/news';
+    navigate(`/news?tickerCode=${tickerCode}`);
   };
 
   const getSentimentInfo = () => {

@@ -24,11 +24,23 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
       </TickerInfo>
       <PriceInfo>
         <Text size={isMobile ? 's' : 'm'} weight="bold" variant={getVariant}>
-          {getSignSymbol} {item.predictionStrategy} 추천
+          {getSignSymbol} {item.predictionStrategy} 신호
         </Text>
-        <Text size={isMobile ? 'xxs' : 'xs'} weight="bold" variant={getVariant}>
-          {getSentiment} 기사 {item.articleCount}건
-        </Text>
+        <ArticleChip $variant={getVariant}>
+          <Text
+            size={isMobile ? '12px' : 'xxs'}
+            weight="bold"
+            variant={
+              getVariant === 'red'
+                ? '#ef4444'
+                : getVariant === 'blue'
+                  ? '#3b82f6'
+                  : '#6b7280'
+            }
+          >
+            {getSentiment} 기사 {item.articleCount}건
+          </Text>
+        </ArticleChip>
       </PriceInfo>
     </Wrapper>
   );
@@ -67,5 +79,26 @@ const PriceInfo = styled.div`
   }
   svg {
     margin-right: -3px;
+  }
+`;
+
+const ArticleChip = styled.div<{ $variant: string }>`
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+  padding: 6px 10px;
+  border-radius: 18px;
+  background-color: ${(props) =>
+    props.$variant === 'red'
+      ? '#ffecec'
+      : props.$variant === 'blue'
+        ? '#e6f0ff'
+        : '#f0f0f0'};
+  color: ${(props) => props.$variant}15;
+  width: fit-content;
+  margin-left: auto;
+
+  @media screen and (max-width: 768px) {
+    padding: 4px 8px;
   }
 `;
