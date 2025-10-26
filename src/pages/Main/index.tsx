@@ -11,36 +11,67 @@ import useIsMobile from '@/hooks/useIsMobile';
 export default function MainPage() {
   const navigate = useNavigate();
   const { data: popularData } = useGetInfiniteTickerList({ sort: 'popular' });
+  const { data: volatilityData } = useGetInfiniteTickerList({
+    sort: 'volatility',
+  });
   const isMobile = useIsMobile();
   return (
     <Wrapper>
       <SearchBar />
       <TickerSection>
         <MarketStatusBanner />
-        <TickerTitle>
-          <Left>
-            <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
-              한국인이 가장 좋아하는 종목 Top5
-            </Paragraph>
-            <Paragraph
-              size={isMobile ? '12px' : 'xxs'}
-              weight="normal"
-              variant="grey"
+        <TickerWrapper>
+          <TickerTitle>
+            <Left>
+              <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
+                한국인이 가장 좋아하는 종목 Top5
+              </Paragraph>
+              <Paragraph
+                size={isMobile ? '12px' : 'xxs'}
+                weight="normal"
+                variant="grey"
+              >
+                여러분이 가장 좋아하는 종목을 예측했어요!
+              </Paragraph>
+            </Left>
+            <MoreBtn
+              aria-label="more-ticker-btn"
+              onClick={() => navigate('/ticker')}
             >
-              여러분이 가장 좋아하는 종목을 예측했어요!
-            </Paragraph>
-          </Left>
-          <MoreBtn
-            aria-label="more-ticker-btn"
-            onClick={() => navigate('/ticker')}
-          >
-            전체 보기
-            <IoIosArrowForward />
-          </MoreBtn>
-        </TickerTitle>
-        <TickerList
-          items={popularData?.pages[0].content.predictionList || []}
-        />
+              전체 보기
+              <IoIosArrowForward />
+            </MoreBtn>
+          </TickerTitle>
+          <TickerList
+            items={popularData?.pages[0].content.predictionList || []}
+          />
+        </TickerWrapper>
+        <TickerWrapper>
+          <TickerTitle>
+            <Left>
+              <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
+                변동성이 가장 많은 종목 Top5
+              </Paragraph>
+              <Paragraph
+                size={isMobile ? '12px' : 'xxs'}
+                weight="normal"
+                variant="grey"
+              >
+                현재 변동성이 가장 많은 종목을 예측했어요!
+              </Paragraph>
+            </Left>
+            <MoreBtn
+              aria-label="more-ticker-btn"
+              onClick={() => navigate('/ticker')}
+            >
+              전체 보기
+              <IoIosArrowForward />
+            </MoreBtn>
+          </TickerTitle>
+          <TickerList
+            items={volatilityData?.pages[0].content.predictionList || []}
+          />
+        </TickerWrapper>
       </TickerSection>
     </Wrapper>
   );
@@ -62,6 +93,13 @@ const Wrapper = styled.div`
 const TickerSection = styled.div`
   width: 100%;
 `;
+
+const TickerWrapper = styled.div`
+  &:not(:first-child) {
+    margin-top: 32px;
+  }
+`;
+
 const MoreBtn = styled.button`
   border: none;
   background: none;
