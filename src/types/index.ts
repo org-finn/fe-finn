@@ -124,3 +124,20 @@ export type ArticleTickerFilteringResponse = {
   shortCompanyName: string;
   tickerCode: string;
 };
+
+export type ArticleDetailTickerResponse = {
+  shortCompanyName: string;
+  sentiment: string;
+  reasoning: string;
+};
+
+export type ArticleDetailResponse = {
+  articleId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  contentUrl: string;
+  publishedDate: string;
+  source: string;
+  tickers: ArticleDetailTickerResponse[];
+};
