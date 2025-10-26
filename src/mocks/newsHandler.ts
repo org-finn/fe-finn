@@ -5,7 +5,7 @@ import { getFilterTickerListPath } from '@/api/hooks/useGetFilterTickerList';
 
 const mockNewsList = [
   {
-    articleId: '5c3efd65-af44-409b-8370-dae762c54b37',
+    articleId: '1',
     title:
       'Bone Marrow Failure Market Growth Accelerates with Advances in Cell and Gene Therapy | DelveInsight',
     description:

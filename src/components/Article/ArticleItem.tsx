@@ -3,11 +3,13 @@ import { Text } from '../common/typography/Text';
 import { ArticleDataResponse } from '@/types';
 import FallbackImage from '../common/Item/FallbackImage';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useNavigate } from 'react-router-dom';
 
 export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const handleClick = () => {
-    window.open(item.contentUrl, '_blank');
+    navigate(`/news/${item.articleId}`);
   };
 
   // const getSentimentInfo = () => {
