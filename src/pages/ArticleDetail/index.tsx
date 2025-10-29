@@ -45,6 +45,19 @@ export default function ArticleDetailPage() {
           <Text size={isMobile ? 'xs' : 's'} weight="normal" variant="grey">
             {articleData.source} · {articleData.publishedDate}
           </Text>
+          <OriginalLink
+            href={articleData.contentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Text
+              size={isMobile ? 'xxs' : 'xs'}
+              weight="normal"
+              variant="#2d70d3"
+            >
+              원문 보기
+            </Text>
+          </OriginalLink>
         </ArticlePublishdata>
       </ArticleHeader>
 
@@ -76,17 +89,6 @@ export default function ArticleDetailPage() {
           </TickersGrid>
         </TickersSection>
       )}
-      <OriginalLinkContainer>
-        <OriginalLink
-          href={articleData.contentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Text size={isMobile ? 'xs' : 's'} weight="normal" variant="#2d70d3">
-            원문 보기
-          </Text>
-        </OriginalLink>
-      </OriginalLinkContainer>
     </Wrapper>
   );
 }
@@ -165,18 +167,14 @@ const TickersGrid = styled.div`
   }
 `;
 
-const OriginalLinkContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 32px;
-  border-top: 1px solid #e5e7eb;
-`;
-
 const OriginalLink = styled.a`
-  padding: 12px 24px;
+  display: flex;
+  padding: 8px 14px;
+  align-items: center;
   border: 1px solid #2d70d3;
   border-radius: 8px;
   background-color: #ffffff;
+  margin-top: -6px;
 
   &:hover {
     background-color: #f3f5f7;
