@@ -42,9 +42,22 @@ export default function ArticleDetailPage() {
           </Paragraph>
         </ArticleTitle>
         <ArticlePublishdata>
-          <Text size={isMobile ? 'xs' : 's'} weight="normal" variant="grey">
-            {articleData.source} · {articleData.publishedDate}
-          </Text>
+          <PublishInfo>
+            {isMobile ? (
+              <>
+                <Text size="xs" weight="normal" variant="grey">
+                  {articleData.publishedDate}
+                </Text>
+                <Text size="xs" weight="normal" variant="grey">
+                  {articleData.source}
+                </Text>
+              </>
+            ) : (
+              <Text size="s" weight="normal" variant="grey">
+                {articleData.publishedDate} · {articleData.source}
+              </Text>
+            )}
+          </PublishInfo>
           <OriginalLink
             href={articleData.contentUrl}
             target="_blank"
@@ -167,6 +180,18 @@ const TickersGrid = styled.div`
   }
 `;
 
+const PublishInfo = styled.div`
+  flex-direction: row;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+`;
+
 const OriginalLink = styled.a`
   display: flex;
   padding: 8px 14px;
@@ -178,6 +203,10 @@ const OriginalLink = styled.a`
 
   &:hover {
     background-color: #f3f5f7;
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-top: 0px;
   }
 `;
 
