@@ -12,7 +12,7 @@ interface Option {
 
 export interface DropdownMenuProps {
   options: Option[];
-  onChange: (value: { id: string }) => void;
+  onApply: (selectedTickerIds: string[]) => void;
   placeholder?: string;
   width: number;
   selectedOptions?: string[];
@@ -20,7 +20,7 @@ export interface DropdownMenuProps {
 
 export default function DropdownMenu({
   options,
-  onChange,
+  onApply,
   placeholder = '',
   width,
   selectedOptions,
@@ -28,6 +28,7 @@ export default function DropdownMenu({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [tempSelectedOptions, setTempSelectedOptions] = useState<string[]>([]);
   useClickOutside([dropdownRef as React.RefObject<HTMLElement>], () => {
     setIsOpen(false);
   });
@@ -48,10 +49,21 @@ export default function DropdownMenu({
   }, [options, searchTerm]);
 
   const handleOptionClick = (option: Option) => {
-    onChange({
-      id: option.id,
-    });
+    const newSelectedOption = tempSelectedOptions.includes(option.id)
+      ? tempSelectedOptions.filter((id) => id !== option.id)
+      : [...tempSelectedOptions, option.id];
+
+    setTempSelectedOptions(newSelectedOption);
+  };
+
+  const handleConfirmSelection = () => {
+    onApply(tempSelectedOptions);
     setIsOpen(false);
+  };
+
+  const handleDropdownClose = () => {
+    setIsOpen(false);
+    setSearchTerm('');
   };
 
   const handleSearchInputChange = (
@@ -62,11 +74,11 @@ export default function DropdownMenu({
 
   const handleDropdownToggle = () => {
     if (isOpen) {
-      setIsOpen(false);
-      setSearchTerm('');
+      handleDropdownClose();
     } else {
       setIsOpen(true);
       setSearchTerm('');
+      setTempSelectedOptions([...(selectedOptions || [])]);
     }
   };
 
@@ -96,10 +108,13 @@ export default function DropdownMenu({
                 key={option.label}
                 label={option.label}
                 onClick={() => handleOptionClick(option)}
-                isFiltered={selectedOptions?.includes(option.id) || false}
+                isFiltered={tempSelectedOptions.includes(option.id)}
               />
             ))}
           </ItemContainer>
+          <ConfirmButtonContainer>
+            <ConfirmButton onClick={handleConfirmSelection}>적용</ConfirmButton>
+          </ConfirmButtonContainer>
         </DropdownMenuContainer>
       )}
     </DropdownContainer>
@@ -215,10 +230,37 @@ const SearchIcon = styled(FaSearch)`
 
 const ItemContainer = styled.div`
   width: 100%;
-  max-height: 250px;
+  max-height: 200px;
   overflow-y: auto;
 
   @media screen and (max-width: 768px) {
     max-height: 100%;
+  }
+`;
+
+const ConfirmButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+`;
+
+const ConfirmButton = styled.button`
+  width: 90%;
+  padding: 8px 16px;
+  background-color: #2d70d3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #1e5bb8;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 10px 16px;
+    font-size: 16px;
   }
 `;
