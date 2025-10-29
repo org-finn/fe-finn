@@ -234,7 +234,7 @@ const ItemContainer = styled.div`
   overflow-y: auto;
 
   @media screen and (max-width: 768px) {
-    max-height: 100%;
+    max-height: 210px;
   }
 `;
 
@@ -242,6 +242,10 @@ const ConfirmButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 8px;
+
+  @media screen and (max-width: 768px) {
+    padding: 4px;
+  }
 `;
 
 const ConfirmButton = styled.button`
@@ -260,7 +264,6 @@ const ConfirmButton = styled.button`
   }
 
   @media screen and (max-width: 768px) {
-    padding: 10px 16px;
-    font-size: 16px;
+    padding: 6px 16px;
   }
 `;
