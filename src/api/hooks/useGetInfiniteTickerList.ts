@@ -4,7 +4,7 @@ import { fetchInstance } from '../instance';
 import { PageableData, TickerListData } from '@/types';
 
 interface GetTickerListParams {
-  sort: 'popular' | 'upward' | 'downward' | 'volatility';
+  sort: string;
 }
 
 export const getInfiniteTickerListPath = () => `/api/v1/prediction/ticker`;
