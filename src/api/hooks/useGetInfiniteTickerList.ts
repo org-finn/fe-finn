@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 
 import { PageableData, TickerListData } from '@/types';
@@ -36,6 +36,7 @@ export const useGetInfiniteTickerList = ({ sort }: GetTickerListParams) => {
       }
       return undefined;
     },
+    placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
 };
