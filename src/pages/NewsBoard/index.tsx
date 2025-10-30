@@ -6,7 +6,7 @@ import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
 import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
 import Loading from '@/components/common/Layout/Loading';
-import DropdownFilterBar from '@/components/Article/FilterDrowndown';
+import DropdownFilterBar from '@/components/Article/FilterDropdown';
 import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
 import Chip from '@/components/Article/FilterChip';
 import useIsMobile from '@/hooks/useIsMobile';
