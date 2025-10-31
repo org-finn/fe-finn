@@ -43,8 +43,8 @@ export default function TickerPage() {
   } = useGetInfiniteTickerList({ sort: sortOption });
   const sortLabel: Record<string, string> = {
     popular: '인기순',
-    upward: '점수 높은순',
-    downward: '점수 낮은순',
+    upward: '점수 낮은순',
+    downward: '점수 높은순',
     volatility: '변동성순',
   };
 
@@ -93,11 +93,11 @@ export default function TickerPage() {
             <SortItem onClick={() => handleSortChange('popular')}>
               인기순 {sortOption === 'popular'}
             </SortItem>
-            <SortItem onClick={() => handleSortChange('upward')}>
-              점수 높은순 {sortOption === 'upward'}
-            </SortItem>
             <SortItem onClick={() => handleSortChange('downward')}>
-              점수 낮은순 {sortOption === 'downward'}
+              점수 높은순 {sortOption === 'downward'}
+            </SortItem>
+            <SortItem onClick={() => handleSortChange('upward')}>
+              점수 낮은순 {sortOption === 'upward'}
             </SortItem>
             <SortItem onClick={() => handleSortChange('volatility')}>
               변동성순 {sortOption === 'volatility'}
