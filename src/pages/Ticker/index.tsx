@@ -91,16 +91,16 @@ export default function TickerPage() {
         {showSortOptions && (
           <SortDropdown>
             <SortItem onClick={() => handleSortChange('popular')}>
-              인기순 {sortOption === 'popular'}
+              인기순
             </SortItem>
             <SortItem onClick={() => handleSortChange('downward')}>
-              점수 높은순 {sortOption === 'downward'}
+              점수 높은순
             </SortItem>
             <SortItem onClick={() => handleSortChange('upward')}>
-              점수 낮은순 {sortOption === 'upward'}
+              점수 낮은순
             </SortItem>
             <SortItem onClick={() => handleSortChange('volatility')}>
-              변동성순 {sortOption === 'volatility'}
+              변동성순
             </SortItem>
           </SortDropdown>
         )}
