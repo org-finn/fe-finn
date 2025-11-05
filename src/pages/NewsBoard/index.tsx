@@ -6,7 +6,7 @@ import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
 import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
 import Loading from '@/components/common/Layout/Loading';
-import DropdownFilterBar from '@/components/Article/FilterDrowndown';
+import DropdownFilterBar from '@/components/Article/FilterDropdown';
 import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
 import Chip from '@/components/Article/FilterChip';
 import useIsMobile from '@/hooks/useIsMobile';
@@ -52,22 +52,13 @@ export default function NewsBoardPage() {
 
   const { data: filterTickerData } = useGetFilterTickerList();
 
-  const handleTickerChange = useCallback(
-    (selectedTickerId: string) => {
+  const handleApplySelection = useCallback(
+    (selectedTickerIds: string[]) => {
       const searchParams = new URLSearchParams(location.search);
-      const existingCodes = searchParams.getAll('tickerCode');
-
       searchParams.delete('tickerCode');
 
-      let newCodes: string[];
-      if (existingCodes.includes(selectedTickerId)) {
-        newCodes = existingCodes.filter((code) => code !== selectedTickerId);
-      } else {
-        newCodes = [...existingCodes, selectedTickerId];
-      }
-
-      newCodes.forEach((code) => {
-        searchParams.append('tickerCode', code);
+      selectedTickerIds.forEach((id) => {
+        searchParams.append('tickerCode', id);
       });
 
       navigate(`${location.pathname}?${searchParams.toString()}`);
@@ -86,7 +77,7 @@ export default function NewsBoardPage() {
               label: ticker.shortCompanyName,
               id: ticker.tickerCode,
             })) || [],
-          onChange: (value: { id: string }) => handleTickerChange(value.id),
+          onApply: handleApplySelection,
           isMobileOpen: false,
           placeholder: isMobile ? '필터' : '종목 선택',
           width: 120,
@@ -94,7 +85,7 @@ export default function NewsBoardPage() {
         },
       },
     ];
-  }, [filterTickerData, handleTickerChange, currentTickerCodes, isMobile]);
+  }, [filterTickerData, handleApplySelection, currentTickerCodes, isMobile]);
 
   const handleFilterChange = (newFilter: NewsSentiment | null) => {
     const searchParams = new URLSearchParams(location.search);

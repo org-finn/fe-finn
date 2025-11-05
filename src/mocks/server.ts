@@ -3,11 +3,13 @@ import { mainHandlers } from './mainHandler';
 import { detailHandlers } from './detailHandlers';
 import newsHandlers from './newsHandler';
 import { searchHandlers } from './searchHandler';
+import { articleDetailHandlers } from './articleDetailHandler';
 
 const server = setupServer(
   ...mainHandlers,
   ...detailHandlers,
   ...newsHandlers,
-  ...searchHandlers
+  ...searchHandlers,
+  ...articleDetailHandlers
 );
 export default server;
