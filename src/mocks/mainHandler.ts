@@ -149,28 +149,6 @@ export const tickerHandlers = [
       },
     });
   }),
-  http.get(`${BASE_URL}${getInfiniteTickerListPath()}`, ({ request }) => {
-    const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '0');
-    const pageSize = 10;
-    const totalItems = mockTickerData.length;
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    const startIndex = page * pageSize;
-    const endIndex = startIndex + pageSize;
-    const pageData = mockTickerData.slice(startIndex, endIndex);
-
-    return HttpResponse.json({
-      code: '200 OK',
-      message: '주식 리스트를 성공적으로 조회하였습니다.',
-      content: {
-        predictionDate: '2025-07-22',
-        predictionList: pageData,
-        pageNumber: page,
-        hasNext: page < totalPages - 1,
-      },
-    });
-  }),
 ];
 
 export const holidayHandlers = [
