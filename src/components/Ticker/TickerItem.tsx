@@ -5,6 +5,10 @@ import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import useIsMobile from '@/hooks/useIsMobile';
+import { getABTestVariant } from '@/utils/abTest';
+import KeywordView from './ABTest/KeywordView';
+import ArticleView from './ABTest/ArticleView';
+import GraphView from './ABTest/GraphView';
 
 export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const isMobile = useIsMobile();
@@ -12,6 +16,8 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const getSignSymbol = useGetSignSymbol(item.sentiment);
   const getSentiment =
     item.sentiment > 0 ? '긍정' : item.sentiment < 0 ? '부정' : '관련';
+  const variant = getABTestVariant();
+
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
       <TickerInfo>
@@ -41,6 +47,17 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
             {getSentiment} 기사 {item.articleCount}건
           </Text>
         </ArticleChip>
+
+        {variant === 'keyword' && (
+          <KeywordView
+            positiveKeywords={item.positiveKeywords}
+            negativeKeywords={item.negativeKeywords}
+          />
+        )}
+        {variant === 'article' && (
+          <ArticleView articleTitles={item.articleTitles} />
+        )}
+        {variant === 'graph' && <GraphView graphData={item.graphData} />}
       </PriceInfo>
     </Wrapper>
   );
