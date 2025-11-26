@@ -11,7 +11,7 @@ export type ArticleTitleResponse = {
 
 export type PredictionListGraphDataResponse = {
   isMarketOpen: boolean;
-  priceDate: number[];
+  priceData: number[];
 };
 
 // 주가 아이템 컴포넌트
@@ -25,7 +25,7 @@ export type PredictionDataResponse = {
   positiveKeywords?: string; // Optional: param=keyword
   negativeKeywords?: string;
   articleTitles?: ArticleTitleResponse[]; // Optional: param=article
-  graphData?: PredictionListGraphDataResponse[]; // Optional: param=graph
+  graphData?: PredictionListGraphDataResponse; // Optional: param=graph
 };
 
 export type TickerListData = {
