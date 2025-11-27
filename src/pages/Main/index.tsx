@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGetInfiniteTickerList } from '@/api/hooks/useGetInfiniteTickerList';
 import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useEffect } from 'react';
+import { getABTestVariant } from '@/utils/abTest';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -15,6 +17,17 @@ export default function MainPage() {
     sort: 'volatility',
   });
   const isMobile = useIsMobile();
+  const variant = getABTestVariant();
+
+  useEffect(() => {
+    if (window.dataLayer) {
+      window.dataLayer.push({
+        event: 'ticker_item_view',
+        ab_test_name: 'ticker_item_ui',
+        ab_test_variant: variant,
+      });
+    }
+  }, [variant]);
   return (
     <Wrapper>
       <SearchBar />

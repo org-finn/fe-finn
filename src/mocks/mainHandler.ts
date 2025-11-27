@@ -130,6 +130,7 @@ export const tickerHandlers = [
   http.get(`${BASE_URL}${getInfiniteTickerListPath()}`, ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '0');
+    const param = url.searchParams.get('param') || 'keyword';
     const pageSize = 10;
     const totalItems = mockTickerData.length;
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -138,12 +139,58 @@ export const tickerHandlers = [
     const endIndex = startIndex + pageSize;
     const pageData = mockTickerData.slice(startIndex, endIndex);
 
+    const variantPageData = pageData.map((item) => {
+      if (param === 'keyword') {
+        return {
+          ...item,
+          positiveKeywords: 'AI 칩, 시장 성장, 주가 상승, AI 관련, 점유율',
+          negativeKeywords: '고평가, 버블, 시장 위험, 우려',
+        };
+      } else if (param === 'article') {
+        return {
+          ...item,
+          articleTitles: [
+            {
+              articleId: '5b434b63-ecbe-4a3a-85d4-d7977ed8d6c1',
+              title:
+                'Will the S&P 500 Rally in December? These 3 Signals Point to a Big Move Ahead',
+            },
+            {
+              articleId: '5b434b63-ecbe-4a3a-85d4-d7977ed8d6c2',
+              title: `Is This Quantum Chip Stock Set to Surge 22,660% Like Nvidia Did?`,
+            },
+          ],
+        };
+      } else if (param === 'graph') {
+        const isMarketOpen = Math.random() > 0.5;
+        const priceData = isMarketOpen
+          ? [
+              177.82, 182.55, 178.88, 180.64, 186.52, 181.36, 186.6, 190.17,
+              186.86, 193.8, 193.16,
+            ]
+          : [
+              476.99, 474, 472.12, 478.43, 487.12, 493.79, 507.49, 510.18,
+              503.29, 511.14, 508.68,
+            ];
+
+        return {
+          ...item,
+          graphData: {
+            isMarketOpen,
+            priceData: priceData,
+          },
+        };
+      }
+
+      return item;
+    });
+
     return HttpResponse.json({
       code: '200 OK',
       message: '주식 리스트를 성공적으로 조회하였습니다.',
       content: {
         predictionDate: '2025-07-22',
-        predictionList: pageData,
+        predictionList: variantPageData,
         pageNumber: page,
         hasNext: page < totalPages - 1,
       },

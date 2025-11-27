@@ -8,10 +8,12 @@ import Loading from '@/components/common/Layout/Loading';
 import SearchBar from '@/components/common/SearchBar';
 import Button from '@/components/common/Button';
 import { IoIosArrowDown } from 'react-icons/io';
+import { getABTestVariant } from '@/utils/abTest';
 
 export default function TickerPage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const variant = getABTestVariant();
 
   const location = useLocation();
 
@@ -47,6 +49,16 @@ export default function TickerPage() {
     downward: '점수 높은순',
     volatility: '변동성순',
   };
+
+  useEffect(() => {
+    if (window.dataLayer) {
+      window.dataLayer.push({
+        event: 'ticker_item_view',
+        ab_test_name: 'ticker_item_ui',
+        ab_test_variant: variant,
+      });
+    }
+  }, [variant]);
 
   useEffect(() => {
     if (tickerData?.pages && tickerData.pages.length > 0) {

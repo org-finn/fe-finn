@@ -5,43 +5,95 @@ import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import useIsMobile from '@/hooks/useIsMobile';
+import { getABTestVariant } from '@/utils/abTest';
+import KeywordView from './ABTest/KeywordView';
+import ArticleView from './ABTest/ArticleView';
+import GraphView from './ABTest/GraphView';
 
 export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const isMobile = useIsMobile();
   const getVariant = useGetVariant(item.sentiment);
   const getSignSymbol = useGetSignSymbol(item.sentiment);
-  const getSentiment =
-    item.sentiment > 0 ? '긍정' : item.sentiment < 0 ? '부정' : '관련';
+  const variant = getABTestVariant();
+  const useCompactLayout =
+    variant === 'keyword' || (variant !== 'graph' && isMobile);
+
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
-      <TickerInfo>
-        <Text size={isMobile ? 's' : 'm'} weight="bold">
-          {item.tickerCode}
-        </Text>
-        <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-          {item.shortCompanyName}
-        </Text>
-      </TickerInfo>
-      <PriceInfo>
-        <Text size={isMobile ? 's' : 'm'} weight="bold" variant={getVariant}>
-          {getSignSymbol} {item.predictionStrategy} 신호
-        </Text>
-        <ArticleChip $variant={getVariant}>
-          <Text
-            size={isMobile ? '12px' : 'xxs'}
-            weight="bold"
-            variant={
-              getVariant === 'red'
-                ? '#ef4444'
-                : getVariant === 'blue'
-                  ? '#3b82f6'
-                  : '#6b7280'
-            }
-          >
-            {getSentiment} 기사 {item.articleCount}건
-          </Text>
-        </ArticleChip>
-      </PriceInfo>
+      {useCompactLayout ? (
+        <MobileArticleLayout>
+          <MobileTickerInfo>
+            <Text size={isMobile ? 's' : 'm'} weight="bold">
+              {item.tickerCode}
+            </Text>
+            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
+              {item.shortCompanyName}
+            </Text>
+          </MobileTickerInfo>
+
+          {variant === 'keyword' ? (
+            <KeywordView
+              predictionStrategy={item.predictionStrategy}
+              sentiment={item.sentiment}
+              positiveKeywords={item.positiveKeywords}
+              negativeKeywords={item.negativeKeywords}
+            />
+          ) : (
+            <ArticleView
+              predictionStrategy={item.predictionStrategy}
+              sentiment={item.sentiment}
+              articleTitles={item.articleTitles}
+            />
+          )}
+        </MobileArticleLayout>
+      ) : (
+        <>
+          <LeftSection>
+            <TickerInfo>
+              <Text size={isMobile ? 's' : 'm'} weight="bold">
+                {item.tickerCode}
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                {item.shortCompanyName}
+              </Text>
+            </TickerInfo>
+            <SignalInfo>
+              {getSignSymbol && (
+                <span
+                  style={{
+                    marginRight: '4px',
+                    fontSize: isMobile ? '12px' : '14px',
+                  }}
+                >
+                  {getSignSymbol}
+                </span>
+              )}
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="bold"
+                variant={getVariant}
+              >
+                {item.predictionStrategy} 신호
+              </Text>
+            </SignalInfo>
+          </LeftSection>
+
+          <PriceInfo>
+            {variant === 'article' && (
+              <ArticleView
+                predictionStrategy={item.predictionStrategy}
+                sentiment={item.sentiment}
+                articleTitles={item.articleTitles}
+              />
+            )}
+            {variant === 'graph' && <GraphView graphData={item.graphData} />}
+          </PriceInfo>
+        </>
+      )}
     </Wrapper>
   );
 }
@@ -49,56 +101,63 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
 const Wrapper = styled(Link)`
   display: flex;
   justify-content: space-between;
-  padding: 20px 30px;
+  padding: 14px 32px;
   color: black;
   background-color: #f7faff;
   border-radius: 10px;
   cursor: pointer;
+  text-decoration: none;
   &:hover {
     background-color: #f4f7fc;
   }
 
   @media screen and (max-width: 768px) {
-    padding: 18px 28px;
+    padding: 16px 20px;
   }
 `;
-const TickerInfo = styled.div`
+
+const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: end;
-  gap: 6px;
+  justify-content: center;
+  gap: 10px;
+
+  @media screen and (max-width: 768px) {
+    gap: 12px;
+  }
 `;
+
+const TickerInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+`;
+
+const SignalInfo = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const PriceInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-
-  span {
-    display: inline-flex;
-    justify-content: end;
-  }
-  svg {
-    margin-right: -3px;
-  }
+  align-items: flex-end;
+  justify-content: center;
+  flex: 1;
 `;
 
-const ArticleChip = styled.div<{ $variant: string }>`
+const MobileArticleLayout = styled.div`
   display: flex;
-  align-items: end;
-  justify-content: flex-end;
-  padding: 6px 10px;
-  border-radius: 18px;
-  background-color: ${(props) =>
-    props.$variant === 'red'
-      ? '#ffecec'
-      : props.$variant === 'blue'
-        ? '#e6f0ff'
-        : '#f0f0f0'};
-  color: ${(props) => props.$variant}15;
-  width: fit-content;
-  margin-left: auto;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+`;
 
-  @media screen and (max-width: 768px) {
-    padding: 4px 8px;
-  }
+const MobileTickerInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
 `;

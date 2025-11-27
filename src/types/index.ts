@@ -4,6 +4,16 @@ export type ApiResponse<T> = {
   content: T;
 };
 
+export type ArticleTitleResponse = {
+  articleId: string;
+  title: string;
+};
+
+export type PredictionListGraphDataResponse = {
+  isMarketOpen: boolean;
+  priceData: number[];
+};
+
 // 주가 아이템 컴포넌트
 export type PredictionDataResponse = {
   tickerId: string;
@@ -12,6 +22,10 @@ export type PredictionDataResponse = {
   predictionStrategy: string;
   sentiment: number;
   articleCount: number;
+  positiveKeywords?: string; // Optional: param=keyword
+  negativeKeywords?: string;
+  articleTitles?: ArticleTitleResponse[]; // Optional: param=article
+  graphData?: PredictionListGraphDataResponse; // Optional: param=graph
 };
 
 export type TickerListData = {
