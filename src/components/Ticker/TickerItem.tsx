@@ -15,24 +15,36 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const getVariant = useGetVariant(item.sentiment);
   const getSignSymbol = useGetSignSymbol(item.sentiment);
   const variant = getABTestVariant();
+  const useCompactLayout =
+    variant === 'keyword' || (variant !== 'graph' && isMobile);
 
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
-      {variant === 'article' && isMobile ? (
+      {useCompactLayout ? (
         <MobileArticleLayout>
           <MobileTickerInfo>
-            <Text size="s" weight="bold">
+            <Text size={isMobile ? 's' : 'm'} weight="bold">
               {item.tickerCode}
             </Text>
-            <Text size="xxs" weight="normal" variant="grey">
+            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
               {item.shortCompanyName}
             </Text>
           </MobileTickerInfo>
-          <ArticleView
-            predictionStrategy={item.predictionStrategy}
-            sentiment={item.sentiment}
-            articleTitles={item.articleTitles}
-          />
+
+          {variant === 'keyword' ? (
+            <KeywordView
+              predictionStrategy={item.predictionStrategy}
+              sentiment={item.sentiment}
+              positiveKeywords={item.positiveKeywords}
+              negativeKeywords={item.negativeKeywords}
+            />
+          ) : (
+            <ArticleView
+              predictionStrategy={item.predictionStrategy}
+              sentiment={item.sentiment}
+              articleTitles={item.articleTitles}
+            />
+          )}
         </MobileArticleLayout>
       ) : (
         <>
@@ -71,12 +83,6 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
           </LeftSection>
 
           <PriceInfo>
-            {variant === 'keyword' && (
-              <KeywordView
-                positiveKeywords={item.positiveKeywords}
-                negativeKeywords={item.negativeKeywords}
-              />
-            )}
             {variant === 'article' && (
               <ArticleView
                 predictionStrategy={item.predictionStrategy}
