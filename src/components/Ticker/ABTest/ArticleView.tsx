@@ -3,42 +3,61 @@ import { ArticleTitleResponse } from '@/types';
 import { Text } from '@/components/common/typography/Text';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useState, useEffect } from 'react';
+import useGetVariant from '@/hooks/useGetVariant';
+import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 
 type ArticleViewProps = {
+  predictionStrategy: string;
+  sentiment: number;
   articleTitles?: ArticleTitleResponse[];
 };
 
-export default function ArticleView({ articleTitles }: ArticleViewProps) {
+export default function ArticleView({
+  predictionStrategy,
+  sentiment,
+  articleTitles,
+}: ArticleViewProps) {
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  if (!articleTitles || articleTitles.length === 0) {
-    return null;
-  }
+  const getVariant = useGetVariant(sentiment);
+  const getSignSymbol = useGetSignSymbol(sentiment);
 
   useEffect(() => {
-    if (articleTitles.length < 2) return;
+    if (!articleTitles || articleTitles.length < 2) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % articleTitles.length);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [articleTitles.length]);
+  }, [articleTitles]);
+
+  if (!articleTitles || articleTitles.length === 0) {
+    return null;
+  }
 
   const currentArticle = articleTitles[currentIndex];
 
   return (
     <ArticleSection key={currentArticle.articleId}>
-      {!isMobile && (
-        <ChipContainer>
+      <ChipContainer>
+        {isMobile ? (
+          <SignalChip $variant={getVariant}>
+            {getSignSymbol && (
+              <span style={{ fontSize: '10px' }}>{getSignSymbol}</span>
+            )}
+            <Text size="xxs" weight="bold" variant={getVariant}>
+              {predictionStrategy} 신호
+            </Text>
+          </SignalChip>
+        ) : (
           <RealtimeChip>
             <Text size="xxs" weight="normal" variant="#374151">
               실시간 기사
             </Text>
           </RealtimeChip>
-        </ChipContainer>
-      )}
+        )}
+      </ChipContainer>
       <ArticleTitle>
         <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="#374151">
           {currentArticle.title}
@@ -70,7 +89,7 @@ const ArticleSection = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    width: 140px;
+    width: 180px;
     padding: 8px 10px;
     gap: 4px;
   }
@@ -91,6 +110,28 @@ const RealtimeChip = styled.div`
   height: 16px;
   border-radius: 18px;
   background-color: #e5e7eb;
+  flex-shrink: 0;
+
+  @media screen and (max-width: 768px) {
+    padding: 2px 6px 0px 6px;
+    height: 14px;
+  }
+`;
+
+const SignalChip = styled.div<{ $variant: string }>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 2px 8px;
+  margin-top: -2px;
+  height: 16px;
+  border-radius: 18px;
+  background-color: ${(props) =>
+    props.$variant === 'red'
+      ? '#ffecec'
+      : props.$variant === 'blue'
+        ? '#e6f0ff'
+        : '#f0f0f0'};
   flex-shrink: 0;
 
   @media screen and (max-width: 768px) {

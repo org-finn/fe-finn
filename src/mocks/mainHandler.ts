@@ -152,7 +152,8 @@ export const tickerHandlers = [
           articleTitles: [
             {
               articleId: '5b434b63-ecbe-4a3a-85d4-d7977ed8d6c1',
-              title: 'Will the S&P 500 Rally in December? These 3 Signals Point to a Big Move Ahead',
+              title:
+                'Will the S&P 500 Rally in December? These 3 Signals Point to a Big Move Ahead',
             },
             {
               articleId: '5b434b63-ecbe-4a3a-85d4-d7977ed8d6c2',

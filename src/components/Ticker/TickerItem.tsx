@@ -18,48 +18,76 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
 
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
-      <LeftSection>
-        <TickerInfo>
-          <Text size={isMobile ? 's' : 'm'} weight="bold">
-            {item.tickerCode}
-          </Text>
-          <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-            {item.shortCompanyName}
-          </Text>
-        </TickerInfo>
-        <SignalInfo>
-          {getSignSymbol && (
-            <span
-              style={{
-                marginRight: '4px',
-                fontSize: isMobile ? '12px' : '14px',
-              }}
-            >
-              {getSignSymbol}
-            </span>
-          )}
-          <Text
-            size={isMobile ? 'xxs' : 'xs'}
-            weight="bold"
-            variant={getVariant}
-          >
-            {item.predictionStrategy} 신호
-          </Text>
-        </SignalInfo>
-      </LeftSection>
-
-      <PriceInfo>
-        {variant === 'keyword' && (
-          <KeywordView
-            positiveKeywords={item.positiveKeywords}
-            negativeKeywords={item.negativeKeywords}
+      {variant === 'article' && isMobile ? (
+        <MobileArticleLayout>
+          <MobileTickerInfo>
+            <Text size="s" weight="bold">
+              {item.tickerCode}
+            </Text>
+            <Text size="xxs" weight="normal" variant="grey">
+              {item.shortCompanyName}
+            </Text>
+          </MobileTickerInfo>
+          <ArticleView
+            predictionStrategy={item.predictionStrategy}
+            sentiment={item.sentiment}
+            articleTitles={item.articleTitles}
           />
-        )}
-        {variant === 'article' && (
-          <ArticleView articleTitles={item.articleTitles} />
-        )}
-        {variant === 'graph' && <GraphView graphData={item.graphData} />}
-      </PriceInfo>
+        </MobileArticleLayout>
+      ) : (
+        <>
+          <LeftSection>
+            <TickerInfo>
+              <Text size={isMobile ? 's' : 'm'} weight="bold">
+                {item.tickerCode}
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                {item.shortCompanyName}
+              </Text>
+            </TickerInfo>
+            <SignalInfo>
+              {getSignSymbol && (
+                <span
+                  style={{
+                    marginRight: '4px',
+                    fontSize: isMobile ? '12px' : '14px',
+                  }}
+                >
+                  {getSignSymbol}
+                </span>
+              )}
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="bold"
+                variant={getVariant}
+              >
+                {item.predictionStrategy} 신호
+              </Text>
+            </SignalInfo>
+          </LeftSection>
+
+          <PriceInfo>
+            {variant === 'keyword' && (
+              <KeywordView
+                positiveKeywords={item.positiveKeywords}
+                negativeKeywords={item.negativeKeywords}
+              />
+            )}
+            {variant === 'article' && (
+              <ArticleView
+                predictionStrategy={item.predictionStrategy}
+                sentiment={item.sentiment}
+                articleTitles={item.articleTitles}
+              />
+            )}
+            {variant === 'graph' && <GraphView graphData={item.graphData} />}
+          </PriceInfo>
+        </>
+      )}
     </Wrapper>
   );
 }
@@ -111,4 +139,19 @@ const PriceInfo = styled.div`
   align-items: flex-end;
   justify-content: center;
   flex: 1;
+`;
+
+const MobileArticleLayout = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+`;
+
+const MobileTickerInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
 `;
