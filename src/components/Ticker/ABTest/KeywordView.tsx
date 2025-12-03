@@ -12,6 +12,28 @@ type KeywordViewProps = {
   negativeKeywords?: string;
 };
 
+const getChipColors = (variant: string) => {
+  if (variant === 'red') {
+    return {
+      gradient: 'linear-gradient(145deg, #ffecec, #ffd5d5)',
+      shadow:
+        '2px 2px 4px rgba(255, 107, 107, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.8)',
+    };
+  }
+  if (variant === 'blue') {
+    return {
+      gradient: 'linear-gradient(145deg, #e6f0ff, #cce0ff)',
+      shadow:
+        '2px 2px 4px rgba(71, 200, 217, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.8)',
+    };
+  }
+  return {
+    gradient: 'linear-gradient(145deg, #f5f5f5, #e0e0e0)',
+    shadow:
+      '2px 2px 4px rgba(0, 0, 0, 0.1), -1px -1px 3px rgba(255, 255, 255, 0.8)',
+  };
+};
+
 export default function KeywordView({
   predictionStrategy,
   sentiment,
@@ -173,22 +195,34 @@ const KeywordList = styled.div`
 const KeywordChip = styled.div<{ $variant: string }>`
   display: flex;
   align-items: center;
+  position: relative;
   gap: 4px;
-  padding: 4px 8px 2px 8px;
+  padding: 4px 10px 2px 10px;
   margin-top: -2px;
   height: 16px;
   border-radius: 18px;
-  background-color: ${(props) =>
-    props.$variant === 'red'
-      ? '#ffecec'
-      : props.$variant === 'blue'
-        ? '#e6f0ff'
-        : '#f0f0f0'};
+  background: ${(props) => getChipColors(props.$variant).gradient};
+  box-shadow: ${(props) => getChipColors(props.$variant).shadow};
   flex-shrink: 0;
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 18px 18px 0 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 100%
+    );
+  }
+
   @media screen and (max-width: 768px) {
-    padding: 2px 6px 0px 6px;
+    padding: 2px 8px 0px 8px;
     margin-top: 0;
-    height: 14px;
+    height: 18px;
   }
 `;
