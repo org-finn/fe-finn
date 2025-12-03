@@ -23,7 +23,20 @@ export default function ArticleView({ articleTitles }: ArticleViewProps) {
   }, [articleTitles]);
 
   if (!articleTitles || articleTitles.length === 0) {
-    return null;
+    return (
+      <ArticleSection>
+        <ChipContainer></ChipContainer>
+        <ArticleTitle>
+          <Text
+            size={isMobile ? '12px' : 'xxs'}
+            weight="normal"
+            variant="#9CA3AF"
+          >
+            현재 등록된 기사가 없어요
+          </Text>
+        </ArticleTitle>
+      </ArticleSection>
+    );
   }
 
   const currentArticle = articleTitles[currentIndex];
