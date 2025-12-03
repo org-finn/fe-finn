@@ -114,18 +114,6 @@ const KeywordSection = styled.div`
   border-radius: 8px;
   width: 360px;
   overflow: hidden;
-  animation: fadeIn 0.5s ease-in-out;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
   @media screen and (max-width: 768px) {
     width: 194px;
@@ -168,6 +156,18 @@ const KeywordList = styled.div`
   flex-wrap: nowrap;
   overflow-x: visible;
   padding-left: 6px;
+  animation: fadeIn 0.5s ease-in-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const KeywordChip = styled.div<{ $variant: string }>`
