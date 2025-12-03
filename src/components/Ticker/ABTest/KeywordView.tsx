@@ -67,7 +67,7 @@ export default function KeywordView({
             <span style={{ fontSize: '10px' }}>{getSignSymbol}</span>
           )}
           <Text
-            size={isMobile ? '12px' : 'xxs'}
+            size={isMobile ? 'xxs' : 'xs'}
             weight="bold"
             variant={getVariant}
           >
