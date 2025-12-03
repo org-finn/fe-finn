@@ -16,7 +16,8 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const getSignSymbol = useGetSignSymbol(item.sentiment);
   const variant = getABTestVariant();
   const useCompactLayout =
-    variant === 'keyword' || (variant !== 'graph' && isMobile);
+    variant === 'keyword' ||
+    (variant !== 'graph' && variant !== 'article' && isMobile);
 
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
@@ -31,20 +32,12 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
             </Text>
           </MobileTickerInfo>
 
-          {variant === 'keyword' ? (
-            <KeywordView
-              predictionStrategy={item.predictionStrategy}
-              sentiment={item.sentiment}
-              positiveKeywords={item.positiveKeywords}
-              negativeKeywords={item.negativeKeywords}
-            />
-          ) : (
-            <ArticleView
-              predictionStrategy={item.predictionStrategy}
-              sentiment={item.sentiment}
-              articleTitles={item.articleTitles}
-            />
-          )}
+          <KeywordView
+            predictionStrategy={item.predictionStrategy}
+            sentiment={item.sentiment}
+            positiveKeywords={item.positiveKeywords}
+            negativeKeywords={item.negativeKeywords}
+          />
         </MobileArticleLayout>
       ) : (
         <>
@@ -84,11 +77,7 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
 
           <PriceInfo>
             {variant === 'article' && (
-              <ArticleView
-                predictionStrategy={item.predictionStrategy}
-                sentiment={item.sentiment}
-                articleTitles={item.articleTitles}
-              />
+              <ArticleView articleTitles={item.articleTitles} />
             )}
             {variant === 'graph' && <GraphView graphData={item.graphData} />}
           </PriceInfo>
