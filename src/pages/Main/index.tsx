@@ -9,6 +9,7 @@ import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useEffect } from 'react';
 import { getABTestVariant } from '@/utils/abTest';
+import ExchangeRate from '@/components/common/ExchangeRate';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -30,7 +31,10 @@ export default function MainPage() {
   }, [variant]);
   return (
     <Wrapper>
-      <SearchBar />
+      <Header>
+        <SearchBar />
+        <ExchangeRate />
+      </Header>
       <TickerSection>
         <MarketStatusBanner />
         <TickerWrapper>
@@ -103,6 +107,15 @@ const Wrapper = styled.div`
     padding: 12px 0;
   }
 `;
+
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+`;
+
 const TickerSection = styled.div`
   width: 100%;
 `;

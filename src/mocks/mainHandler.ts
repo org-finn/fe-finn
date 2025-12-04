@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getInfiniteTickerListPath } from '@/api/hooks/useGetInfiniteTickerList';
 import { getTodayMarketStatusPath } from '@/api/hooks/useGetTodayMarketStatus';
+import { getExchangeRatePath } from '@/api/hooks/useGetExchangeRate';
 
 const mockTickerData = [
   {
@@ -211,4 +212,24 @@ export const holidayHandlers = [
   }),
 ];
 
-export const mainHandlers = [...tickerHandlers, ...holidayHandlers];
+export const exchangeRateHandlers = [
+  http.get(`${BASE_URL}${getExchangeRatePath()}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '실시간 환율 조회에 성공하였습니다.',
+      content: {
+        date: '2024-12-04',
+        indexCode: 'C01',
+        indexInfo: '원/달러',
+        value: 1413.12,
+        changeRate: 0.14,
+      },
+    });
+  }),
+];
+
+export const mainHandlers = [
+  ...tickerHandlers,
+  ...holidayHandlers,
+  ...exchangeRateHandlers,
+];
