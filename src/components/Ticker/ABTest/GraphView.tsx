@@ -36,7 +36,20 @@ export default function GraphView({ graphData }: GraphViewProps) {
     colors: [chartColor],
     stroke: {
       curve: 'smooth',
-      width: 2.6,
+      width: isMobile ? 2 : 2.6,
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: 'light',
+        type: 'vertical',
+        shadeIntensity: 0.5,
+        gradientToColors: [chartColor],
+        inverseColors: false,
+        opacityFrom: 0.4,
+        opacityTo: 0.05,
+        stops: [0, 100],
+      },
     },
     yaxis: {
       show: false,
@@ -51,16 +64,16 @@ export default function GraphView({ graphData }: GraphViewProps) {
       <ApexChart
         options={options}
         series={[{ name: 'Price', data: chartData }]}
-        type="line"
-        height={isMobile ? 36 : 50}
+        type="area"
+        height={isMobile ? 36 : 44}
       />
     </ChartWrapper>
   );
 }
 
 const ChartWrapper = styled.div`
-  width: 170px;
-  background: white;
+  width: 154px;
+  background: transparent;
   border-radius: 8px;
   padding: 10px 14px;
 

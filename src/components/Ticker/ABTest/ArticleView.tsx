@@ -3,24 +3,14 @@ import { ArticleTitleResponse } from '@/types';
 import { Text } from '@/components/common/typography/Text';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useState, useEffect } from 'react';
-import useGetVariant from '@/hooks/useGetVariant';
-import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 
 type ArticleViewProps = {
-  predictionStrategy: string;
-  sentiment: number;
   articleTitles?: ArticleTitleResponse[];
 };
 
-export default function ArticleView({
-  predictionStrategy,
-  sentiment,
-  articleTitles,
-}: ArticleViewProps) {
+export default function ArticleView({ articleTitles }: ArticleViewProps) {
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const getVariant = useGetVariant(sentiment);
-  const getSignSymbol = useGetSignSymbol(sentiment);
 
   useEffect(() => {
     if (!articleTitles || articleTitles.length < 2) return;
@@ -33,34 +23,34 @@ export default function ArticleView({
   }, [articleTitles]);
 
   if (!articleTitles || articleTitles.length === 0) {
-    return null;
+    return (
+      <ArticleSection>
+        <ChipContainer></ChipContainer>
+        <ArticleTitle>
+          <Text
+            size={isMobile ? '12px' : 'xxs'}
+            weight="normal"
+            variant="#9CA3AF"
+          >
+            현재 등록된 기사가 없어요
+          </Text>
+        </ArticleTitle>
+      </ArticleSection>
+    );
   }
 
   const currentArticle = articleTitles[currentIndex];
 
   return (
     <ArticleSection key={currentArticle.articleId}>
-      <ChipContainer>
-        {isMobile ? (
-          <SignalChip $variant={getVariant}>
-            {getSignSymbol && (
-              <span style={{ fontSize: '10px' }}>{getSignSymbol}</span>
-            )}
-            <Text size="xxs" weight="bold" variant={getVariant}>
-              {predictionStrategy} 신호
-            </Text>
-          </SignalChip>
-        ) : (
-          <RealtimeChip>
-            <Text size="xxs" weight="normal" variant="#374151">
-              실시간 기사
-            </Text>
-          </RealtimeChip>
-        )}
-      </ChipContainer>
+      <ChipContainer></ChipContainer>
       <ArticleTitle>
-        <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="#374151">
-          {currentArticle.title}
+        <Text
+          size={isMobile ? '12px' : 'xxs'}
+          weight="normal"
+          variant="#374151"
+        >
+          📰 {currentArticle.title}
         </Text>
       </ArticleTitle>
     </ArticleSection>
@@ -70,12 +60,34 @@ export default function ArticleView({
 const ArticleSection = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  position: relative;
   gap: 6px;
-  padding: 12px 14px;
-  background-color: white;
-  border-radius: 8px;
-  width: 360px;
+  padding: 8px 14px 10px 14px;
+  margin: 8px 0;
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.1),
+    -1px -1px 3px rgba(255, 255, 255, 0.8);
+  border-radius: 32px;
+  max-width: 360px;
+  width: fit-content;
   animation: fadeIn 0.5s ease-in-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 32px 32px 0 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 100%
+    );
+  }
 
   @keyframes fadeIn {
     from {
@@ -89,8 +101,9 @@ const ArticleSection = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    width: 180px;
-    padding: 8px 10px;
+    max-width: 124px;
+    padding: 8px 8px 10px 14px;
+    margin: 0;
     gap: 4px;
   }
 `;
@@ -100,44 +113,6 @@ const ChipContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 6px;
-`;
-
-const RealtimeChip = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 8px 2px 8px;
-  margin-top: -2px;
-  height: 16px;
-  border-radius: 18px;
-  background-color: #e5e7eb;
-  flex-shrink: 0;
-
-  @media screen and (max-width: 768px) {
-    padding: 2px 6px 0px 6px;
-    height: 14px;
-  }
-`;
-
-const SignalChip = styled.div<{ $variant: string }>`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px 2px 8px;
-  margin-top: -2px;
-  height: 16px;
-  border-radius: 18px;
-  background-color: ${(props) =>
-    props.$variant === 'red'
-      ? '#ffecec'
-      : props.$variant === 'blue'
-        ? '#e6f0ff'
-        : '#f0f0f0'};
-  flex-shrink: 0;
-
-  @media screen and (max-width: 768px) {
-    padding: 2px 6px 0px 6px;
-    height: 14px;
-  }
 `;
 
 const ArticleTitle = styled.div`
@@ -150,6 +125,7 @@ const ArticleTitle = styled.div`
   line-height: 1.2;
 
   @media screen and (max-width: 768px) {
+    line-height: 1.1;
     -webkit-line-clamp: 2;
   }
 `;
