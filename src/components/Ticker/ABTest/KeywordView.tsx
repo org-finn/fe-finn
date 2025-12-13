@@ -34,9 +34,7 @@ export default function KeywordView({
     return () => clearInterval(interval);
   }, [positiveKeywords, negativeKeywords]);
 
-  if (!positiveKeywords && !negativeKeywords) {
-    return null;
-  }
+  const hasKeywords = positiveKeywords || negativeKeywords;
 
   const displayType =
     positiveKeywords && negativeKeywords
@@ -77,32 +75,34 @@ export default function KeywordView({
           </Text>
         </SignalChip>
       </ChipContainer>
-      <KeywordContent>
-        <KeywordList>
-          {visibleKeywords.map((keyword, index) => (
-            <KeywordChip key={index} $variant={keywordVariant}>
-              <Text
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant={keywordVariant}
-              >
-                {keyword.trim()}
-              </Text>
-            </KeywordChip>
-          ))}
-          {hasMore && (
-            <KeywordChip $variant={keywordVariant}>
-              <Text
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant={keywordVariant}
-              >
-                ...
-              </Text>
-            </KeywordChip>
-          )}
-        </KeywordList>
-      </KeywordContent>
+      {hasKeywords && (
+        <KeywordContent>
+          <KeywordList>
+            {visibleKeywords.map((keyword, index) => (
+              <KeywordChip key={index} $variant={keywordVariant}>
+                <Text
+                  size={isMobile ? '12px' : 'xxs'}
+                  weight="normal"
+                  variant={keywordVariant}
+                >
+                  {keyword.trim()}
+                </Text>
+              </KeywordChip>
+            ))}
+            {hasMore && (
+              <KeywordChip $variant={keywordVariant}>
+                <Text
+                  size={isMobile ? '12px' : 'xxs'}
+                  weight="normal"
+                  variant={keywordVariant}
+                >
+                  ...
+                </Text>
+              </KeywordChip>
+            )}
+          </KeywordList>
+        </KeywordContent>
+      )}
     </KeywordSection>
   );
 }
