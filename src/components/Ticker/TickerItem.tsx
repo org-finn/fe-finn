@@ -39,6 +39,35 @@ export default function TickerItem({ item }: { item: PredictionDataResponse }) {
             negativeKeywords={item.negativeKeywords}
           />
         </MobileArticleLayout>
+      ) : variant === 'article' && isMobile ? (
+        <MobileArticleVariantLayout>
+          <MobileArticleTop>
+            <TickerInfo>
+              <Text size="s" weight="bold">
+                {item.tickerCode}
+              </Text>
+              <Text size="xxs" weight="normal" variant="grey">
+                {item.shortCompanyName}
+              </Text>
+            </TickerInfo>
+            <SignalInfo>
+              {getSignSymbol && (
+                <span
+                  style={{
+                    marginRight: '4px',
+                    fontSize: '12px',
+                  }}
+                >
+                  {getSignSymbol}
+                </span>
+              )}
+              <Text size="xxs" weight="bold" variant={getVariant}>
+                {item.predictionStrategy} 신호
+              </Text>
+            </SignalInfo>
+          </MobileArticleTop>
+          <ArticleView articleTitles={item.articleTitles} />
+        </MobileArticleVariantLayout>
       ) : (
         <>
           <LeftSection>
@@ -149,4 +178,18 @@ const MobileTickerInfo = styled.div`
   flex-direction: column;
   gap: 4px;
   flex-shrink: 0;
+`;
+
+const MobileArticleVariantLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px;
+`;
+
+const MobileArticleTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
 `;
