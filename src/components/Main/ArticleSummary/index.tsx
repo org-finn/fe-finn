@@ -3,6 +3,7 @@ import { useGetArticleSummary } from '@/api/hooks/useGetArticleSummary';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import useIsMobile from '@/hooks/useIsMobile';
+import { getChipColors } from '@/hooks/useGetChipColors';
 
 export default function ArticleSummary() {
   const { data, isLoading, isError } = useGetArticleSummary();
@@ -36,8 +37,7 @@ export default function ArticleSummary() {
                 <KeywordWrapper>
                   {content.positiveKeywords.map((keyword, index) => (
                     <Keyword key={index} $type="positive">
-                      <span>📈</span>
-                      <Text size={isMobile ? 'xxs' : 'xs'} weight="bold">
+                      <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
                         {keyword}
                       </Text>
                     </Keyword>
@@ -61,8 +61,7 @@ export default function ArticleSummary() {
                 <KeywordWrapper>
                   {content.negativeKeywords.map((keyword, index) => (
                     <Keyword key={index} $type="negative">
-                      <span>📉</span>
-                      <Text size={isMobile ? 'xxs' : 'xs'} weight="bold">
+                      <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
                         {keyword}
                       </Text>
                     </Keyword>
@@ -131,7 +130,6 @@ const ContentWrapper = styled.div`
   gap: 8px;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
 `;
 
 const ReasoningText = styled.div`
@@ -141,10 +139,10 @@ const ReasoningText = styled.div`
 const KeywordWrapper = styled.div`
   display: flex;
   gap: 8px;
-  margin-top: 4px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  padding: 4px 0 6px 0;
 
   &::-webkit-scrollbar {
     display: none;
@@ -152,33 +150,46 @@ const KeywordWrapper = styled.div`
 `;
 
 const Keyword = styled.div<{ $type: 'positive' | 'negative' }>`
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  position: relative;
   gap: 4px;
-  padding: 6px 8px 4px 8px;
-  border-radius: 12px;
-  background-color: ${(props) =>
-    props.$type === 'positive' ? '#ef444415' : '#3b82f615'};
-  border: 1px solid
-    ${(props) => (props.$type === 'positive' ? '#ef444440' : '#3b82f640')};
+  padding: 6px 12px 4px 12px;
+  height: 16px;
+  border-radius: 18px;
+  background: ${(props) =>
+    getChipColors(props.$type === 'positive' ? 'red' : 'blue').gradient};
+  box-shadow: ${(props) =>
+    getChipColors(props.$type === 'positive' ? 'red' : 'blue').shadow};
   white-space: nowrap;
   flex-shrink: 0;
 
-  span {
-    font-size: 12px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 18px 18px 0 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 100%
+    );
   }
 
-  & > *:last-child {
+  & > * {
     color: ${(props) =>
       props.$type === 'positive' ? '#ef4444' : '#3b82f6'} !important;
+    position: relative;
+    z-index: 1;
   }
 
   @media screen and (max-width: 768px) {
-    padding: 4px 8px;
+    margin-top: -4px;
+    padding: 4px 10px 2px 10px;
+    height: 18px;
     gap: 2px;
-
-    span {
-      font-size: 10px;
-    }
   }
 `;
