@@ -9,7 +9,7 @@ export default function ArticleSummary() {
   const { data, isLoading, isError } = useGetArticleSummary();
   const isMobile = useIsMobile();
 
-  if (isLoading || isError || !data) {
+  if (isLoading || isError || !data || !data.content) {
     return null;
   }
 
