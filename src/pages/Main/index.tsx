@@ -113,9 +113,14 @@ const Wrapper = styled.div`
 const Header = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
-  align-items: flex-end;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-end;
+  }
 `;
 
 const TickerSection = styled.div`
