@@ -3,6 +3,7 @@ import { BASE_URL } from '@/api/instance';
 import { getInfiniteTickerListPath } from '@/api/hooks/useGetInfiniteTickerList';
 import { getTodayMarketStatusPath } from '@/api/hooks/useGetTodayMarketStatus';
 import { getExchangeRatePath } from '@/api/hooks/useGetExchangeRate';
+import { getArticleSummaryPath } from '@/api/hooks/useGetArticleSummary';
 
 const mockTickerData = [
   {
@@ -228,8 +229,28 @@ export const exchangeRateHandlers = [
   }),
 ];
 
+export const articleSummaryHandlers = [
+  http.get(`${BASE_URL}${getArticleSummaryPath()}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      content: {
+        positiveReasoning: [
+          '기업 인수 및 시장 확장 진행. 신규 상장 및 성장 전략 강화. AI 및 신기술 시장 급성장',
+        ],
+        negativeReasoning: [
+          '증권 집단 소송 및 주가 하락. FDA 승인 거절로 사업 손실. 시장 하락 및 마진 압박 우려',
+        ],
+        positiveKeywords: ['성장', ' 확장', ' 상장', ' 수익', ' 인수'],
+        negativeKeywords: ['하락', ' 손실', ' 소송', ' 규제', ' 압박'],
+        summaryDate: '2025-12-13',
+      },
+    });
+  }),
+];
+
 export const mainHandlers = [
   ...tickerHandlers,
   ...holidayHandlers,
   ...exchangeRateHandlers,
+  ...articleSummaryHandlers,
 ];

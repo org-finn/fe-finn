@@ -10,6 +10,7 @@ import useIsMobile from '@/hooks/useIsMobile';
 import { useEffect } from 'react';
 import { getABTestVariant } from '@/utils/abTest';
 import ExchangeRate from '@/components/common/ExchangeRate';
+import ArticleSummary from '@/components/Main/ArticleSummary';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export default function MainPage() {
       </Header>
       <TickerSection>
         <MarketStatusBanner />
+        <ArticleSummary />
         <TickerWrapper>
           <TickerTitle>
             <Left>

@@ -163,3 +163,11 @@ export type ExchangeRateResponse = {
   value: number;
   changeRate: number;
 };
+
+export type ArticleSummaryAllResponse = {
+  positiveReasoning: string[];
+  negativeReasoning: string[];
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  summaryDate: string;
+};
