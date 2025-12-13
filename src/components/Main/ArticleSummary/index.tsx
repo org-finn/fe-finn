@@ -29,7 +29,7 @@ export default function ArticleSummary() {
             <IconText>📈</IconText>
             <ContentWrapper>
               <ReasoningText>
-                <Text size={isMobile ? 'xxs' : 'sm'} weight="normal">
+                <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
                   {content.positiveReasoning[0]}
                 </Text>
               </ReasoningText>
@@ -53,7 +53,7 @@ export default function ArticleSummary() {
             <IconText>📉</IconText>
             <ContentWrapper>
               <ReasoningText>
-                <Text size={isMobile ? 'xxs' : 'sm'} weight="normal">
+                <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
                   {content.negativeReasoning[0]}
                 </Text>
               </ReasoningText>
