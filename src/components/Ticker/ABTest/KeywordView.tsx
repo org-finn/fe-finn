@@ -59,6 +59,7 @@ export default function KeywordView({
   const maxKeywords = isMobile ? 3 : 5;
   const visibleKeywords = displayKeywords.slice(0, maxKeywords);
   const hasMore = displayKeywords.length > maxKeywords;
+  const keywordVariant = displayType === 'positive' ? 'red' : 'blue';
 
   return (
     <KeywordSection key={`${displayType}-${displayKeywords[0]}`}>
@@ -79,22 +80,22 @@ export default function KeywordView({
       <KeywordContent>
         <KeywordList>
           {visibleKeywords.map((keyword, index) => (
-            <KeywordChip key={index} $variant={getVariant}>
+            <KeywordChip key={index} $variant={keywordVariant}>
               <Text
                 size={isMobile ? '12px' : 'xxs'}
                 weight="normal"
-                variant={getVariant}
+                variant={keywordVariant}
               >
                 {keyword.trim()}
               </Text>
             </KeywordChip>
           ))}
           {hasMore && (
-            <KeywordChip $variant={getVariant}>
+            <KeywordChip $variant={keywordVariant}>
               <Text
                 size={isMobile ? '12px' : 'xxs'}
                 weight="normal"
-                variant={getVariant}
+                variant={keywordVariant}
               >
                 ...
               </Text>
