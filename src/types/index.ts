@@ -155,3 +155,19 @@ export type ArticleDetailResponse = {
   source: string;
   tickers: ArticleDetailTickerResponse[];
 };
+
+export type ExchangeRateResponse = {
+  date: string;
+  indexCode: string;
+  indexInfo: string;
+  value: number;
+  changeRate: number;
+};
+
+export type ArticleSummaryAllResponse = {
+  positiveReasoning: string[];
+  negativeReasoning: string[];
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  summaryDate: string;
+};

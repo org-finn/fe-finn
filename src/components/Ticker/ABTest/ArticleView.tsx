@@ -101,9 +101,9 @@ const ArticleSection = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    max-width: 124px;
-    padding: 8px 8px 10px 14px;
-    margin: 0;
+    max-width: 280px;
+    padding: 2px 8px 8px 12px;
+    margin: 2px 0 0 0;
     gap: 4px;
   }
 `;
@@ -126,6 +126,6 @@ const ArticleTitle = styled.div`
 
   @media screen and (max-width: 768px) {
     line-height: 1.1;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
   }
 `;

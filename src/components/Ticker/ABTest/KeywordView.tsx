@@ -4,34 +4,13 @@ import useIsMobile from '@/hooks/useIsMobile';
 import { useState, useEffect } from 'react';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
+import { getChipColors } from '@/hooks/useGetChipColors';
 
 type KeywordViewProps = {
   predictionStrategy: string;
   sentiment: number;
   positiveKeywords?: string;
   negativeKeywords?: string;
-};
-
-const getChipColors = (variant: string) => {
-  if (variant === 'red') {
-    return {
-      gradient: 'linear-gradient(145deg, #ffecec, #ffd5d5)',
-      shadow:
-        '2px 2px 4px rgba(255, 107, 107, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.8)',
-    };
-  }
-  if (variant === 'blue') {
-    return {
-      gradient: 'linear-gradient(145deg, #e6f0ff, #cce0ff)',
-      shadow:
-        '2px 2px 4px rgba(71, 200, 217, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.8)',
-    };
-  }
-  return {
-    gradient: 'linear-gradient(145deg, #f5f5f5, #e0e0e0)',
-    shadow:
-      '2px 2px 4px rgba(0, 0, 0, 0.1), -1px -1px 3px rgba(255, 255, 255, 0.8)',
-  };
 };
 
 export default function KeywordView({
@@ -55,9 +34,7 @@ export default function KeywordView({
     return () => clearInterval(interval);
   }, [positiveKeywords, negativeKeywords]);
 
-  if (!positiveKeywords && !negativeKeywords) {
-    return null;
-  }
+  const hasKeywords = positiveKeywords || negativeKeywords;
 
   const displayType =
     positiveKeywords && negativeKeywords
@@ -80,6 +57,7 @@ export default function KeywordView({
   const maxKeywords = isMobile ? 3 : 5;
   const visibleKeywords = displayKeywords.slice(0, maxKeywords);
   const hasMore = displayKeywords.length > maxKeywords;
+  const keywordVariant = displayType === 'positive' ? 'red' : 'blue';
 
   return (
     <KeywordSection key={`${displayType}-${displayKeywords[0]}`}>
@@ -97,32 +75,34 @@ export default function KeywordView({
           </Text>
         </SignalChip>
       </ChipContainer>
-      <KeywordContent>
-        <KeywordList>
-          {visibleKeywords.map((keyword, index) => (
-            <KeywordChip key={index} $variant={getVariant}>
-              <Text
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant={getVariant}
-              >
-                {keyword.trim()}
-              </Text>
-            </KeywordChip>
-          ))}
-          {hasMore && (
-            <KeywordChip $variant={getVariant}>
-              <Text
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant={getVariant}
-              >
-                ...
-              </Text>
-            </KeywordChip>
-          )}
-        </KeywordList>
-      </KeywordContent>
+      {hasKeywords && (
+        <KeywordContent>
+          <KeywordList>
+            {visibleKeywords.map((keyword, index) => (
+              <KeywordChip key={index} $variant={keywordVariant}>
+                <Text
+                  size={isMobile ? '12px' : 'xxs'}
+                  weight="normal"
+                  variant={keywordVariant}
+                >
+                  {keyword.trim()}
+                </Text>
+              </KeywordChip>
+            ))}
+            {hasMore && (
+              <KeywordChip $variant={keywordVariant}>
+                <Text
+                  size={isMobile ? '12px' : 'xxs'}
+                  weight="normal"
+                  variant={keywordVariant}
+                >
+                  ...
+                </Text>
+              </KeywordChip>
+            )}
+          </KeywordList>
+        </KeywordContent>
+      )}
     </KeywordSection>
   );
 }
