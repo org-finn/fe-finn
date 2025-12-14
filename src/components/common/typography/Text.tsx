@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export interface IText {
   size: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl' | string;
   weight: 'bold' | 'normal';
-  variant?: 'mint' | 'background' | 'white' | 'grey' | string;
+  variant?: 'mint' | 'background' | 'white' | 'grey' | 'darkgrey' | string;
 }
 
 export const Text = styled.span<IText>`
@@ -40,6 +40,8 @@ export const Text = styled.span<IText>`
         return '#000000';
       case 'grey':
         return '#979797';
+      case 'darkgrey':
+        return '#7b7b7b';
       case 'white':
         return '#ffffff';
       default:

@@ -5,12 +5,10 @@ import { HEADER_HEIGHT } from './MainHeader';
 
 type SubHeaderProps = {
   visible: boolean;
-  onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
 };
 
 export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
-  ({ visible, onMouseEnter, onMouseLeave }, ref) => {
+  ({ visible }, ref) => {
     const location = useLocation();
 
     const isActive = (path: string) => {
@@ -21,12 +19,7 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
       return location.pathname.startsWith(path);
     };
     return (
-      <HeaderContainer
-        $show={visible}
-        ref={ref}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
+      <HeaderContainer $show={visible} ref={ref}>
         <Item aria-label="header-home" to="/" $isActive={isActive('/')}>
           홈
         </Item>
@@ -34,14 +27,11 @@ export const SubHeader = forwardRef<HTMLDivElement, SubHeaderProps>(
           뉴스보드
         </Item>
         <Item
-          aria-label="header-stock"
-          to="/stock"
-          $isActive={isActive('/stock')}
+          aria-label="header-ticker"
+          to="/ticker"
+          $isActive={isActive('/ticker')}
         >
           종목
-        </Item>
-        <Item aria-label="header-my" to="/my" $isActive={isActive('/my')}>
-          포트폴리오
         </Item>
       </HeaderContainer>
     );
