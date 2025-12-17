@@ -14,18 +14,25 @@ export default function ArticleSummary() {
 
   useEffect(() => {
     const positiveReasoning = data?.content.positiveReasoning;
-    const negativeReasoning = data?.content.negativeReasoning;
-
-    if (!positiveReasoning || !negativeReasoning) return;
-    if (positiveReasoning.length < 2 || negativeReasoning.length < 2) return;
+    if (!positiveReasoning || positiveReasoning.length < 2) return;
 
     const interval = setInterval(() => {
       setPositiveIndex((prev) => (prev + 1) % positiveReasoning.length);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [data?.content.positiveReasoning]);
+
+  useEffect(() => {
+    const negativeReasoning = data?.content.negativeReasoning;
+    if (!negativeReasoning || negativeReasoning.length < 2) return;
+
+    const interval = setInterval(() => {
       setNegativeIndex((prev) => (prev + 1) % negativeReasoning.length);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [data?.content.positiveReasoning, data?.content.negativeReasoning]);
+  }, [data?.content.negativeReasoning]);
 
   if (isLoading || isError || !data || !data.content) {
     return null;
