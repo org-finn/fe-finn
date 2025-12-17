@@ -235,14 +235,18 @@ export const articleSummaryHandlers = [
       code: '200 OK',
       content: {
         positiveReasoning: [
-          '기업 인수 및 시장 확장 진행. 신규 상장 및 성장 전략 강화. AI 및 신기술 시장 급성장',
+          'AI 및 친환경 기술 성장 잠재력 확대',
+          '기업 인수, 배당 확대 등 주주 가치 증대',
+          '신흥 시장 주식 및 특정 산업 높은 수익률',
         ],
         negativeReasoning: [
-          '증권 집단 소송 및 주가 하락. FDA 승인 거절로 사업 손실. 시장 하락 및 마진 압박 우려',
+          '다수 기업 증권 소송 및 규제 문제',
+          '일부 기업 주가 급락 및 실적 부진',
+          '유가 하락 및 시장 변동성 확대',
         ],
-        positiveKeywords: ['성장', ' 확장', ' 상장', ' 수익', ' 인수'],
-        negativeKeywords: ['하락', ' 손실', ' 소송', ' 규제', ' 압박'],
-        summaryDate: '2025-12-13',
+        positiveKeywords: ['AI', '성장', '배당', '매입', '기술'],
+        negativeKeywords: ['소송', '하락', '규제', '부진', '변동'],
+        summaryDate: '2025-12-17',
       },
     });
   }),

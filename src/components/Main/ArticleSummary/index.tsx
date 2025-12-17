@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 import { useGetArticleSummary } from '@/api/hooks/useGetArticleSummary';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -7,7 +8,24 @@ import { getChipColors } from '@/hooks/useGetChipColors';
 
 export default function ArticleSummary() {
   const { data, isLoading, isError } = useGetArticleSummary();
+  const [positiveIndex, setPositiveIndex] = useState(0);
+  const [negativeIndex, setNegativeIndex] = useState(0);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const positiveReasoning = data?.content.positiveReasoning;
+    const negativeReasoning = data?.content.negativeReasoning;
+
+    if (!positiveReasoning || !negativeReasoning) return;
+    if (positiveReasoning.length < 2 || negativeReasoning.length < 2) return;
+
+    const interval = setInterval(() => {
+      setPositiveIndex((prev) => (prev + 1) % positiveReasoning.length);
+      setNegativeIndex((prev) => (prev + 1) % negativeReasoning.length);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [data?.content.positiveReasoning, data?.content.negativeReasoning]);
 
   if (isLoading || isError || !data || !data.content) {
     return null;
@@ -28,9 +46,9 @@ export default function ArticleSummary() {
           <SummaryItem>
             <IconText>📈</IconText>
             <ContentWrapper>
-              <ReasoningText>
+              <ReasoningText key={`positive-${positiveIndex}`}>
                 <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-                  {content.positiveReasoning[0]}
+                  {content.positiveReasoning[positiveIndex]}
                 </Text>
               </ReasoningText>
               {content.positiveKeywords.length > 0 && (
@@ -52,9 +70,9 @@ export default function ArticleSummary() {
           <SummaryItem>
             <IconText>📉</IconText>
             <ContentWrapper>
-              <ReasoningText>
+              <ReasoningText key={`negative-${negativeIndex}`}>
                 <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-                  {content.negativeReasoning[0]}
+                  {content.negativeReasoning[negativeIndex]}
                 </Text>
               </ReasoningText>
               {content.negativeKeywords.length > 0 && (
@@ -134,6 +152,18 @@ const ContentWrapper = styled.div`
 
 const ReasoningText = styled.div`
   line-height: 1.5;
+  animation: fadeIn 0.5s ease-in-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const KeywordWrapper = styled.div`
