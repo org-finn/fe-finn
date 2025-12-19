@@ -75,7 +75,7 @@ export default function KeywordView({
           </Text>
         </SignalChip>
       </ChipContainer>
-      {hasKeywords && (
+      {hasKeywords ? (
         <KeywordContent>
           <KeywordList>
             {visibleKeywords.map((keyword, index) => (
@@ -102,6 +102,12 @@ export default function KeywordView({
             )}
           </KeywordList>
         </KeywordContent>
+      ) : (
+        <NoKeywordMessage>
+          <Text size={isMobile ? '12px' : 'xxs'} weight="normal" variant="gray">
+            분석된 키워드가 없습니다
+          </Text>
+        </NoKeywordMessage>
       )}
     </KeywordSection>
   );
@@ -205,4 +211,10 @@ const KeywordChip = styled.div<{ $variant: string }>`
     margin-top: 0;
     height: 18px;
   }
+`;
+
+const NoKeywordMessage = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
 `;
