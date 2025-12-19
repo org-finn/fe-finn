@@ -104,7 +104,7 @@ export default function KeywordView({
         </KeywordContent>
       ) : (
         <NoKeywordMessage>
-          <Text size={isMobile ? '12px' : 'xxs'} weight="normal" variant="gray">
+          <Text size={isMobile ? '12px' : 'xxs'} weight="normal" variant="grey">
             분석된 키워드가 없습니다
           </Text>
         </NoKeywordMessage>
