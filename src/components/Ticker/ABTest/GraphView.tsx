@@ -32,6 +32,12 @@ export default function GraphView({ graphData }: GraphViewProps) {
   const options: ApexOptions = {
     chart: {
       sparkline: { enabled: true },
+      animations: {
+        enabled: true,
+        dynamicAnimation: {
+          enabled: true,
+        },
+      },
     },
     colors: [chartColor],
     stroke: {
@@ -50,6 +56,18 @@ export default function GraphView({ graphData }: GraphViewProps) {
         opacityTo: 0.05,
         stops: [0, 100],
       },
+    },
+    markers: {
+      size: 0,
+      discrete: [
+        {
+          seriesIndex: 0,
+          dataPointIndex: chartData.length - 1,
+          fillColor: chartColor,
+          strokeColor: 'transparent',
+          size: isMobile ? 4 : 6,
+        },
+      ],
     },
     yaxis: {
       show: false,
@@ -80,5 +98,23 @@ const ChartWrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 100px;
     padding: 8px 12px;
+  }
+
+  .apexcharts-marker {
+    animation: pulse 2s infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.6);
+    }
+    50% {
+      transform: scale(0.8);
+    }
+    100% {
+      transform: scale(0.6);
+    }
   }
 `;
