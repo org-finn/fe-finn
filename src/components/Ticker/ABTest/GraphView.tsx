@@ -32,6 +32,12 @@ export default function GraphView({ graphData }: GraphViewProps) {
   const options: ApexOptions = {
     chart: {
       sparkline: { enabled: true },
+      animations: {
+        enabled: true,
+        dynamicAnimation: {
+          enabled: true,
+        },
+      },
     },
     colors: [chartColor],
     stroke: {
@@ -51,6 +57,20 @@ export default function GraphView({ graphData }: GraphViewProps) {
         stops: [0, 100],
       },
     },
+    markers: {
+      size: 0,
+      discrete: isMarketOpen
+        ? [
+            {
+              seriesIndex: 0,
+              dataPointIndex: chartData.length - 1,
+              fillColor: chartColor,
+              strokeColor: 'transparent',
+              size: isMobile ? 4 : 6,
+            },
+          ]
+        : [],
+    },
     yaxis: {
       show: false,
       min: minPrice,
@@ -60,7 +80,7 @@ export default function GraphView({ graphData }: GraphViewProps) {
   };
 
   return (
-    <ChartWrapper>
+    <ChartWrapper $isMarketOpen={isMarketOpen}>
       <ApexChart
         options={options}
         series={[{ name: 'Price', data: chartData }]}
@@ -71,7 +91,7 @@ export default function GraphView({ graphData }: GraphViewProps) {
   );
 }
 
-const ChartWrapper = styled.div`
+const ChartWrapper = styled.div<{ $isMarketOpen: boolean }>`
   width: 154px;
   background: transparent;
   border-radius: 8px;
@@ -80,5 +100,27 @@ const ChartWrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 100px;
     padding: 8px 12px;
+  }
+
+  .apexcharts-marker {
+    ${({ $isMarketOpen }) =>
+      $isMarketOpen &&
+      `
+      animation: pulse 2s infinite;
+    `}
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.7);
+    }
+    50% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(0.7);
+    }
   }
 `;
