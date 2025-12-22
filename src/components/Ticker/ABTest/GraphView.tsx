@@ -108,13 +108,13 @@ const ChartWrapper = styled.div`
 
   @keyframes pulse {
     0% {
-      transform: scale(0.6);
+      transform: scale(0.7);
     }
     50% {
-      transform: scale(0.8);
+      transform: scale(0.9);
     }
     100% {
-      transform: scale(0.6);
+      transform: scale(0.7);
     }
   }
 `;
