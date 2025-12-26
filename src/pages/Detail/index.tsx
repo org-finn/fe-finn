@@ -10,12 +10,15 @@ import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
+import { useGetArticleSummaryTicker } from '@/api/hooks/useGetArticleSummaryTicker';
 import Loading from '@/components/common/Layout/Loading';
 import { useState, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import RotationArticleItem from '@/components/Detail/RotationArticleItem';
+import SummaryModal from '@/components/Detail/SummaryModal';
 import useIsMobile from '@/hooks/useIsMobile';
+import { MdOutlineStickyNote2 } from 'react-icons/md';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
@@ -24,6 +27,7 @@ export default function DetailPage() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
   const scrollPositionRef = useRef(0);
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
@@ -48,10 +52,12 @@ export default function DetailPage() {
   } = useGetRealTimePrice({
     tickerId: id,
   });
+  const { data: summaryResponse } = useGetArticleSummaryTicker(id);
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
   const realTimePriceData = realTimePriceResponse?.content;
+  const summaryData = summaryResponse?.content ?? null;
 
   const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
   const error = tickerError || realGraphError || realTimePriceError;
@@ -123,6 +129,11 @@ export default function DetailPage() {
 
   return (
     <Wrapper>
+      <SummaryModal
+        isOpen={showSummaryModal}
+        onClose={() => setShowSummaryModal(false)}
+        summaryData={summaryData}
+      />
       <TickerTitle>
         <CompanyInfo>
           <Text size={isMobile ? 'm' : 'l'} weight="bold">
@@ -246,9 +257,20 @@ export default function DetailPage() {
           predictionStrategy={tickerData.predictionStrategy}
         />
       )}
-      <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-        실제 주가
-      </Paragraph>
+      <StockPriceSection>
+        <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+          실제 주가
+        </Paragraph>
+        {isMobile && (
+          <SummaryButton
+            onClick={() => setShowSummaryModal(true)}
+            variant="grey"
+            size="small"
+          >
+            <MdOutlineStickyNote2 size={16} />
+          </SummaryButton>
+        )}
+      </StockPriceSection>
       <PeriodSelectorContainer>
         <PeriodSelector>
           {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
@@ -265,14 +287,25 @@ export default function DetailPage() {
             <LiveDot />
           </LiveButton>
         </PeriodSelector>
-        <RefreshContainer>
-          <RefreshButton onClick={handleRefresh} variant="grey" size="small">
-            <IoMdRefresh size={isMobile ? 14 : 16} />
-          </RefreshButton>
-          {showRefreshTooltip && (
-            <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
+        <ButtonGroup>
+          {!isMobile && (
+            <SummaryButton
+              onClick={() => setShowSummaryModal(true)}
+              variant="grey"
+              size="small"
+            >
+              <MdOutlineStickyNote2 size={16} />
+            </SummaryButton>
           )}
-        </RefreshContainer>
+          <RefreshContainer>
+            <RefreshButton onClick={handleRefresh} variant="grey" size="small">
+              <IoMdRefresh size={isMobile ? 14 : 16} />
+            </RefreshButton>
+            {showRefreshTooltip && (
+              <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
+            )}
+          </RefreshContainer>
+        </ButtonGroup>
       </PeriodSelectorContainer>
       {isLiveMode && realTimePriceData ? (
         <RealTimeTickerCharts
@@ -542,10 +575,39 @@ const LiveDot = styled.div`
     }
   }
 `;
+const StockPriceSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
 const PeriodSelectorContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 24px;
+
+  @media screen and (max-width: 768px) {
+    gap: 8px;
+    margin-right: 0;
+  }
+`;
+
+const SummaryButton = styled(Button)`
+  width: auto;
+  height: 34px;
+  padding: 0 12px;
+
+  @media screen and (max-width: 768px) {
+    height: 24px;
+    padding: 0 8px;
+  }
 `;
 
 const RefreshContainer = styled.div`
@@ -556,7 +618,6 @@ const RefreshContainer = styled.div`
 const RefreshButton = styled(Button)`
   width: 40px;
   height: 34px;
-  margin-right: 24px;
 
   &:hover {
     svg {

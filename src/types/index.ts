@@ -171,3 +171,12 @@ export type ArticleSummaryAllResponse = {
   negativeKeywords: string[];
   summaryDate: string;
 };
+
+export type ArticleSummaryTickerResponse = {
+  tickerId: string;
+  positiveReasoning: string[];
+  negativeReasoning: string[];
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  summaryDate: string;
+};
