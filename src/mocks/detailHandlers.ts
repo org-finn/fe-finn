@@ -3,6 +3,7 @@ import { BASE_URL } from '@/api/instance';
 import { getTickerDetailPath } from '@/api/hooks/useGetTickerDetail';
 import { getRealGraphPath } from '@/api/hooks/useGetRealGraph';
 import { getRealTimePricePath } from '@/api/hooks/useGetRealTimePrice';
+import { getArticleSummaryTickerPath } from '@/api/hooks/useGetArticleSummaryTicker';
 
 const mockNewsData = [
   {
@@ -471,6 +472,24 @@ const realTimeGraphData = {
 const mockRealGraphData = generateGraphDataWithChangeRate(
   baseMockRealGraphData
 );
+
+const mockArticleSummary = {
+  tickerId: '0-d-q-8b-95n',
+  positiveReasoning: [
+    'AI 선두 주자, 수익 증가',
+    '강력한 AI 인프라 수요',
+    '과대평가 아님, 마진 확대',
+  ],
+  negativeReasoning: [
+    '대중국 수출 규제 위험',
+    '고객 집중도 높음',
+    '경쟁 심화, 밸류에이션 우려',
+  ],
+  positiveKeywords: ['AI선두', 'CUDA', '수익성장', '인프라', '장기매수'],
+  negativeKeywords: ['수출규제', '고객집중', '경쟁심화', '전력망', '고평가'],
+  summaryDate: '2025-12-26',
+};
+
 export const detailHandlers = [
   http.get(`${BASE_URL}${getTickerDetailPath('0-d-q-8b-95n')}`, () => {
     return HttpResponse.json({
@@ -524,6 +543,13 @@ export const detailHandlers = [
       });
     }
   ),
+  http.get(`${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n')}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
+      content: mockArticleSummary,
+    });
+  }),
 ];
 
 export default detailHandlers;
