@@ -24,12 +24,16 @@ export default function LoginModal({ children, currentPath }: LoginModalProps) {
   const handleGoogleLogin = () => {
     // to-do: 백에서 프론트로 리다이렉트 해줄 때, 복원 로직(getItem) 필요
     localStorage.setItem('redirectPath', currentPath);
+    const state = crypto.randomUUID();
+    sessionStorage.setItem('oauthState', state);
+
     const params = new URLSearchParams({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       redirect_uri: `${window.location.origin}/callback`,
       response_type: 'code',
       scope: 'openid email profile',
       access_type: 'online',
+      state,
     });
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
   };

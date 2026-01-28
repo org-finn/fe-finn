@@ -9,6 +9,18 @@ export default function CallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get('code');
+    const state = searchParams.get('state'); // state 응답은 요청에 지정된 redirect_uri로 전송됨
+    const storedState = sessionStorage.getItem('oauthState');
+
+    // CSRF 공격 방지를 위한 state 파라미터 검증
+    if (!state || !storedState || state !== storedState) {
+      console.error('OAuth state mismatch - possible CSRF attack');
+      sessionStorage.removeItem('oauthState');
+      navigate('/', { replace: true });
+      return;
+    }
+    sessionStorage.removeItem('oauthState');
+
     if (!code) {
       navigate('/', { replace: true });
       return;
