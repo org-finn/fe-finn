@@ -12,6 +12,11 @@ import CallbackPage from './pages/Callback';
 import JoinPage from './pages/Join';
 import GlobalStyle from './global';
 
+/**
+ * Root application component that provides authentication context, applies global styles, and declares client-side routes.
+ *
+ * @returns The root React element containing providers and the app's routing structure.
+ */
 function App() {
   return (
     <AuthProvider>

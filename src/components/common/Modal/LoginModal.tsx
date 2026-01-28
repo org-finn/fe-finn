@@ -10,6 +10,16 @@ interface LoginModalProps {
   currentPath: string;
 }
 
+/**
+ * Renders a modal login UI that initiates Google OAuth and exposes a render-prop to open the modal.
+ *
+ * The modal is mounted into document.body via a portal, stores `currentPath` to localStorage before redirecting
+ * to Google's OAuth2 authorization endpoint, and closes when the overlay or close button is clicked.
+ *
+ * @param children - Optional render-prop that receives an `openModal` callback to open the login modal
+ * @param currentPath - Current route path to persist in localStorage for restoring after OAuth redirect
+ * @returns A React element containing the trigger (via `children`) and the portal-mounted login modal when open
+ */
 export default function LoginModal({ children, currentPath }: LoginModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 

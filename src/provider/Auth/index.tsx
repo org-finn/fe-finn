@@ -20,7 +20,15 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // 만료 시간 1시간
+const ACCESS_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; /**
+ * Provides authentication context and manages authentication state, token refresh, and login/logout side effects.
+ *
+ * Persists authentication status to localStorage, attempts an initial token reissue on mount when previously authenticated,
+ * refreshes the access token periodically while authenticated, and clears state plus navigates to `/` on logout.
+ *
+ * @param children - React nodes to render inside the provider
+ * @returns The AuthContext provider element that renders `children` after initialization
+ */
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(

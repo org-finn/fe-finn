@@ -6,6 +6,13 @@ interface GoogleLoginButtonProps {
   text?: 'signin_with' | 'signup_with' | 'continue_with';
 }
 
+/**
+ * Render a Google-branded login button that displays a Google logo and localized label, and calls `onLogin` when clicked.
+ *
+ * @param onLogin - Callback invoked when the button is activated
+ * @param text - Optional label variant: `'signin_with'` renders "Google 계정으로 로그인", `'signup_with'` renders "Google 계정으로 가입", otherwise renders "Google 계정으로 계속"
+ * @returns A React element representing the Google login button
+ */
 export default function GoogleLoginButton({
   onLogin,
   text,

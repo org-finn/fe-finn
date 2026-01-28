@@ -6,6 +6,12 @@ type PrivateRouteProps = {
   children: ReactElement;
 };
 
+/**
+ * Renders `children` only when the user is authenticated and redirects unauthenticated access from protected paths to the root.
+ *
+ * @param children - React element to render when access is allowed
+ * @returns The provided `children` React element when the user is authenticated, `null` otherwise.
+ */
 export default function PrivateRoute({ children }: PrivateRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
