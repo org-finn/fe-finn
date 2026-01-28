@@ -180,3 +180,13 @@ export type ArticleSummaryTickerResponse = {
   negativeKeywords: string[];
   summaryDate: string;
 };
+
+export type OAuthLoginRequest = {
+  authorizationCode: string;
+  deviceType: string;
+};
+
+export type TokenResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
