@@ -5,6 +5,7 @@ import TickerPage from './pages/Ticker';
 import DetailPage from './pages/Detail';
 import NewsBoardPage from './pages/NewsBoard';
 import ArticleDetailPage from './pages/ArticleDetail';
+import CallbackPage from './pages/Callback';
 import GlobalStyle from './global';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
     <>
       <GlobalStyle />
       <Routes>
+        <Route path="/callback" element={<CallbackPage />} />
         <Route path="/" element={<MainLayout />}>
           <Route index path="/" element={<MainPage />} />
           <Route path="/ticker" element={<TickerPage />} />
