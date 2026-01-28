@@ -16,16 +16,19 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
           alt="Articker Logo"
           onClick={() => navigate('/')}
         />
-        <NavButton
-          onClick={() =>
-            window.open(
-              'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
-              '_blank'
-            )
-          }
-        >
-          피드백 남기기
-        </NavButton>
+        <ButtonContainer>
+          <NavButton
+            onClick={() =>
+              window.open(
+                'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
+                '_blank'
+              )
+            }
+          >
+            피드백 남기기
+          </NavButton>
+          <LoginButton>로그인</LoginButton>
+        </ButtonContainer>
       </HeaderContainer>
     );
   }
@@ -58,6 +61,17 @@ const LogoWrapper = styled.img`
     width: 80px;
   }
 `;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media screen and (max-width: 768px) {
+    gap: 12px;
+  }
+`;
+
 const NavButton = styled.button`
   background: none;
   border: none;
@@ -68,5 +82,18 @@ const NavButton = styled.button`
 
   &:hover {
     color: #2d70d3;
+  }
+`;
+
+const LoginButton = styled.button`
+  border: none;
+  padding: 6px 14px;
+  background: none;
+  color: #708cbc;
+  cursor: pointer;
+
+  &:hover {
+    color: #2d70d3;
+    font-weight: bold;
   }
 `;
