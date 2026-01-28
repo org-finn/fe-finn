@@ -18,7 +18,7 @@ export default function GoogleLoginButton({
         : 'Google 계정으로 계속';
 
   return (
-    <Button onClick={onLogin} aria-label="Google 계정으로 로그인">
+    <Button onClick={onLogin} aria-label={buttonText}>
       <GoogleLogo src={GoogleLogoIcon} alt="Google logo" />
       <ButtonText>{buttonText}</ButtonText>
     </Button>
