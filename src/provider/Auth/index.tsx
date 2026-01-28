@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { usePostReissueToken } from '@/api/hooks/usePostReissueToken.ts';
+import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
 
 type AuthInfo = {
   isAuthenticated: boolean;
