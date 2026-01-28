@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import Logo from '@/assets/images/Articker.png';
 import { forwardRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LoginModal from '@/components/common/Modal/LoginModal';
 
 type HeaderProps = {
   onClick: () => void;
@@ -9,6 +10,8 @@ type HeaderProps = {
 export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
   (props, ref) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     return (
       <HeaderContainer ref={ref} onClick={props.onClick}>
         <LogoWrapper
@@ -27,7 +30,11 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
           >
             피드백 남기기
           </NavButton>
-          <LoginButton>로그인</LoginButton>
+          <LoginModal currentPath={location.pathname}>
+            {(openModal) => (
+              <LoginButton onClick={openModal}>로그인</LoginButton>
+            )}
+          </LoginModal>
         </ButtonContainer>
       </HeaderContainer>
     );
