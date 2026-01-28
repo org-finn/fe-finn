@@ -17,13 +17,7 @@ const GlobalStyle = createGlobalStyle`
 		font-display: swap;
 	}
 
-	@font-face {
-		font-family: "Roboto";
-		font-weight: 500;
-		src: url("./assets/fonts/Roboto-Medium.woff2") format("woff2"),
-		url("./assets/fonts/Roboto-Medium.woff") format("woff"),;
-		font-display: swap;
-	}
+	@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
     html, body, div, span, applet, object, iframe,
     h1, h2, h3, h4, h5, h6, p, blockquote, pre,
