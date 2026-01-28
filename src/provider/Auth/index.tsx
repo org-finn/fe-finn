@@ -1,20 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
-
-type AuthInfo = {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  handleLoginSuccess: () => void;
-  handleLogout: () => void;
-};
-
-export const AuthContext = createContext<AuthInfo | undefined>(undefined);
+import { AuthContext } from './AuthContext';
 
 interface AuthProviderProps {
   children: React.ReactNode;
