@@ -1,6 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+	@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
 	@font-face {
 		font-family: "Pretendard";
 		font-weight: 700;
@@ -16,8 +18,6 @@ const GlobalStyle = createGlobalStyle`
 		url("./assets/fonts/Pretendard-Regular.woff") format("font-woff"),;
 		font-display: swap;
 	}
-
-	@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
     html, body, div, span, applet, object, iframe,
     h1, h2, h3, h4, h5, h6, p, blockquote, pre,
