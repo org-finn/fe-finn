@@ -58,8 +58,8 @@ export type TickerGraphDataResponse = {
   date: string;
   price: number;
   changeRate: number;
-  positiveArticleCount: number;
-  negativeArticleCount: number;
+  positiveArticleRatio: number;
+  negativeArticleRatio: number;
 };
 
 export type GraphData = {
