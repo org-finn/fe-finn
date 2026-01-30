@@ -166,8 +166,8 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
                 margin-bottom: 4px;
                 font-size: 11px;
               ">
-                <span style="color: red; font-weight: 600;">긍정 ${positiveRatio}%</span>
-                <span style="color: blue; font-weight: 600;">부정 ${negativeRatio}%</span>
+                <span style="color: red; font-weight: 600;">긍정 ${positiveRatio * 100}%</span>
+                <span style="color: blue; font-weight: 600;">부정 ${negativeRatio * 100}%</span>
               </div>
               <div style="
                 display: flex;
@@ -177,11 +177,11 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
                 background: #e5e7eb;
               ">
                 <div style="
-                  width: ${positiveRatio}%;
+                  width: ${positiveRatio * 100}%;
                   background: #fbb8b8;
                 "></div>
                 <div style="
-                  width: ${negativeRatio}%;
+                  width: ${negativeRatio * 100}%;
                   background: #9fc0fa;
                 "></div>
               </div>

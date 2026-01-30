@@ -77,8 +77,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-09',
     price: 102.7,
-    positiveArticleRatio: 20,
-    negativeArticleRatio: 80,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
   {
     date: '2025-05-10',
@@ -89,20 +89,20 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-11',
     price: 100.9,
-    positiveArticleRatio: 10,
-    negativeArticleRatio: 90,
+    positiveArticleRatio: 0.1,
+    negativeArticleRatio: 0.9,
   },
   {
     date: '2025-05-12',
     price: 101.2,
-    positiveArticleRatio: 40,
-    negativeArticleRatio: 60,
+    positiveArticleRatio: 0.4,
+    negativeArticleRatio: 0.6,
   },
   {
     date: '2025-05-13',
     price: 103.7,
-    positiveArticleRatio: 18,
-    negativeArticleRatio: 82,
+    positiveArticleRatio: 0.18,
+    negativeArticleRatio: 0.82,
   },
   {
     date: '2025-05-14',
@@ -131,8 +131,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-18',
     price: 106.3,
-    positiveArticleRatio: 37,
-    negativeArticleRatio: 63,
+    positiveArticleRatio: 0.37,
+    negativeArticleRatio: 0.63,
   },
   {
     date: '2025-05-19',
@@ -155,8 +155,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-22',
     price: 102.1,
-    positiveArticleRatio: 41,
-    negativeArticleRatio: 59,
+    positiveArticleRatio: 0.41,
+    negativeArticleRatio: 0.59,
   },
   {
     date: '2025-05-23',
@@ -179,8 +179,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-26',
     price: 107.3,
-    positiveArticleRatio: 20,
-    negativeArticleRatio: 80,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
   {
     date: '2025-05-27',
@@ -203,8 +203,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-30',
     price: 110.2,
-    positiveArticleRatio: 67,
-    negativeArticleRatio: 33,
+    positiveArticleRatio: 0.67,
+    negativeArticleRatio: 0.33,
   },
   {
     date: '2025-05-31',
@@ -227,8 +227,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-06-03',
     price: 113.2,
-    positiveArticleRatio: 40,
-    negativeArticleRatio: 60,
+    positiveArticleRatio: 0.4,
+    negativeArticleRatio: 0.6,
   },
   {
     date: '2025-06-04',
@@ -245,8 +245,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-06-06',
     price: 116.4,
-    positiveArticleRatio: 58,
-    negativeArticleRatio: 42,
+    positiveArticleRatio: 0.5,
+    negativeArticleRatio: 0.5,
   },
   {
     date: '2025-06-07',
@@ -257,8 +257,8 @@ const baseMockRealGraphData = [
   {
     date: '2025-06-08',
     price: 118.5,
-    positiveArticleRatio: 20,
-    negativeArticleRatio: 80,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
 ];
 const realTimeGraphData = {
