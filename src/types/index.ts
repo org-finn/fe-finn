@@ -189,4 +189,5 @@ export type OAuthLoginRequest = {
 export type TokenResponse = {
   accessToken: string;
   refreshToken: string;
+  isNewUser: boolean;
 };
