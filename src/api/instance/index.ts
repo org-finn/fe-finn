@@ -6,6 +6,7 @@ import getCurrentConfig from '../config';
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
     timeout: 5000,
+    withCredentials: true,
     ...config,
     headers: {
       'Content-Type': 'application/json',
