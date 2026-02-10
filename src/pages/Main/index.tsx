@@ -15,9 +15,6 @@ import ArticleSummary from '@/components/Main/ArticleSummary';
 export default function MainPage() {
   const navigate = useNavigate();
   const { data: popularData } = useGetInfiniteTickerList({ sort: 'popular' });
-  const { data: volatilityData } = useGetInfiniteTickerList({
-    sort: 'volatility',
-  });
   const isMobile = useIsMobile();
   const variant = getABTestVariant();
 
@@ -63,32 +60,6 @@ export default function MainPage() {
           </TickerTitle>
           <TickerList
             items={popularData?.pages[0].content.predictionList || []}
-          />
-        </TickerWrapper>
-        <TickerWrapper>
-          <TickerTitle>
-            <Left>
-              <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
-                변동성이 가장 많은 종목 Top5
-              </Paragraph>
-              <Paragraph
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant="grey"
-              >
-                현재 변동성이 가장 많은 종목을 예측했어요!
-              </Paragraph>
-            </Left>
-            <MoreBtn
-              aria-label="more-ticker-btn"
-              onClick={() => navigate('/ticker')}
-            >
-              전체 보기
-              <IoIosArrowForward />
-            </MoreBtn>
-          </TickerTitle>
-          <TickerList
-            items={volatilityData?.pages[0].content.predictionList || []}
           />
         </TickerWrapper>
       </TickerSection>
