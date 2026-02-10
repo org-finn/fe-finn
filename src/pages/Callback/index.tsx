@@ -42,7 +42,11 @@ export default function CallbackPage() {
             return;
           }
           const redirectPath = localStorage.getItem('redirectPath');
-          if (redirectPath) {
+          if (
+            redirectPath &&
+            redirectPath.startsWith('/') &&
+            !redirectPath.startsWith('//')
+          ) {
             localStorage.removeItem('redirectPath');
             window.location.href = redirectPath;
           } else {
