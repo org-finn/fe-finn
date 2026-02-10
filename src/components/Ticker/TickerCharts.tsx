@@ -166,8 +166,8 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
                 margin-bottom: 4px;
                 font-size: 11px;
               ">
-                <span style="color: red; font-weight: 600;">긍정 ${positiveRatio * 100}%</span>
-                <span style="color: blue; font-weight: 600;">부정 ${negativeRatio * 100}%</span>
+                <span style="color: red; font-weight: 600;">긍정 ${Math.round(positiveRatio * 100)}%</span>
+                <span style="color: blue; font-weight: 600;">부정 ${Math.round(negativeRatio * 100)}%</span>
               </div>
               <div style="
                 display: flex;
