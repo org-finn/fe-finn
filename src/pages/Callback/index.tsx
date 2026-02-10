@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
 import useAuth from '@/hooks/useAuth';
 
 export default function CallbackPage() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { handleLoginSuccess } = useAuth();
   const { mutate: postOauthCode } = usePostOauthCode();
 
@@ -14,17 +13,20 @@ export default function CallbackPage() {
     const state = searchParams.get('state'); // state 응답은 요청에 지정된 redirect_uri로 전송됨
     const storedState = sessionStorage.getItem('oauthState');
 
+    if (!storedState) {
+      return;
+    }
     // CSRF 공격 방지를 위한 state 파라미터 검증
     if (!state || state !== storedState) {
       console.error('OAuth state mismatch - possible CSRF attack');
       sessionStorage.removeItem('oauthState');
-      navigate('/', { replace: true });
+      window.location.href = '/';
       return;
     }
     sessionStorage.removeItem('oauthState');
 
     if (!code) {
-      navigate('/', { replace: true });
+      window.location.href = '/';
       return;
     }
     postOauthCode(
@@ -36,24 +38,24 @@ export default function CallbackPage() {
         onSuccess: (response) => {
           handleLoginSuccess();
           if (response.content.isNewUser === true) {
-            navigate('/join', { replace: true });
+            window.location.href = '/join';
             return;
           }
           const redirectPath = localStorage.getItem('redirectPath');
           if (redirectPath) {
             localStorage.removeItem('redirectPath');
-            navigate(redirectPath, { replace: true });
+            window.location.href = redirectPath;
           } else {
-            navigate('/', { replace: true });
+            window.location.href = '/';
           }
         },
         onError: (error) => {
           console.error('OAuth login failed:', error);
-          navigate('/', { replace: true });
+          window.location.href = '/';
         },
       }
     );
-  }, [searchParams, navigate, postOauthCode, handleLoginSuccess]);
+  }, [searchParams, postOauthCode, handleLoginSuccess]);
 
   return null;
 }
