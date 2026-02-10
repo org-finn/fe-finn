@@ -41,7 +41,7 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
   }
 );
 export default MainHeader;
-export const HEADER_HEIGHT = 50;
+export const HEADER_HEIGHT = 60;
 
 const HeaderContainer = styled.header`
   position: sticky;
@@ -94,13 +94,18 @@ const NavButton = styled.button`
 
 const LoginButton = styled.button`
   border: none;
-  padding: 6px 14px;
-  background: none;
-  color: #708cbc;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background-color: #e7f0fe;
+  color: #2757aa;
+  font-weight: 600;
   cursor: pointer;
 
   &:hover {
-    color: #2d70d3;
-    font-weight: bold;
+    background-color: #dae5f8;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 6px 14px;
   }
 `;
