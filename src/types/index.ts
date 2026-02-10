@@ -58,8 +58,8 @@ export type TickerGraphDataResponse = {
   date: string;
   price: number;
   changeRate: number;
-  positiveArticleCount: number;
-  negativeArticleCount: number;
+  positiveArticleRatio: number;
+  negativeArticleRatio: number;
 };
 
 export type GraphData = {
@@ -189,4 +189,5 @@ export type OAuthLoginRequest = {
 export type TokenResponse = {
   accessToken: string;
   refreshToken: string;
+  isNewUser: boolean;
 };

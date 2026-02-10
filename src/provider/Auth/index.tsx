@@ -7,6 +7,7 @@ interface AuthProviderProps {
 }
 
 const ACCESS_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // 만료 시간 1시간
+const TOKEN_TIMESTAMP_KEY = 'lastTokenTime';
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -18,12 +19,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem(TOKEN_TIMESTAMP_KEY);
     window.location.href = '/';
   }, []);
 
   const refreshTokenRegularly = useCallback(async () => {
     try {
       await refreshToken('web');
+      localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
     } catch (error) {
       console.error('Token refresh failed:', error);
       handleLogout();
@@ -33,6 +36,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const handleLoginSuccess = useCallback(() => {
     if (!isAuthenticated) {
       localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
       setIsAuthenticated(true);
     }
   }, [isAuthenticated]);
@@ -42,14 +46,22 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       const savedAuthStatus =
         localStorage.getItem('isAuthenticated') === 'true';
       if (savedAuthStatus) {
-        try {
-          await refreshTokenRegularly();
-        } catch (error) {
-          console.error(
-            'Failed to refresh token during initialization:',
-            error
-          );
-          handleLogout();
+        const lastTokenTime = localStorage.getItem(TOKEN_TIMESTAMP_KEY);
+        const now = Date.now();
+
+        if (
+          !lastTokenTime ||
+          now - parseInt(lastTokenTime) >= ACCESS_TOKEN_REFRESH_INTERVAL
+        ) {
+          try {
+            await refreshTokenRegularly();
+          } catch (error) {
+            console.error(
+              'Failed to refresh token during initialization:',
+              error
+            );
+            handleLogout();
+          }
         }
       }
       setIsInitialized(true);

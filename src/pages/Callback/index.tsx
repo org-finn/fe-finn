@@ -1,43 +1,65 @@
-import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
+import useAuth from '@/hooks/useAuth';
 
 export default function CallbackPage() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const { handleLoginSuccess } = useAuth();
   const { mutate: postOauthCode } = usePostOauthCode();
+  const isOAuthProcessingRef = useRef(false);
 
   useEffect(() => {
+    if (isOAuthProcessingRef.current) return;
     const code = searchParams.get('code');
     const state = searchParams.get('state'); // state 응답은 요청에 지정된 redirect_uri로 전송됨
     const storedState = sessionStorage.getItem('oauthState');
 
     // CSRF 공격 방지를 위한 state 파라미터 검증
-    if (!state || !storedState || state !== storedState) {
+    if (!state || state !== storedState) {
       console.error('OAuth state mismatch - possible CSRF attack');
       sessionStorage.removeItem('oauthState');
-      navigate('/', { replace: true });
+      window.location.href = '/';
       return;
     }
     sessionStorage.removeItem('oauthState');
 
     if (!code) {
-      navigate('/', { replace: true });
+      window.location.href = '/';
       return;
     }
+    isOAuthProcessingRef.current = true;
     postOauthCode(
       {
         authorizationCode: code,
         deviceType: 'web',
       },
       {
+        onSuccess: (response) => {
+          handleLoginSuccess();
+          if (response.content.isNewUser === true) {
+            window.location.href = '/join';
+            return;
+          }
+          const redirectPath = localStorage.getItem('redirectPath');
+          if (
+            redirectPath &&
+            redirectPath.startsWith('/') &&
+            !redirectPath.startsWith('//')
+          ) {
+            localStorage.removeItem('redirectPath');
+            window.location.href = redirectPath;
+          } else {
+            window.location.href = '/';
+          }
+        },
         onError: (error) => {
           console.error('OAuth login failed:', error);
-          navigate('/', { replace: true });
+          window.location.href = '/';
         },
       }
     );
-  }, [searchParams, navigate, postOauthCode]);
+  }, [searchParams, postOauthCode, handleLoginSuccess]);
 
   return null;
 }

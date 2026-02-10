@@ -56,12 +56,10 @@ export default function LoginModal({ children, currentPath }: LoginModalProps) {
                 <LoginSection>
                   <LoginMessageWrapper>
                     <DividerLine />
-                    <LoginMessage>간편 로그인</LoginMessage>
-                    <DividerLine />
                   </LoginMessageWrapper>
                   <GoogleLoginButton
                     onLogin={handleGoogleLogin}
-                    text="continue_with"
+                    text="signin_with"
                   />
                 </LoginSection>
               </ContentWrapper>
@@ -200,16 +198,4 @@ const DividerLine = styled.div`
   flex: 1;
   height: 1px;
   background-color: #e0e0e0;
-`;
-
-const LoginMessage = styled.p`
-  font-size: 14px;
-  color: #999;
-  font-weight: 400;
-  margin: 0;
-  white-space: nowrap;
-
-  @media screen and (max-width: 768px) {
-    font-size: 12px;
-  }
 `;

@@ -11,7 +11,7 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const directRedirectPaths = ['/join', '/auth'];
+  const directRedirectPaths = ['/join', '/callback'];
   const isProtectedPath = directRedirectPaths.includes(location.pathname);
 
   useEffect(() => {
