@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
 import useAuth from '@/hooks/useAuth';
@@ -7,15 +7,14 @@ export default function CallbackPage() {
   const [searchParams] = useSearchParams();
   const { handleLoginSuccess } = useAuth();
   const { mutate: postOauthCode } = usePostOauthCode();
+  const isOAuthProcessingRef = useRef(false);
 
   useEffect(() => {
+    if (isOAuthProcessingRef.current) return;
     const code = searchParams.get('code');
     const state = searchParams.get('state'); // state 응답은 요청에 지정된 redirect_uri로 전송됨
     const storedState = sessionStorage.getItem('oauthState');
 
-    if (!storedState) {
-      return;
-    }
     // CSRF 공격 방지를 위한 state 파라미터 검증
     if (!state || state !== storedState) {
       console.error('OAuth state mismatch - possible CSRF attack');
@@ -29,6 +28,7 @@ export default function CallbackPage() {
       window.location.href = '/';
       return;
     }
+    isOAuthProcessingRef.current = true;
     postOauthCode(
       {
         authorizationCode: code,
