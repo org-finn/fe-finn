@@ -20,11 +20,7 @@ export default function NotFound() {
           요청한 페이지가 존재하지 않거나 삭제되었어요.
         </Paragraph>
       </TextWrapper>
-      <StyledButton
-        aria-label="NotFound 홈으로"
-        variant="blackOutline"
-        onClick={handleHome}
-      >
+      <StyledButton variant="blackOutline" onClick={handleHome}>
         홈으로 이동하기
       </StyledButton>
     </Wrapper>
