@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
+import { usePostLogout } from '@/api/hooks/usePostLogout';
 import { AuthContext } from './AuthContext';
 
 interface AuthProviderProps {
@@ -15,17 +16,23 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   );
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const { mutateAsync: refreshToken } = usePostReissueToken();
+  const { mutateAsync: logout } = usePostLogout();
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout({ deviceType: 'web' });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem(TOKEN_TIMESTAMP_KEY);
     window.location.href = '/';
-  }, []);
+  }, [logout]);
 
   const refreshTokenRegularly = useCallback(async () => {
     try {
-      await refreshToken('web');
+      await refreshToken({ deviceType: 'web' });
       localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
     } catch (error) {
       console.error('Token refresh failed:', error);

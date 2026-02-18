@@ -186,8 +186,23 @@ export type OAuthLoginRequest = {
   deviceType: string;
 };
 
+export type ReIssueRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
 export type TokenResponse = {
   accessToken: string;
   refreshToken: string;
   isNewUser: boolean;
+};
+
+export type LogoutRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
+export type ApiEmptyResponse = {
+  code: string;
+  content: Record<string, never>;
 };

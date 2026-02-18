@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Logo from '@/assets/images/Articker.png';
 import { forwardRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/Modal/LoginModal';
 
 type HeaderProps = {
@@ -11,6 +12,7 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
   (props, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { isAuthenticated, handleLogout } = useAuth();
 
     return (
       <HeaderContainer ref={ref} onClick={props.onClick}>
@@ -30,11 +32,15 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
           >
             피드백 남기기
           </NavButton>
-          <LoginModal currentPath={location.pathname}>
-            {(openModal) => (
-              <LoginButton onClick={openModal}>로그인</LoginButton>
-            )}
-          </LoginModal>
+          {isAuthenticated ? (
+            <AuthButton onClick={handleLogout}>로그아웃</AuthButton>
+          ) : (
+            <LoginModal currentPath={location.pathname}>
+              {(openModal) => (
+                <AuthButton onClick={openModal}>로그인</AuthButton>
+              )}
+            </LoginModal>
+          )}
         </ButtonContainer>
       </HeaderContainer>
     );
@@ -92,7 +98,7 @@ const NavButton = styled.button`
   }
 `;
 
-const LoginButton = styled.button`
+const AuthButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 14px;
