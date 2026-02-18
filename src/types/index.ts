@@ -186,6 +186,11 @@ export type OAuthLoginRequest = {
   deviceType: string;
 };
 
+export type ReIssueRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
 export type TokenResponse = {
   accessToken: string;
   refreshToken: string;

@@ -1,15 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 
-import { ApiResponse, TokenResponse } from '@/types';
+import { ApiResponse, ReIssueRequest, TokenResponse } from '@/types';
 
 export const postReissueTokenPath = () => `/api/v1/reIssue`;
 
-const postReissueToken = async (deviceType: string) => {
+const postReissueToken = async ({ deviceType }: ReIssueRequest) => {
   const response = await fetchInstance.post<ApiResponse<TokenResponse>>(
     postReissueTokenPath(),
     {
       deviceType,
+      // refreshToken는 앱 기능 시작할 때 추가
     },
     { withCredentials: true }
   );
@@ -18,6 +19,7 @@ const postReissueToken = async (deviceType: string) => {
 
 export const usePostReissueToken = () => {
   return useMutation({
-    mutationFn: (deviceType: string) => postReissueToken(deviceType),
+    mutationFn: ({ deviceType }: ReIssueRequest) =>
+      postReissueToken({ deviceType }),
   });
 };

@@ -6,7 +6,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // 만료 시간 1시간
+const ACCESS_TOKEN_REFRESH_INTERVAL = 1 * 30 * 1000; // 만료 시간 1시간
 const TOKEN_TIMESTAMP_KEY = 'lastTokenTime';
 
 export default function AuthProvider({ children }: AuthProviderProps) {
@@ -25,7 +25,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshTokenRegularly = useCallback(async () => {
     try {
-      await refreshToken('web');
+      await refreshToken({ deviceType: 'web' });
       localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
     } catch (error) {
       console.error('Token refresh failed:', error);
