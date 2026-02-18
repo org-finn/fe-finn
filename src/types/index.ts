@@ -191,3 +191,13 @@ export type TokenResponse = {
   refreshToken: string;
   isNewUser: boolean;
 };
+
+export type LogoutRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
+export type ApiEmptyResponse = {
+  code: string;
+  content: Record<string, never>;
+};
