@@ -206,3 +206,17 @@ export type ApiEmptyResponse = {
   code: string;
   content: Record<string, never>;
 };
+
+export type JoinTickerData = {
+  tickerCode: string;
+  shortCompanyName: string;
+  predictionStrategy: string;
+  sentiment: number;
+  graphData: PredictionListGraphDataResponse;
+};
+
+export type JoinTickerResponse = {
+  tickers: JoinTickerData[];
+  pageNumber: number;
+  hasNext: boolean;
+};
