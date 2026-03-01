@@ -70,10 +70,10 @@ export default function TickerCard({
         </ImageContainer>
         <InfoContainer>
           <TickerInfo>
-            <Text size="s" weight="bold">
+            <Text size={isMobile ? 'xs' : 's'} weight="bold">
               {tickerCode}
             </Text>
-            <Text size="xxs" weight="normal" variant="grey">
+            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
               {shortCompanyName}
             </Text>
           </TickerInfo>
@@ -123,9 +123,7 @@ const Wrapper = styled.div`
   padding: 12px;
 
   @media screen and (max-width: 768px) {
-    height: 100%;
-    aspect-ratio: 1.2 / 2;
-    width: auto;
+    width: 84%;
   }
 `;
 
@@ -152,6 +150,11 @@ const InfoContainer = styled.div`
   align-items: center;
   padding: 18px 0;
   gap: 10px;
+
+  @media screen and (max-width: 768px) {
+    padding: 16px 0;
+    gap: 8px;
+  }
 `;
 
 const TickerInfo = styled.div`
@@ -177,7 +180,7 @@ const LikeIcon = styled.div`
 
   @media screen and (max-width: 768px) {
     top: 8px;
-    right: 6px;
+    right: 0;
     svg {
       width: 24px;
       height: 24px;

@@ -31,8 +31,12 @@ export default function JoinPage() {
           searchResultCodes.includes(ticker.tickerCode)
         )
       : tickerList;
+  const itemSize = isMobile ? 8 : 9;
+  const displayTickers = filteredTickers.slice(0, itemSize);
   const totalPages =
-    searchResultCodes !== null ? Math.ceil(filteredTickers.length / 9) || 1 : 4;
+    searchResultCodes !== null
+      ? Math.ceil(filteredTickers.length / itemSize) || 1
+      : 4;
 
   const handlePageChange = (pageNum: number) => {
     setCurrentPage(pageNum);
@@ -93,7 +97,7 @@ export default function JoinPage() {
         />
       ) : (
         <CardContainer>
-          {filteredTickers.map((ticker) => (
+          {displayTickers.map((ticker) => (
             <TickerCard
               key={ticker.tickerCode}
               tickerCode={ticker.tickerCode}
@@ -148,6 +152,11 @@ const CardContainer = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 20px;
   margin-top: 10px;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -158,6 +167,7 @@ const ButtonWrapper = styled.div`
   margin-bottom: 30px;
 
   @media screen and (max-width: 768px) {
+    width: 90%;
     margin-bottom: 20px;
   }
 `;
