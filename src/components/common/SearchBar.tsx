@@ -1,10 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
 import { useGetTickerSearch } from '@/api/hooks/useGetTickerSearch';
 
-export default function SearchBar() {
+interface SearchBarProps {
+  onSearchResult?: (tickerCodes: string[] | null) => void;
+}
+
+export default function SearchBar({ onSearchResult }: SearchBarProps) {
   const [keyword, setKeyword] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -12,7 +16,10 @@ export default function SearchBar() {
   const navigate = useNavigate();
 
   const { data: searchData, isLoading } = useGetTickerSearch(keyword);
-  const tickerList = searchData?.content.tickerSearchList || [];
+  const tickerList = useMemo(
+    () => searchData?.content.tickerSearchList ?? [],
+    [searchData]
+  );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,13 +35,23 @@ export default function SearchBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!onSearchResult) return;
+    if (keyword.length < 2) {
+      onSearchResult(null);
+    } else {
+      onSearchResult(tickerList.map((t) => t.tickerCode));
+    }
+  }, [tickerList, keyword, onSearchResult]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setKeyword(value);
     setSelectedIndex(-1);
 
+    if (onSearchResult) return;
+
     if (value.length >= 2) {
-      // 2글자부터 드롭다운 열기
       setIsDropdownOpen(true);
     } else {
       setIsDropdownOpen(false);

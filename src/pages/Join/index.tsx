@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -10,6 +10,7 @@ import Button from '@/components/common/Button';
 import { useGetJoinTickerList } from '@/api/hooks/useGetJoinTickerList';
 import { usePutFavoriteTickers } from '@/api/hooks/usePutFavoriteTickers';
 import useIsMobile from '@/hooks/useIsMobile';
+import SearchBar from '@/components/common/SearchBar';
 
 export default function JoinPage() {
   const navigate = useNavigate();
@@ -19,9 +20,26 @@ export default function JoinPage() {
   );
   const { mutateAsync: postMultipleLikes } = usePutFavoriteTickers();
   const [currentPage, setCurrentPage] = useState(1);
-  const TOTAL_PAGES = 4;
+  const [searchResultCodes, setSearchResultCodes] = useState<string[] | null>(
+    null
+  );
+  const [totalPages, setTotalPages] = useState(4);
   const { data } = useGetJoinTickerList(currentPage - 1);
   const tickerList = data?.content.tickers || [];
+  const filteredTickers =
+    searchResultCodes !== null
+      ? tickerList.filter((ticker) =>
+          searchResultCodes.includes(ticker.tickerCode)
+        )
+      : tickerList;
+
+  useEffect(() => {
+    if (searchResultCodes !== null) {
+      setTotalPages(Math.ceil(filteredTickers.length / 9) || 1);
+    } else {
+      setTotalPages(4);
+    }
+  }, [searchResultCodes, filteredTickers.length]);
 
   const handlePageChange = (pageNum: number) => {
     setCurrentPage(pageNum);
@@ -72,7 +90,8 @@ export default function JoinPage() {
         </Text>
         을 선택하세요!
       </Paragraph>
-      {tickerList.length === 0 ? (
+      <SearchBar onSearchResult={setSearchResultCodes} />
+      {filteredTickers.length === 0 ? (
         <NoItem
           message="종목 정보가 없어요!"
           height={300}
@@ -80,7 +99,7 @@ export default function JoinPage() {
         />
       ) : (
         <CardContainer>
-          {tickerList.map((ticker) => (
+          {filteredTickers.map((ticker) => (
             <TickerCard
               key={ticker.tickerCode}
               tickerCode={ticker.tickerCode}
@@ -96,7 +115,7 @@ export default function JoinPage() {
       )}
       <Pagination
         currentPage={currentPage}
-        totalPages={TOTAL_PAGES}
+        totalPages={totalPages}
         onPageChange={handlePageChange}
       />
       <ButtonWrapper>
@@ -127,13 +146,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   margin: 0 auto;
   padding: 20px;
+  gap: 20px;
 `;
 
 const CardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const ButtonWrapper = styled.div`
