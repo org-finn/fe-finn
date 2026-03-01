@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
@@ -6,12 +6,25 @@ import Logo from '@/assets/images/Articker.png';
 import GoogleLoginButton from '../Button/GoogleLoginButton';
 
 interface LoginModalProps {
-  children: (openModal: () => void) => React.ReactNode;
+  children?: (openModal: () => void) => React.ReactNode;
   currentPath: string;
+  immediateOpen?: boolean;
+  onClose?: () => void;
 }
 
-export default function LoginModal({ children, currentPath }: LoginModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function LoginModal({
+  children,
+  currentPath,
+  immediateOpen = false,
+  onClose,
+}: LoginModalProps) {
+  const [isOpen, setIsOpen] = useState(immediateOpen);
+
+  useEffect(() => {
+    if (immediateOpen) {
+      setIsOpen(true);
+    }
+  }, [immediateOpen]);
 
   const openModal = () => {
     setIsOpen(true);
@@ -19,6 +32,9 @@ export default function LoginModal({ children, currentPath }: LoginModalProps) {
 
   const closeModal = () => {
     setIsOpen(false);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleGoogleLogin = () => {

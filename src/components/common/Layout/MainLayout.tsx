@@ -39,13 +39,12 @@ export default function MainLayout() {
     }
   };
   const showHeader = scrollDirection === 'up' || scrollDirection === null;
-
-  // 바깥 클릭 시 메뉴 닫기
+  const isJoinPage = location.pathname === '/join';
 
   return (
     <Wrapper>
       <MainHeader ref={headerRef} onClick={handleHeaderClick} />
-      <SubHeader visible={showHeader} ref={subHeaderRef} />
+      {!isJoinPage && <SubHeader visible={showHeader} ref={subHeaderRef} />}
       <InnerWrapper>
         <QueryErrorResetBoundary>
           {({ reset }) => (

@@ -59,12 +59,12 @@ const variantStyles = (variant: Props['variant'] = 'mint') => {
   }
   if (variant === 'blackOutline') {
     return {
-      boxShadow: '0 0 0 1px #000000 inset',
+      boxShadow: '0 0 0 1.4px #000000 inset',
       color: '#000000',
       background: 'none',
 
       '&:hover': {
-        backgroundColor: '#bac5db',
+        backgroundColor: '#f3f4f6',
       },
     };
   }
@@ -92,7 +92,7 @@ const variantStyles = (variant: Props['variant'] = 'mint') => {
   }
 
   return {
-    color: '#000',
+    color: '#ffffff',
     backgroundColor: '#0057FF',
     '&:hover': {
       backgroundColor: '#004ce4',
