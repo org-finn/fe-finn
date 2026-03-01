@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -23,7 +23,6 @@ export default function JoinPage() {
   const [searchResultCodes, setSearchResultCodes] = useState<string[] | null>(
     null
   );
-  const [totalPages, setTotalPages] = useState(4);
   const { data } = useGetJoinTickerList(currentPage - 1);
   const tickerList = data?.content.tickers || [];
   const filteredTickers =
@@ -32,14 +31,8 @@ export default function JoinPage() {
           searchResultCodes.includes(ticker.tickerCode)
         )
       : tickerList;
-
-  useEffect(() => {
-    if (searchResultCodes !== null) {
-      setTotalPages(Math.ceil(filteredTickers.length / 9) || 1);
-    } else {
-      setTotalPages(4);
-    }
-  }, [searchResultCodes, filteredTickers.length]);
+  const totalPages =
+    searchResultCodes !== null ? Math.ceil(filteredTickers.length / 9) || 1 : 4;
 
   const handlePageChange = (pageNum: number) => {
     setCurrentPage(pageNum);
