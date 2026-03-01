@@ -102,7 +102,9 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
           value={keyword}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => keyword.length >= 2 && setIsDropdownOpen(true)}
+          onFocus={() =>
+            !onSearchResult && keyword.length >= 2 && setIsDropdownOpen(true)
+          }
         />
         <SearchIcon
           size={24}
@@ -112,7 +114,7 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
         />
       </Wrapper>
 
-      {isDropdownOpen && (
+      {isDropdownOpen && !onSearchResult && (
         <DropdownContainer>
           {isLoading ? (
             <DropdownItem>검색 중...</DropdownItem>
