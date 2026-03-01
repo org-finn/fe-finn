@@ -51,6 +51,7 @@ export default function JoinPage() {
       }
     } catch (error) {
       console.error('좋아요 처리 중 오류 발생:', error);
+      alert('관심 종목 저장에 실패했습니다. 다시 시도해주세요!');
     } finally {
       navigate('/');
     }
