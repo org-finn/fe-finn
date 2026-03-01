@@ -220,3 +220,7 @@ export type JoinTickerResponse = {
   pageNumber: number;
   hasNext: boolean;
 };
+
+export type FavoriteTickersRequest = {
+  tickers: string[];
+};
