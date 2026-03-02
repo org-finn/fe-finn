@@ -10,6 +10,7 @@ import NewsBoardPage from './pages/NewsBoard';
 import ArticleDetailPage from './pages/ArticleDetail';
 import CallbackPage from './pages/Callback';
 import JoinPage from './pages/Join';
+import MyPage from './pages/My';
 import NotFoundPage from './pages/NotFound';
 import GlobalStyle from './global';
 
@@ -39,6 +40,14 @@ function App() {
             element={
               <PrivatedRoute>
                 <JoinPage />
+              </PrivatedRoute>
+            }
+          />
+          <Route
+            path="/my"
+            element={
+              <PrivatedRoute>
+                <MyPage />
               </PrivatedRoute>
             }
           />

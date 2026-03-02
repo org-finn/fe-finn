@@ -3,14 +3,14 @@ import { Suspense, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import MainHeader from './MainHeader';
+import MainHeader from './Header.tsx/MainHeader';
 import Footer from './Footer';
 import useScrollToTop from '@/hooks/useScrollToTop';
 import ErrorComponent from './Error';
 import Loading from './Loading';
 import MainSkeleton from '@/components/Main/MainSkeleton';
 import TickerSkeleton from '@/components/Ticker/TickerSkeleton';
-import SubHeader from './SubHeader';
+import SubHeader from './Header.tsx/SubHeader';
 import useIsTouchDevice from '@/hooks/useIsTouchDevice';
 import useScrollDirection from '@/hooks/useScrollDirection';
 
