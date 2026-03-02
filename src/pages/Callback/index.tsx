@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
+import { getUserInfo } from '@/api/hooks/useGetUserInfo';
 import useAuth from '@/hooks/useAuth';
 
 export default function CallbackPage() {
@@ -35,8 +36,9 @@ export default function CallbackPage() {
         deviceType: 'web',
       },
       {
-        onSuccess: (response) => {
-          handleLoginSuccess();
+        onSuccess: async (response) => {
+          const userInfoResponse = await getUserInfo();
+          handleLoginSuccess(userInfoResponse.content);
           if (response.content.isNewUser === true) {
             window.location.href = '/join';
             return;
