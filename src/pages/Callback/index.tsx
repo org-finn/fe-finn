@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
 import { getUserInfo } from '@/api/hooks/useGetUserInfo';
 import useAuth from '@/hooks/useAuth';
+import { setAccessToken } from '@/api/instance';
 
 export default function CallbackPage() {
   const [searchParams] = useSearchParams();
@@ -37,6 +38,7 @@ export default function CallbackPage() {
       },
       {
         onSuccess: async (response) => {
+          setAccessToken(response.content.accessToken);
           const userInfoResponse = await getUserInfo();
           handleLoginSuccess(userInfoResponse.content);
           if (response.content.isNewUser === true) {

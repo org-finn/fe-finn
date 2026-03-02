@@ -3,6 +3,7 @@ import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
 import { usePostLogout } from '@/api/hooks/usePostLogout';
 import { AuthContext } from './AuthContext';
 import { UserInfoResponse } from '@/types';
+import { setAccessToken } from '@/api/instance';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -33,7 +34,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshTokenRegularly = useCallback(async () => {
     try {
-      await refreshToken({ deviceType: 'web' });
+      const tokenResponse = await refreshToken({ deviceType: 'web' });
+      setAccessToken(tokenResponse.content.accessToken);
       localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
     } catch (error) {
       console.error('Token refresh failed:', error);
