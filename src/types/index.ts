@@ -237,3 +237,16 @@ export type NicknameRequest = {
 export type NicknameValidationResponse = {
   isEnable: boolean;
 };
+
+export type FavoriteTickerResponse = {
+  tickerId: string;
+  tickerCode: string;
+  shortCompanyName: string;
+  predictionStrategy: string;
+  sentiment: number;
+  graphData: PredictionListGraphDataResponse;
+};
+
+export type FavoriteTickersContent = {
+  tickers: FavoriteTickerResponse[];
+};
