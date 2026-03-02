@@ -5,6 +5,7 @@ import newsHandlers from './newsHandler';
 import { searchHandlers } from './searchHandler';
 import { articleDetailHandlers } from './articleDetailHandler';
 import { joinHandlers } from './joinHandler';
+import { myPageHandlers } from './myPageHandler';
 
 const server = setupServer(
   ...mainHandlers,
@@ -12,6 +13,7 @@ const server = setupServer(
   ...newsHandlers,
   ...searchHandlers,
   ...articleDetailHandlers,
-  ...joinHandlers
+  ...joinHandlers,
+  ...myPageHandlers
 );
 export default server;

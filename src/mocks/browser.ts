@@ -5,6 +5,7 @@ import newsHandlers from './newsHandler';
 import { searchHandlers } from './searchHandler';
 import { articleDetailHandlers } from './articleDetailHandler';
 import { joinHandlers } from './joinHandler';
+import { myPageHandlers } from './myPageHandler';
 
 export const worker = setupWorker(
   ...mainHandlers,
@@ -12,7 +13,8 @@ export const worker = setupWorker(
   ...newsHandlers,
   ...searchHandlers,
   ...articleDetailHandlers,
-  ...joinHandlers
+  ...joinHandlers,
+  ...myPageHandlers
 );
 
 export default worker;
