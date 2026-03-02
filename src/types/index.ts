@@ -224,3 +224,8 @@ export type JoinTickerResponse = {
 export type FavoriteTickersRequest = {
   tickers: string[];
 };
+
+export type UserInfoResponse = {
+  nickname: string;
+  imageUrl?: string;
+};
