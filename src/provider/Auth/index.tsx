@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
 import { usePostLogout } from '@/api/hooks/usePostLogout';
 import { AuthContext } from './AuthContext';
+import { UserInfoResponse } from '@/types';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -40,13 +41,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [refreshToken, handleLogout]);
 
-  const handleLoginSuccess = useCallback(() => {
-    if (!isAuthenticated) {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
-      setIsAuthenticated(true);
-    }
-  }, [isAuthenticated]);
+  const handleLoginSuccess = useCallback(
+    async (userInfo: UserInfoResponse) => {
+      if (!isAuthenticated) {
+        localStorage.setItem('nickname', userInfo.nickname);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
+        setIsAuthenticated(true);
+      }
+    },
+    [isAuthenticated]
+  );
 
   useEffect(() => {
     const initialize = async () => {
