@@ -41,8 +41,19 @@ export default function FavoriteArticleSection() {
     putFavoriteArticle(
       { articleId, mode: 'off' },
       {
-        onSuccess: () =>
-          queryClient.invalidateQueries({ queryKey: ['favoriteArticles'] }),
+        onSuccess: () => {
+          const newTotalPages = Math.max(
+            1,
+            Math.ceil((articles.length - 1) / PAGE_SIZE)
+          );
+          if (currentPage >= newTotalPages && currentPage > 0) {
+            setCurrentPage(newTotalPages - 1);
+          }
+          queryClient.invalidateQueries({ queryKey: ['favoriteArticles'] });
+        },
+        onError: () => {
+          alert('스크랩 해제에 실패했습니다. 다시 시도해주세요.');
+        },
       }
     );
   };
