@@ -2,7 +2,6 @@ import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 
 import { PageableData, TickerListData } from '@/types';
-import { getABTestVariant } from '@/utils/abTest';
 
 interface GetTickerListParams {
   sort: string;
@@ -14,11 +13,9 @@ export const getInfiniteTickerList = async ({
   sort,
   page,
 }: GetTickerListParams & { page: number }) => {
-  const variant = getABTestVariant();
   const params = new URLSearchParams({
     sort,
     page: page.toString(),
-    param: variant,
   });
 
   const response = await fetchInstance.get<PageableData<TickerListData>>(
