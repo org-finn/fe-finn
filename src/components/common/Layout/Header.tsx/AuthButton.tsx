@@ -11,7 +11,7 @@ import useClickOutside from '@/hooks/useClickOutside';
 
 export default function AuthButton() {
   const { isAuthenticated, handleLogout } = useAuth();
-  const { data } = useGetUserInfo();
+  const { data } = useGetUserInfo(isAuthenticated);
   const imageUrl = data?.content?.imageUrl;
   const navigate = useNavigate();
   const location = useLocation();

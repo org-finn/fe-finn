@@ -12,10 +12,11 @@ export const getUserInfo = async () => {
   return response.data;
 };
 
-export const useGetUserInfo = () => {
+export const useGetUserInfo = (enabled: boolean) => {
   return useQuery({
     queryKey: ['userInfo'],
     queryFn: getUserInfo,
     staleTime: 1000 * 60 * 5,
+    enabled,
   });
 };

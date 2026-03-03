@@ -9,7 +9,7 @@ type PrivateRouteProps = {
 
 export default function PrivateRoute({ children }: PrivateRouteProps) {
   const { isAuthenticated, isLoading, handleLoginSuccess } = useAuth();
-  const { data: userInfo } = useGetUserInfo();
+  const { data: userInfo } = useGetUserInfo(true);
   const navigate = useNavigate();
   const location = useLocation();
 

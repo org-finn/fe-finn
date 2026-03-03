@@ -12,7 +12,7 @@ import FavoriteArticleSection from '@/components/My/FavoriteArticleSection';
 import useAuth from '@/hooks/useAuth';
 
 export default function MyPage() {
-  const { data: userInfo } = useGetUserInfo();
+  const { data: userInfo } = useGetUserInfo(true);
   const userInfoData = userInfo?.content;
   const [nickname, setNickname] = useState(userInfoData?.nickname || '');
   const [isVisible, setIsVisible] = useState(true);
