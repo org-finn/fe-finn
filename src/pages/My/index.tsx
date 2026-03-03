@@ -1,5 +1,5 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdOutlineDriveFileRenameOutline } from 'react-icons/md';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
@@ -14,7 +14,7 @@ import useAuth from '@/hooks/useAuth';
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo(true);
   const userInfoData = userInfo?.content;
-  const [nickname, setNickname] = useState(userInfoData?.nickname || '');
+  const [nickname, setNickname] = useState('');
   const [isVisible, setIsVisible] = useState(true);
   const [validationNickname, setValidationNickname] = useState('');
   const { mutate: putNickname } = usePutNickname();
@@ -82,6 +82,12 @@ export default function MyPage() {
       });
     }
   };
+
+  useEffect(() => {
+    if (userInfoData?.nickname) {
+      setNickname(userInfoData.nickname);
+    }
+  }, [userInfoData?.nickname]);
 
   return (
     <Wrapper>
