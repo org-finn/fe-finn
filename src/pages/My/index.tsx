@@ -6,8 +6,10 @@ import { Text } from '@/components/common/typography/Text';
 import { usePutNickname } from '@/api/hooks/usePutNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { useGetNicknameValidation } from '@/api/hooks/useGetNicknameValidation';
+import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 import FavoriteTickerSection from '@/components/My/FavoriteTickerSection';
 import FavoriteArticleSection from '@/components/My/FavoriteArticleSection';
+import useAuth from '@/hooks/useAuth';
 
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
@@ -16,6 +18,8 @@ export default function MyPage() {
   const [isVisible, setIsVisible] = useState(true);
   const [validationNickname, setValidationNickname] = useState('');
   const { mutate: putNickname } = usePutNickname();
+  const { mutate: deleteUser } = useDeleteUser();
+  const { handleLogout } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: validationData, isLoading: isValidating } =
@@ -63,6 +67,22 @@ export default function MyPage() {
       }
     );
   };
+
+  const handleDeleteUser = () => {
+    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
+      deleteUser(undefined, {
+        onSuccess: () => {
+          handleLogout();
+          alert('회원 탈퇴가 완료되었습니다.');
+        },
+        onError: (error) => {
+          console.error('회원탈퇴 실패:', error);
+          alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+        },
+      });
+    }
+  };
+
   return (
     <Wrapper>
       <TitleWrapper>
@@ -129,6 +149,15 @@ export default function MyPage() {
         <FavoriteTickerSection />
         <FavoriteArticleSection />
       </FavoriteSection>
+      <Text
+        size="xs"
+        weight="normal"
+        style={{ color: '#9e9e9e', width: '90%' }}
+      >
+        아티커 회원 탈퇴를 원하시면{' '}
+        <UnderlineText onClick={handleDeleteUser}>여기</UnderlineText>를
+        눌러주세요.
+      </Text>
     </Wrapper>
   );
 }
@@ -138,7 +167,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 30px 0px 60px;
+  padding: 30px 0px 0px 0px;
 
   @media screen and (max-width: 768px) {
     width: 100%;
@@ -234,9 +263,16 @@ const FavoriteSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
+  margin-bottom: 20px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
     gap: 30px;
   }
+`;
+
+const UnderlineText = styled.span`
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
 `;
