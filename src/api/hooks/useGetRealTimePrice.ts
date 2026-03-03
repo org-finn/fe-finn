@@ -10,7 +10,7 @@ interface GetRealTimePriceParams {
 }
 
 export const getRealTimePricePath = (tickerId: string) =>
-  `/api/v1/price/ticker/${tickerId}/real-time`;
+  `/api/v1/price/ticker/${tickerId}/real-time/history`;
 
 export const getRealTimePrice = async ({
   tickerId,
