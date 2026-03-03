@@ -6,6 +6,7 @@ import { Text } from '@/components/common/typography/Text';
 import { usePutNickname } from '@/api/hooks/usePutNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { useGetNicknameValidation } from '@/api/hooks/useGetNicknameValidation';
+import FavoriteTickerSection from '@/components/My/FavoriteTickerSection';
 
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
@@ -120,6 +121,10 @@ export default function MyPage() {
           </EditWrapper>
         )}
       </TitleWrapper>
+      <Text size="m" weight="bold">
+        관심 종목
+      </Text>
+      <FavoriteTickerSection />
     </Wrapper>
   );
 }
@@ -128,7 +133,7 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 20px;
   padding: 30px 0px 60px;
 
   @media screen and (max-width: 768px) {
@@ -142,6 +147,7 @@ const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 20px;
 
   @media screen and (max-width: 768px) {
     width: 90%;

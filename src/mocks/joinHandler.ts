@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getJoinTickerListPath } from '@/api/hooks/useGetJoinTickerList';
 
-const mockTickerData = [
+export const mockTickerData = [
   {
     tickerCode: 'GOOGL',
     shortCompanyName: 'Google',
