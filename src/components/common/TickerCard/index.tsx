@@ -123,7 +123,7 @@ const Wrapper = styled.div`
   padding: 12px;
 
   @media screen and (max-width: 768px) {
-    width: 84%;
+    width: 120px;
   }
 `;
 
@@ -137,7 +137,7 @@ const ImageContainer = styled.div`
   margin-bottom: 4px;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
+    width: 116px;
   }
 `;
 

@@ -10,8 +10,10 @@ import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 import FavoriteTickerSection from '@/components/My/FavoriteTickerSection';
 import FavoriteArticleSection from '@/components/My/FavoriteArticleSection';
 import useAuth from '@/hooks/useAuth';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function MyPage() {
+  const isMobile = useIsMobile();
   const { data: userInfo } = useGetUserInfo(true);
   const userInfoData = userInfo?.content;
   const [nickname, setNickname] = useState('');
@@ -95,8 +97,12 @@ export default function MyPage() {
         {isVisible ? (
           <>
             <NickNameWrapper>
-              <Text size="l" weight="bold">
-                <Text size="xl" weight="bold" style={{ color: '#0057ff' }}>
+              <Text size={isMobile ? 'm' : 'l'} weight="bold">
+                <Text
+                  size={isMobile ? 'l' : 'xl'}
+                  weight="bold"
+                  style={{ color: '#0057ff' }}
+                >
                   {userInfoData?.nickname}
                 </Text>
                 <CustomButton
@@ -142,21 +148,22 @@ export default function MyPage() {
                   : '이미 사용 중인 닉네임입니다.'}
               </ValidationMessage>
             )}
-            <Text size="xs" weight="normal" style={{ color: '#9e9e9e' }}>
+            <Text
+              size={isMobile ? 'xxs' : 'xs'}
+              weight="normal"
+              style={{ color: '#9e9e9e' }}
+            >
               닉네임 길이는 1-12 글자로 제한됩니다.
             </Text>
           </EditWrapper>
         )}
       </TitleWrapper>
-      <Text size="m" weight="bold">
-        관심 종목
-      </Text>
       <FavoriteSection>
         <FavoriteTickerSection />
         <FavoriteArticleSection />
       </FavoriteSection>
       <Text
-        size="xs"
+        size={isMobile ? 'xxs' : 'xs'}
         weight="normal"
         style={{ color: '#9e9e9e', width: '90%' }}
       >
@@ -199,12 +206,20 @@ const EditWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  @media screen and (max-width: 768px) {
+    gap: 6px;
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   align-items: end;
   gap: 8px;
+
+  @media screen and (max-width: 768px) {
+    gap: 4px;
+  }
 `;
 
 const Input = styled.input`
@@ -217,6 +232,12 @@ const Input = styled.input`
   padding: 0;
   &:focus {
     outline: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 28px;
+    height: 30px;
+    max-width: 200px;
   }
 `;
 
@@ -274,6 +295,7 @@ const FavoriteSection = styled.div`
   @media screen and (max-width: 768px) {
     width: 90%;
     gap: 30px;
+    margin-bottom: 10px;
   }
 `;
 

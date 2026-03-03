@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import useIsMobile from '@/hooks/useIsMobile';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGetFavoriteArticles } from '@/api/hooks/useGetFavoriteArticles';
 import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
@@ -10,6 +11,7 @@ import NewsItem from '@/components/Article/ArticleItem';
 import { Text } from '@/components/common/typography/Text';
 
 export default function FavoriteArticleSection() {
+  const isMobile = useIsMobile();
   const { data } = useGetFavoriteArticles();
   const articles = data?.content.articles ?? [];
   const [currentPage, setCurrentPage] = useState(0);
@@ -61,7 +63,7 @@ export default function FavoriteArticleSection() {
   return (
     <SectionContainer>
       <SectionHeader>
-        <Text size="m" weight="bold">
+        <Text size={isMobile ? 's' : 'm'} weight="bold">
           기사 스크랩
         </Text>
         {articles.length > 2 && (

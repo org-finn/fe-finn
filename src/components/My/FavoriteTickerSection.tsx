@@ -2,12 +2,15 @@ import styled from 'styled-components';
 import { GrPrevious, GrNext } from 'react-icons/gr';
 import { useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import useIsMobile from '@/hooks/useIsMobile';
 import NoItem from '@/components/common/Layout/NoItem';
 import TickerCard from '@/components/common/TickerCard';
 import { useGetFavoriteTickers } from '@/api/hooks/useGetFavoriteTickers';
 import { usePutFavoriteTicker } from '@/api/hooks/usePutFavoriteTicker';
+import { Text } from '@/components/common/typography/Text';
 
 export default function FavoriteTickerSection() {
+  const isMobile = useIsMobile();
   const { data } = useGetFavoriteTickers();
   const tickers = data?.content.tickers ?? [];
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -43,10 +46,15 @@ export default function FavoriteTickerSection() {
 
   return (
     <SectionContainer>
+      <SectionHeader>
+        <Text size={isMobile ? 's' : 'm'} weight="bold">
+          관심 종목
+        </Text>
+      </SectionHeader>
       {tickers.length === 0 ? (
         <NoItem message="관심 종목이 없어요!" height={200} />
       ) : (
-        <>
+        <ListWrapper>
           {tickers.length > 3 && (
             <ArrowButton
               aria-label="관심 종목 스크롤 왼쪽"
@@ -81,13 +89,25 @@ export default function FavoriteTickerSection() {
               <GrNext size={40} />
             </ArrowButton>
           )}
-        </>
+        </ListWrapper>
       )}
     </SectionContainer>
   );
 }
 
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+`;
+
+const ListWrapper = styled.div`
   display: flex;
   align-items: center;
   position: relative;
