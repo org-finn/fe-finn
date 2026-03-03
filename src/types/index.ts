@@ -250,3 +250,18 @@ export type FavoriteTickerResponse = {
 export type FavoriteTickersContent = {
   tickers: FavoriteTickerResponse[];
 };
+
+export type FavoriteArticlesResponse = {
+  articleId: string;
+  title: string;
+  description: string;
+  shortCompanyNames: string[];
+  thumbnailUrl: string;
+  contentUrl: string;
+  publishedDate: string;
+  source: string;
+};
+
+export type FavoriteArticlesContent = {
+  articles: FavoriteArticlesResponse[];
+};
