@@ -7,6 +7,7 @@ import { usePutNickname } from '@/api/hooks/usePutNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { useGetNicknameValidation } from '@/api/hooks/useGetNicknameValidation';
 import FavoriteTickerSection from '@/components/My/FavoriteTickerSection';
+import FavoriteArticleSection from '@/components/My/FavoriteArticleSection';
 
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
@@ -124,7 +125,10 @@ export default function MyPage() {
       <Text size="m" weight="bold">
         관심 종목
       </Text>
-      <FavoriteTickerSection />
+      <FavoriteSection>
+        <FavoriteTickerSection />
+        <FavoriteArticleSection />
+      </FavoriteSection>
     </Wrapper>
   );
 }
@@ -223,5 +227,16 @@ const NickNameWrapper = styled.div`
   span {
     align-items: end;
     display: flex;
+  }
+`;
+
+const FavoriteSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    gap: 30px;
   }
 `;
