@@ -39,8 +39,13 @@ export default function CallbackPage() {
       {
         onSuccess: async (response) => {
           setAccessToken(response.content.accessToken);
-          const userInfoResponse = await getUserInfo();
-          handleLoginSuccess(userInfoResponse.content);
+          try {
+            const userInfoResponse = await getUserInfo();
+            handleLoginSuccess(userInfoResponse.content);
+          } catch {
+            window.location.href = '/';
+            return;
+          }
           if (response.content.isNewUser === true) {
             window.location.href = '/join';
             return;
