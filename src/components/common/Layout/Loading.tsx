@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import { HEADER_HEIGHT } from './MainHeader';
+import { HEADER_HEIGHT } from './Header.tsx/MainHeader';
 
 type Props = {
   size?: number;

@@ -224,3 +224,44 @@ export type JoinTickerResponse = {
 export type FavoriteTickersRequest = {
   tickers: string[];
 };
+
+export type UserInfoResponse = {
+  nickname: string;
+  imageUrl?: string;
+};
+
+export type NicknameRequest = {
+  nickname: string;
+};
+
+export type NicknameValidationResponse = {
+  isEnable: boolean;
+};
+
+export type FavoriteTickerResponse = {
+  tickerId: string;
+  tickerCode: string;
+  shortCompanyName: string;
+  predictionStrategy: string;
+  sentiment: number;
+  graphData: PredictionListGraphDataResponse;
+};
+
+export type FavoriteTickersContent = {
+  tickers: FavoriteTickerResponse[];
+};
+
+export type FavoriteArticlesResponse = {
+  articleId: string;
+  title: string;
+  description: string;
+  shortCompanyNames: string[];
+  thumbnailUrl: string;
+  contentUrl: string;
+  publishedDate: string;
+  source: string;
+};
+
+export type FavoriteArticlesContent = {
+  articles: FavoriteArticlesResponse[];
+};

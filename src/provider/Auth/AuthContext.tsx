@@ -1,9 +1,10 @@
 import { createContext } from 'react';
+import { UserInfoResponse } from '@/types';
 
 export type AuthInfo = {
   isAuthenticated: boolean;
   isLoading: boolean;
-  handleLoginSuccess: () => void;
+  handleLoginSuccess: (userInfo: UserInfoResponse) => Promise<void>;
   handleLogout: () => void;
 };
 

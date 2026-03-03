@@ -3,6 +3,12 @@ import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import getCurrentConfig from '../config';
 
+let accessToken: string | null = null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
     timeout: 5000,
@@ -13,6 +19,18 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       ...config.headers,
     },
   });
+
+  instance.interceptors.request.use(
+    (requestConfig) => {
+      if (accessToken) {
+        requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+      }
+      return requestConfig;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
   instance.interceptors.response.use(
     (response) => response,

@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
+import { getUserInfo } from '@/api/hooks/useGetUserInfo';
 import useAuth from '@/hooks/useAuth';
+import { setAccessToken } from '@/api/instance';
 
 export default function CallbackPage() {
   const [searchParams] = useSearchParams();
@@ -35,8 +37,15 @@ export default function CallbackPage() {
         deviceType: 'web',
       },
       {
-        onSuccess: (response) => {
-          handleLoginSuccess();
+        onSuccess: async (response) => {
+          setAccessToken(response.content.accessToken);
+          try {
+            const userInfoResponse = await getUserInfo();
+            handleLoginSuccess(userInfoResponse.content);
+          } catch {
+            window.location.href = '/';
+            return;
+          }
           if (response.content.isNewUser === true) {
             window.location.href = '/join';
             return;
