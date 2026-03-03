@@ -5,113 +5,48 @@ import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import useIsMobile from '@/hooks/useIsMobile';
-import { getABTestVariant } from '@/utils/abTest';
-import KeywordView from './ABTest/KeywordView';
-import ArticleView from './ABTest/ArticleView';
 import GraphView from './ABTest/GraphView';
 
 export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const isMobile = useIsMobile();
   const getVariant = useGetVariant(item.sentiment);
   const getSignSymbol = useGetSignSymbol(item.sentiment);
-  const variant = getABTestVariant();
-  const useCompactLayout =
-    variant === 'keyword' ||
-    (variant !== 'graph' && variant !== 'article' && isMobile);
 
   return (
     <Wrapper to={`/ticker/${item.tickerId}`}>
-      {useCompactLayout ? (
-        <MobileArticleLayout>
-          <MobileTickerInfo>
-            <Text size={isMobile ? 's' : 'm'} weight="bold">
-              {item.tickerCode}
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              {item.shortCompanyName}
-            </Text>
-          </MobileTickerInfo>
+      <LeftSection>
+        <TickerInfo>
+          <Text size={isMobile ? 's' : 'm'} weight="bold">
+            {item.tickerCode}
+          </Text>
+          <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
+            {item.shortCompanyName}
+          </Text>
+        </TickerInfo>
+        <SignalInfo>
+          {getSignSymbol && (
+            <span
+              style={{
+                marginRight: '4px',
+                fontSize: isMobile ? '12px' : '14px',
+              }}
+            >
+              {getSignSymbol}
+            </span>
+          )}
+          <Text
+            size={isMobile ? 'xxs' : 'xs'}
+            weight="bold"
+            variant={getVariant}
+          >
+            {item.predictionStrategy} 신호
+          </Text>
+        </SignalInfo>
+      </LeftSection>
 
-          <KeywordView
-            predictionStrategy={item.predictionStrategy}
-            sentiment={item.sentiment}
-            positiveKeywords={item.positiveKeywords}
-            negativeKeywords={item.negativeKeywords}
-          />
-        </MobileArticleLayout>
-      ) : variant === 'article' && isMobile ? (
-        <MobileArticleVariantLayout>
-          <MobileArticleTop>
-            <TickerInfo>
-              <Text size="s" weight="bold">
-                {item.tickerCode}
-              </Text>
-              <Text size="xxs" weight="normal" variant="grey">
-                {item.shortCompanyName}
-              </Text>
-            </TickerInfo>
-            <SignalInfo>
-              {getSignSymbol && (
-                <span
-                  style={{
-                    marginRight: '4px',
-                    fontSize: '12px',
-                  }}
-                >
-                  {getSignSymbol}
-                </span>
-              )}
-              <Text size="xxs" weight="bold" variant={getVariant}>
-                {item.predictionStrategy} 신호
-              </Text>
-            </SignalInfo>
-          </MobileArticleTop>
-          <ArticleView articleTitles={item.articleTitles} />
-        </MobileArticleVariantLayout>
-      ) : (
-        <>
-          <LeftSection>
-            <TickerInfo>
-              <Text size={isMobile ? 's' : 'm'} weight="bold">
-                {item.tickerCode}
-              </Text>
-              <Text
-                size={isMobile ? 'xxs' : 'xs'}
-                weight="normal"
-                variant="grey"
-              >
-                {item.shortCompanyName}
-              </Text>
-            </TickerInfo>
-            <SignalInfo>
-              {getSignSymbol && (
-                <span
-                  style={{
-                    marginRight: '4px',
-                    fontSize: isMobile ? '12px' : '14px',
-                  }}
-                >
-                  {getSignSymbol}
-                </span>
-              )}
-              <Text
-                size={isMobile ? 'xxs' : 'xs'}
-                weight="bold"
-                variant={getVariant}
-              >
-                {item.predictionStrategy} 신호
-              </Text>
-            </SignalInfo>
-          </LeftSection>
-
-          <PriceInfo>
-            {variant === 'article' && (
-              <ArticleView articleTitles={item.articleTitles} />
-            )}
-            {variant === 'graph' && <GraphView graphData={item.graphData} />}
-          </PriceInfo>
-        </>
-      )}
+      <PriceInfo>
+        <GraphView graphData={item.graphData} />
+      </PriceInfo>
     </Wrapper>
   );
 }
@@ -163,33 +98,4 @@ const PriceInfo = styled.div`
   align-items: flex-end;
   justify-content: center;
   flex: 1;
-`;
-
-const MobileArticleLayout = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 12px;
-`;
-
-const MobileTickerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
-`;
-
-const MobileArticleVariantLayout = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 8px;
-`;
-
-const MobileArticleTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
 `;
