@@ -4,7 +4,7 @@ import { fetchInstance } from '../instance';
 import { ApiResponse, NicknameValidationResponse } from '@/types';
 
 export const getNicknameValidationPath = (nickname: string) =>
-  `/api/v1/my/nickname/validation?nickname=${nickname}`;
+  `/api/v1/my/nickname/validation?nickname=${encodeURIComponent(nickname)}`;
 
 export const getNicknameValidation = async (nickname: string) => {
   const response = await fetchInstance.get<
