@@ -265,3 +265,12 @@ export type FavoriteArticlesResponse = {
 export type FavoriteArticlesContent = {
   articles: FavoriteArticlesResponse[];
 };
+
+export type TickerRealTimeStreamResponse = {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};
