@@ -73,10 +73,20 @@ export default function DetailPage() {
   useGetRealTimeStream(id, isLiveMode, (newItem) => {
     setLiveChartData((prev) => {
       const last = prev[prev.length - 1];
+      const toMinute = (time: string) => time.slice(0, 5);
+
       // 같은 1분봉이면 마지막 가격만 실시간 업데이트
-      if (last && last.hours === newItem.time) {
-        return [...prev.slice(0, -1), { ...last, price: newItem.close }];
+      if (last && toMinute(last.hours) === toMinute(newItem.time)) {
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...last,
+            price: newItem.close,
+            hours: newItem.time,
+          },
+        ];
       }
+
       const nextIndex = (last?.index ?? -1) + 1;
       return [
         ...prev,
