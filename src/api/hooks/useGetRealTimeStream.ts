@@ -20,7 +20,7 @@ export const useGetRealTimeStream = (
     let reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null;
     let isDisposed = false;
     const reconnectDelayMs = 1000;
-
+    const accessToken = getAccessToken();
     const connect = async () => {
       try {
         const response = await fetch(
@@ -28,7 +28,7 @@ export const useGetRealTimeStream = (
           {
             signal: abortController.signal,
             headers: {
-              Authorization: `Bearer ${getAccessToken()}`,
+              ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
               Accept: 'text/event-stream',
               'Cache-Control': 'no-cache',
             },
