@@ -53,6 +53,7 @@ export type TickerDetailData = {
   articleCount: number;
   sentimentScore: number;
   detailData: DetailDataResponse;
+  isFavorite?: boolean;
 };
 
 export type TickerGraphDataResponse = {

@@ -48,6 +48,7 @@ const mockTickerDetail = {
     volume: 1539200,
     article: mockNewsData,
   },
+  isFavorite: false,
 };
 
 const generateGraphDataWithChangeRate = (
