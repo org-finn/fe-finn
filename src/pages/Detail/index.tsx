@@ -5,7 +5,7 @@ import TickerCharts from '@/components/Ticker/TickerCharts';
 import RealTimeTickerCharts from '@/components/Ticker/RealTimeTickerCharts';
 import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
 import Button from '@/components/common/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
@@ -38,6 +38,7 @@ export default function DetailPage() {
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const location = useLocation();
   const scrollPositionRef = useRef(0);
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
