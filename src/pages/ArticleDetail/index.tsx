@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useGetArticleDetail } from '@/api/hooks/useGetArticleDetail';
 import Loading from '@/components/common/Layout/Loading';
 import { Text } from '@/components/common/typography/Text';
@@ -26,6 +26,12 @@ export default function ArticleDetailPage() {
   );
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { mutate: putFavoriteArticle } = usePutFavoriteArticle();
+
+  useEffect(() => {
+    if (articleData?.isFavorite !== undefined) {
+      setIsFavorite(articleData.isFavorite);
+    }
+  }, [articleData?.isFavorite]);
 
   const handleLikeClick = useCallback(() => {
     if (!isAuthenticated) {
