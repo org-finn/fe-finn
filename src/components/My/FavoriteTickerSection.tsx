@@ -68,7 +68,7 @@ export default function FavoriteTickerSection() {
           <ListContainer ref={listRef}>
             {tickers.map((ticker) => (
               <TickerCard
-                key={ticker.tickerId}
+                tickerId={ticker.tickerId}
                 tickerCode={ticker.tickerCode}
                 shortCompanyName={ticker.shortCompanyName}
                 predictionStrategy={ticker.predictionStrategy}

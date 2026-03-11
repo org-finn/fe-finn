@@ -3,8 +3,9 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import styled from 'styled-components';
 
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Text } from '@/components/common/typography/Text';
-import { JoinTickerData } from '@/types';
+import { FavoriteTickerResponse } from '@/types';
 import useAuth from '@/hooks/useAuth';
 import useIsMobile from '@/hooks/useIsMobile';
 import useGetVariant from '@/hooks/useGetVariant';
@@ -13,12 +14,13 @@ import GraphView from '@/components/Ticker/ABTest/GraphView';
 import LoginModal from '@/components/common/Modal/LoginModal';
 import { useLocation } from 'react-router-dom';
 
-interface TickerCardProps extends JoinTickerData {
+interface TickerCardProps extends FavoriteTickerResponse {
   onToggleLike: (tickerId: string, isFavorite: boolean) => void;
   isSelected: boolean;
 }
 
 export default function TickerCard({
+  tickerId,
   tickerCode,
   shortCompanyName,
   predictionStrategy,
@@ -28,6 +30,7 @@ export default function TickerCard({
   isSelected = false,
 }: TickerCardProps) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const getVariant = useGetVariant(sentiment);
   const getSignSymbol = useGetSignSymbol(sentiment);
   const { isAuthenticated } = useAuth();
@@ -49,7 +52,10 @@ export default function TickerCard({
 
   return (
     <>
-      <Wrapper>
+      <Wrapper
+        onClick={() => tickerId && navigate(`/ticker/${tickerId}`)}
+        style={{ cursor: tickerId ? 'pointer' : 'default' }}
+      >
         <ImageContainer>
           <LikeIcon onClick={handleLikeClick}>
             {isSelected ? (

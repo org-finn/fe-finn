@@ -241,7 +241,7 @@ export type NicknameValidationResponse = {
 };
 
 export type FavoriteTickerResponse = {
-  tickerId: string;
+  tickerId?: string;
   tickerCode: string;
   shortCompanyName: string;
   predictionStrategy: string;
