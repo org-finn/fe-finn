@@ -63,6 +63,7 @@ export default function DetailPage() {
     error: realTimePriceError,
   } = useGetRealTimePrice({
     tickerId: id,
+    enabled: isAuthenticated,
   });
   const { data: summaryResponse } = useGetArticleSummaryTicker(id);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
