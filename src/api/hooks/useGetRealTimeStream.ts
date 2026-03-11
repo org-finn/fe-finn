@@ -17,6 +17,9 @@ export const useGetRealTimeStream = (
     if (!enabled) return;
 
     const abortController = new AbortController();
+    let reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    let isDisposed = false;
+    const reconnectDelayMs = 1000;
 
     const connect = async () => {
       try {
@@ -70,11 +73,21 @@ export const useGetRealTimeStream = (
       } catch (err) {
         if ((err as Error).name === 'AbortError') return;
       }
+
+      if (isDisposed || abortController.signal.aborted) return;
+      reconnectTimeoutId = setTimeout(() => {
+        if (isDisposed || abortController.signal.aborted) return;
+        void connect();
+      }, reconnectDelayMs);
     };
 
-    connect();
+    void connect();
 
     return () => {
+      isDisposed = true;
+      if (reconnectTimeoutId) {
+        clearTimeout(reconnectTimeoutId);
+      }
       abortController.abort();
     };
   }, [tickerId, enabled]);
