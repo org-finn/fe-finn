@@ -112,7 +112,7 @@ export default function DetailPage() {
     }
   }, [realTimePriceData]);
 
-  useGetRealTimeStream(id, isLiveMode, (newItem) => {
+  useGetRealTimeStream(id, isLiveMode && isAuthenticated, (newItem) => {
     setLiveChartData((prev) => {
       const last = prev[prev.length - 1];
       const toMinute = (time: string) => time.slice(0, 5);
@@ -179,6 +179,10 @@ export default function DetailPage() {
   };
 
   const handleLiveMode = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     scrollPositionRef.current = window.scrollY;
     setIsLiveMode(true);
     requestAnimationFrame(() => {
