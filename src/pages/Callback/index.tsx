@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePostOauthCode } from '@/api/hooks/usePostOauthCode';
 import { getUserInfo } from '@/api/hooks/useGetUserInfo';
 import useAuth from '@/hooks/useAuth';
@@ -9,6 +10,7 @@ export default function CallbackPage() {
   const [searchParams] = useSearchParams();
   const { handleLoginSuccess } = useAuth();
   const { mutate: postOauthCode } = usePostOauthCode();
+  const queryClient = useQueryClient();
   const isOAuthProcessingRef = useRef(false);
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function CallbackPage() {
           setAccessToken(response.content.accessToken);
           try {
             const userInfoResponse = await getUserInfo();
+            queryClient.setQueryData(['userInfo'], userInfoResponse);
             handleLoginSuccess(userInfoResponse.content);
           } catch {
             window.location.href = '/';
@@ -68,7 +71,7 @@ export default function CallbackPage() {
         },
       }
     );
-  }, [searchParams, postOauthCode, handleLoginSuccess]);
+  }, [searchParams, postOauthCode, handleLoginSuccess, queryClient]);
 
   return null;
 }

@@ -10,8 +10,10 @@ import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
+import { useGetRealTimeStream } from '@/api/hooks/useGetRealTimeStream';
 import { useGetArticleSummaryTicker } from '@/api/hooks/useGetArticleSummaryTicker';
 import Loading from '@/components/common/Layout/Loading';
+import { TickerRealTimeGraphResponse } from '@/types';
 import { useState, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -24,6 +26,9 @@ export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
+  const [liveChartData, setLiveChartData] = useState<
+    TickerRealTimeGraphResponse[]
+  >([]);
   const [showTooltip, setShowTooltip] = useState(false);
   const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
@@ -58,6 +63,37 @@ export default function DetailPage() {
   const realGraphData = realGraphResponse?.content;
   const realTimePriceData = realTimePriceResponse?.content;
   const summaryData = summaryResponse?.content ?? null;
+
+  useEffect(() => {
+    if (realTimePriceData?.priceDataList) {
+      setLiveChartData(realTimePriceData.priceDataList);
+    }
+  }, [realTimePriceData]);
+
+  useGetRealTimeStream(id, isLiveMode, (newItem) => {
+    setLiveChartData((prev) => {
+      const last = prev[prev.length - 1];
+      const toMinute = (time: string) => time.slice(0, 5);
+
+      // 같은 1분봉이면 마지막 가격만 실시간 업데이트
+      if (last && toMinute(last.hours) === toMinute(newItem.time)) {
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...last,
+            price: newItem.close,
+            hours: newItem.time,
+          },
+        ];
+      }
+
+      const nextIndex = (last?.index ?? -1) + 1;
+      return [
+        ...prev,
+        { price: newItem.close, hours: newItem.time, index: nextIndex },
+      ];
+    });
+  });
 
   const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
   const error = tickerError || realGraphError || realTimePriceError;
@@ -307,10 +343,8 @@ export default function DetailPage() {
           </RefreshContainer>
         </ButtonGroup>
       </PeriodSelectorContainer>
-      {isLiveMode && realTimePriceData ? (
-        <RealTimeTickerCharts
-          realTimeData={realTimePriceData.priceDataList || []}
-        />
+      {isLiveMode ? (
+        <RealTimeTickerCharts realTimeData={liveChartData} />
       ) : (
         realGraphData && (
           <TickerCharts
