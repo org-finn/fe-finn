@@ -51,8 +51,8 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
     markers: {
       size: realData.map((item) => {
         const hasArticles =
-          (item.positiveArticleCount || 0) > 0 ||
-          (item.negativeArticleCount || 0) > 0;
+          (item.positiveArticleRatio || 0) > 0 ||
+          (item.negativeArticleRatio || 0) > 0;
         return hasArticles ? 4 : 1;
       }),
       colors: ['#ff6b6b'],
@@ -60,8 +60,8 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
       strokeWidth: 0,
       discrete: realData.map((item, index) => {
         const hasArticles =
-          (item.positiveArticleCount || 0) > 0 ||
-          (item.negativeArticleCount || 0) > 0;
+          (item.positiveArticleRatio || 0) > 0 ||
+          (item.negativeArticleRatio || 0) > 0;
         return hasArticles
           ? {
               seriesIndex: 0,
@@ -101,16 +101,16 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
       custom: function ({ series, seriesIndex, dataPointIndex }) {
         const price = series[seriesIndex][dataPointIndex];
         const changeRate = realData[dataPointIndex]?.changeRate || 0;
-        const positiveCount =
-          realData[dataPointIndex]?.positiveArticleCount || 0;
-        const negativeCount =
-          realData[dataPointIndex]?.negativeArticleCount || 0;
+        const positiveRatio =
+          realData[dataPointIndex]?.positiveArticleRatio || 0;
+        const negativeRatio =
+          realData[dataPointIndex]?.negativeArticleRatio || 0;
 
         const changeRateColor =
           changeRate > 0 ? 'red' : changeRate < 0 ? 'blue' : 'darkgrey';
         const changeRateSign = changeRate > 0 ? '+' : '';
 
-        const hasArticles = positiveCount > 0 || negativeCount > 0;
+        const hasArticles = positiveRatio > 0 || negativeRatio > 0;
 
         return `
           <div style="
@@ -121,7 +121,7 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 12px;
-            min-width: 120px;
+            min-width: 180px;
           ">
             <div style="
               font-weight: 600;
@@ -157,14 +157,34 @@ export default function TickerCharts({ realData, sentiment }: ChartProps) {
                 ? `
             <div style="
               border-top: 1px solid #e5e7eb;
-              padding-top: 6px;
+              padding-top: 8px;
               margin-top: 6px;
-              text-align: center;
             ">
-              <span style="color: #6b7280;">긍정 기사: </span>
-              <span style="font-weight: 600; color: red;">${positiveCount}개</span>
-              <span style="color: #6b7280; margin-left: 8px;">/ 부정 기사: </span>
-              <span style="font-weight: 600; color: blue;">${negativeCount}개</span>
+              <div style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+                font-size: 11px;
+              ">
+                <span style="color: red; font-weight: 600;">긍정 ${Math.round(positiveRatio * 100)}%</span>
+                <span style="color: blue; font-weight: 600;">부정 ${Math.round(negativeRatio * 100)}%</span>
+              </div>
+              <div style="
+                display: flex;
+                height: 8px;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #e5e7eb;
+              ">
+                <div style="
+                  width: ${positiveRatio * 100}%;
+                  background: #fbb8b8;
+                "></div>
+                <div style="
+                  width: ${negativeRatio * 100}%;
+                  background: #9fc0fa;
+                "></div>
+              </div>
             </div>
             `
                 : ''

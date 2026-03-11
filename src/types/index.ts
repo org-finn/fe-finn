@@ -26,6 +26,7 @@ export type PredictionDataResponse = {
   negativeKeywords?: string;
   articleTitles?: ArticleTitleResponse[]; // Optional: param=article
   graphData?: PredictionListGraphDataResponse; // Optional: param=graph
+  isFavorite?: boolean;
 };
 
 export type TickerListData = {
@@ -52,14 +53,15 @@ export type TickerDetailData = {
   articleCount: number;
   sentimentScore: number;
   detailData: DetailDataResponse;
+  isFavorite?: boolean;
 };
 
 export type TickerGraphDataResponse = {
   date: string;
   price: number;
   changeRate: number;
-  positiveArticleCount: number;
-  negativeArticleCount: number;
+  positiveArticleRatio: number;
+  negativeArticleRatio: number;
 };
 
 export type GraphData = {
@@ -86,8 +88,7 @@ export type ArticleDataResponse = {
   contentUrl: string;
   publishedDate: string;
   source: string;
-  // sentiment: string;
-  // reasoning: string;
+  isFavorite?: boolean;
 };
 
 export type ArticleListData = {
@@ -154,6 +155,7 @@ export type ArticleDetailResponse = {
   publishedDate: string;
   source: string;
   tickers: ArticleDetailTickerResponse[];
+  isFavorite?: boolean;
 };
 
 export type ExchangeRateResponse = {
@@ -170,4 +172,107 @@ export type ArticleSummaryAllResponse = {
   positiveKeywords: string[];
   negativeKeywords: string[];
   summaryDate: string;
+};
+
+export type ArticleSummaryTickerResponse = {
+  tickerId: string;
+  positiveReasoning: string[];
+  negativeReasoning: string[];
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  summaryDate: string;
+};
+
+export type OAuthLoginRequest = {
+  authorizationCode: string;
+  deviceType: string;
+};
+
+export type ReIssueRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
+export type TokenResponse = {
+  accessToken: string;
+  refreshToken: string;
+  isNewUser: boolean;
+};
+
+export type LogoutRequest = {
+  deviceType: string;
+  refreshToken?: string;
+};
+
+export type ApiEmptyResponse = {
+  code: string;
+  content: Record<string, never>;
+};
+
+export type JoinTickerData = {
+  tickerCode: string;
+  shortCompanyName: string;
+  predictionStrategy: string;
+  sentiment: number;
+  graphData: PredictionListGraphDataResponse;
+};
+
+export type JoinTickerResponse = {
+  tickers: JoinTickerData[];
+  pageNumber: number;
+  hasNext: boolean;
+};
+
+export type FavoriteTickersRequest = {
+  tickers: string[];
+};
+
+export type UserInfoResponse = {
+  nickname: string;
+  imageUrl?: string;
+};
+
+export type NicknameRequest = {
+  nickname: string;
+};
+
+export type NicknameValidationResponse = {
+  isEnable: boolean;
+};
+
+export type FavoriteTickerResponse = {
+  tickerId?: string;
+  tickerCode: string;
+  shortCompanyName: string;
+  predictionStrategy: string;
+  sentiment: number;
+  graphData: PredictionListGraphDataResponse;
+};
+
+export type FavoriteTickersContent = {
+  tickers: FavoriteTickerResponse[];
+};
+
+export type FavoriteArticlesResponse = {
+  articleId: string;
+  title: string;
+  description: string;
+  shortCompanyNames: string[];
+  thumbnailUrl: string;
+  contentUrl: string;
+  publishedDate: string;
+  source: string;
+};
+
+export type FavoriteArticlesContent = {
+  articles: FavoriteArticlesResponse[];
+};
+
+export type TickerRealTimeStreamResponse = {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
 };

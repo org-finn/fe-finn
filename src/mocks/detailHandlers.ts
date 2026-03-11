@@ -3,6 +3,9 @@ import { BASE_URL } from '@/api/instance';
 import { getTickerDetailPath } from '@/api/hooks/useGetTickerDetail';
 import { getRealGraphPath } from '@/api/hooks/useGetRealGraph';
 import { getRealTimePricePath } from '@/api/hooks/useGetRealTimePrice';
+import { getRealTimeStreamPath } from '@/api/hooks/useGetRealTimeStream';
+import { getArticleSummaryTickerPath } from '@/api/hooks/useGetArticleSummaryTicker';
+import { TickerRealTimeStreamResponse } from '@/types';
 
 const mockNewsData = [
   {
@@ -45,14 +48,15 @@ const mockTickerDetail = {
     volume: 1539200,
     article: mockNewsData,
   },
+  isFavorite: false,
 };
 
 const generateGraphDataWithChangeRate = (
   baseData: Array<{
     date: string;
     price: number;
-    positiveArticleCount: number;
-    negativeArticleCount: number;
+    positiveArticleRatio: number;
+    negativeArticleRatio: number;
   }>
 ) => {
   return baseData.map((item, index) => {
@@ -66,8 +70,8 @@ const generateGraphDataWithChangeRate = (
       date: item.date,
       price: item.price,
       changeRate: Number(changeRate.toFixed(2)),
-      positiveArticleCount: item.positiveArticleCount,
-      negativeArticleCount: item.negativeArticleCount,
+      positiveArticleRatio: item.positiveArticleRatio,
+      negativeArticleRatio: item.negativeArticleRatio,
     };
   });
 };
@@ -76,394 +80,209 @@ const baseMockRealGraphData = [
   {
     date: '2025-05-09',
     price: 102.7,
-    positiveArticleCount: 2,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
   {
     date: '2025-05-10',
     price: 101.5,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-11',
     price: 100.9,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0.1,
+    negativeArticleRatio: 0.9,
   },
   {
     date: '2025-05-12',
     price: 101.2,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0.4,
+    negativeArticleRatio: 0.6,
   },
   {
     date: '2025-05-13',
     price: 103.7,
-    positiveArticleCount: 1,
-    negativeArticleCount: 2,
+    positiveArticleRatio: 0.18,
+    negativeArticleRatio: 0.82,
   },
   {
     date: '2025-05-14',
     price: 105.2,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-15',
     price: 106.7,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-16',
     price: 108.2,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-17',
     price: 107.5,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-18',
     price: 106.3,
-    positiveArticleCount: 3,
-    negativeArticleCount: 1,
+    positiveArticleRatio: 0.37,
+    negativeArticleRatio: 0.63,
   },
   {
     date: '2025-05-19',
     price: 105.1,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-20',
     price: 104.7,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-21',
     price: 103.5,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-22',
     price: 102.1,
-    positiveArticleCount: 1,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0.41,
+    negativeArticleRatio: 0.59,
   },
   {
     date: '2025-05-23',
     price: 101.9,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-24',
     price: 104.2,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-25',
     price: 104.6,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-26',
     price: 107.3,
-    positiveArticleCount: 2,
-    negativeArticleCount: 3,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
   {
     date: '2025-05-27',
     price: 106.8,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-28',
     price: 108.9,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-29',
     price: 109.7,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-05-30',
     price: 110.2,
-    positiveArticleCount: 1,
-    negativeArticleCount: 1,
+    positiveArticleRatio: 0.67,
+    negativeArticleRatio: 0.33,
   },
   {
     date: '2025-05-31',
     price: 101.4,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-01',
     price: 111.9,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-02',
     price: 112.6,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-03',
     price: 113.2,
-    positiveArticleCount: 4,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0.4,
+    negativeArticleRatio: 0.6,
   },
   {
     date: '2025-06-04',
     price: 124.7,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-05',
     price: 115.9,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-06',
     price: 116.4,
-    positiveArticleCount: 0,
-    negativeArticleCount: 2,
+    positiveArticleRatio: 0.5,
+    negativeArticleRatio: 0.5,
   },
   {
     date: '2025-06-07',
     price: 117.7,
-    positiveArticleCount: 0,
-    negativeArticleCount: 0,
+    positiveArticleRatio: 0,
+    negativeArticleRatio: 0,
   },
   {
     date: '2025-06-08',
     price: 118.5,
-    positiveArticleCount: 2,
-    negativeArticleCount: 1,
+    positiveArticleRatio: 0.2,
+    negativeArticleRatio: 0.8,
   },
 ];
 const realTimeGraphData = {
   priceDate: '2025-09-02',
   tickerId: '0-d-q-8b-95n',
   priceDataList: [
-    {
-      price: 501.075,
-      hours: '15:25:00',
-      index: 23,
-    },
-    {
-      price: 500.94,
-      hours: '15:30:00',
-      index: 24,
-    },
-    {
-      price: 500.915,
-      hours: '15:35:00',
-      index: 25,
-    },
-    {
-      price: 500.48,
-      hours: '15:40:00',
-      index: 26,
-    },
-    {
-      price: 500.81,
-      hours: '15:45:00',
-      index: 27,
-    },
-    {
-      price: 500.71,
-      hours: '15:50:00',
-      index: 28,
-    },
-    {
-      price: 500.61,
-      hours: '15:55:00',
-      index: 29,
-    },
-    {
-      price: 500.77,
-      hours: '16:00:00',
-      index: 30,
-    },
-    {
-      price: 500.69,
-      hours: '16:05:00',
-      index: 31,
-    },
-    {
-      price: 500.935,
-      hours: '16:10:00',
-      index: 32,
-    },
-    {
-      price: 501.03,
-      hours: '16:15:00',
-      index: 33,
-    },
-    {
-      price: 501.44,
-      hours: '16:20:00',
-      index: 34,
-    },
-    {
-      price: 501.39,
-      hours: '16:25:00',
-      index: 35,
-    },
-    {
-      price: 500.965,
-      hours: '16:30:00',
-      index: 36,
-    },
-    {
-      price: 501.07,
-      hours: '16:35:00',
-      index: 37,
-    },
-    {
-      price: 500.82,
-      hours: '16:40:00',
-      index: 38,
-    },
-    {
-      price: 501.25,
-      hours: '16:45:00',
-      index: 39,
-    },
-    {
-      price: 501.07,
-      hours: '16:50:00',
-      index: 40,
-    },
-    {
-      price: 501.32,
-      hours: '16:55:00',
-      index: 41,
-    },
-    {
-      price: 501.53,
-      hours: '17:00:00',
-      index: 42,
-    },
-    {
-      price: 501.36,
-      hours: '17:05:00',
-      index: 43,
-    },
-    {
-      price: 501,
-      hours: '17:10:00',
-      index: 44,
-    },
-    {
-      price: 500.45,
-      hours: '17:15:00',
-      index: 45,
-    },
-    {
-      price: 500.81,
-      hours: '17:20:00',
-      index: 46,
-    },
-    {
-      price: 501.45,
-      hours: '17:25:00',
-      index: 47,
-    },
-    {
-      price: 501.96,
-      hours: '17:30:00',
-      index: 48,
-    },
-    {
-      price: 502.725,
-      hours: '17:35:00',
-      index: 49,
-    },
-    {
-      price: 502.78,
-      hours: '17:40:00',
-      index: 50,
-    },
-    {
-      price: 502.54,
-      hours: '17:45:00',
-      index: 51,
-    },
-    {
-      price: 502.6301,
-      hours: '17:50:00',
-      index: 52,
-    },
-    {
-      price: 502.54,
-      hours: '17:55:00',
-      index: 53,
-    },
-    {
-      price: 502.29,
-      hours: '18:00:00',
-      index: 54,
-    },
-    {
-      price: 502.76,
-      hours: '18:05:00',
-      index: 55,
-    },
-    {
-      price: 502.315,
-      hours: '18:10:00',
-      index: 56,
-    },
-    {
-      price: 502.6475,
-      hours: '18:15:00',
-      index: 57,
-    },
-    {
-      price: 501.85,
-      hours: '18:20:00',
-      index: 58,
-    },
-    {
-      price: 501.775,
-      hours: '18:25:00',
-      index: 59,
-    },
-    {
-      price: 501.44,
-      hours: '18:30:00',
-      index: 60,
-    },
-    {
-      price: 501.6875,
-      hours: '18:35:00',
-      index: 61,
-    },
-    {
-      price: 501.85,
-      hours: '18:40:00',
-      index: 62,
-    },
+    { price: 182.41, hours: '23:30:00', index: 0 },
+    { price: 182.55, hours: '23:31:00', index: 1 },
+    { price: 182.63, hours: '23:32:00', index: 2 },
+    { price: 182.48, hours: '23:33:00', index: 3 },
+    { price: 182.72, hours: '23:34:00', index: 4 },
+    { price: 183.01, hours: '23:35:00', index: 5 },
+    { price: 183.38, hours: '23:36:00', index: 6 },
+    { price: 183.55, hours: '23:37:00', index: 7 },
+    { price: 183.79, hours: '23:38:00', index: 8 },
+    { price: 183.91, hours: '23:39:00', index: 9 },
+    { price: 184.02, hours: '23:40:00', index: 10 },
+    { price: 184.18, hours: '23:41:00', index: 11 },
+    { price: 184.35, hours: '23:42:00', index: 12 },
+    { price: 184.51, hours: '23:43:00', index: 13 },
+    { price: 184.72, hours: '23:44:00', index: 14 },
   ],
   maxLen: 240,
 };
@@ -471,6 +290,24 @@ const realTimeGraphData = {
 const mockRealGraphData = generateGraphDataWithChangeRate(
   baseMockRealGraphData
 );
+
+const mockArticleSummary = {
+  tickerId: '0-d-q-8b-95n',
+  positiveReasoning: [
+    'AI 선두 주자, 수익 증가',
+    '강력한 AI 인프라 수요',
+    '과대평가 아님, 마진 확대',
+  ],
+  negativeReasoning: [
+    '대중국 수출 규제 위험',
+    '고객 집중도 높음',
+    '경쟁 심화, 밸류에이션 우려',
+  ],
+  positiveKeywords: ['AI선두', 'CUDA', '수익성장', '인프라', '장기매수'],
+  negativeKeywords: ['수출규제', '고객집중', '경쟁심화', '전력망', '고평가'],
+  summaryDate: '2025-12-26',
+};
+
 export const detailHandlers = [
   http.get(`${BASE_URL}${getTickerDetailPath('0-d-q-8b-95n')}`, () => {
     return HttpResponse.json({
@@ -524,6 +361,411 @@ export const detailHandlers = [
       });
     }
   ),
+  http.get(`${BASE_URL}${getRealTimeStreamPath('0-d-q-8b-95n')}`, () => {
+    const encoder = new TextEncoder();
+    const mockStreamEvents: TickerRealTimeStreamResponse[] = [
+      {
+        time: '23:45:15',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9001,
+        volume: 1247,
+      },
+      {
+        time: '23:45:15',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9,
+        volume: 276,
+      },
+      {
+        time: '23:45:15',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.885,
+        volume: 211,
+      },
+      {
+        time: '23:45:15',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9,
+        volume: 553,
+      },
+      {
+        time: '23:45:16',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.91,
+        volume: 3514,
+      },
+      {
+        time: '23:45:16',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9201,
+        volume: 989,
+      },
+      {
+        time: '23:45:16',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.95,
+        volume: 515,
+      },
+      {
+        time: '23:45:16',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9739,
+        volume: 280,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9739,
+        volume: 52,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9899,
+        volume: 15371,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9801,
+        volume: 629,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 200,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9737,
+        volume: 644,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 355,
+      },
+      {
+        time: '23:45:17',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9899,
+        volume: 306,
+      },
+      {
+        time: '23:45:18',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.985,
+        volume: 200,
+      },
+      {
+        time: '23:45:18',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.985,
+        volume: 381,
+      },
+      {
+        time: '23:45:18',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9735,
+        volume: 1301,
+      },
+      {
+        time: '23:45:18',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9801,
+        volume: 420,
+      },
+      {
+        time: '23:45:18',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9899,
+        volume: 301,
+      },
+      {
+        time: '23:45:19',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 59,
+      },
+      {
+        time: '23:45:19',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9776,
+        volume: 260,
+      },
+      {
+        time: '23:45:19',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9763,
+        volume: 448,
+      },
+      {
+        time: '23:45:19',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.97,
+        volume: 193,
+      },
+      {
+        time: '23:45:19',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9815,
+        volume: 130,
+      },
+      {
+        time: '23:45:20',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9699,
+        volume: 350,
+      },
+      {
+        time: '23:45:20',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.97,
+        volume: 193,
+      },
+      {
+        time: '23:45:20',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 846,
+      },
+      {
+        time: '23:45:20',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 103,
+      },
+      {
+        time: '23:45:20',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.975,
+        volume: 100,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.95,
+        volume: 42,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.973,
+        volume: 1100,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.96,
+        volume: 144,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.951,
+        volume: 297,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.985,
+        volume: 200,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.985,
+        volume: 192,
+      },
+      {
+        time: '23:45:21',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.98,
+        volume: 110,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.97,
+        volume: 108,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9751,
+        volume: 250,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.97,
+        volume: 138,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.97,
+        volume: 1500,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.978,
+        volume: 290,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9766,
+        volume: 114,
+      },
+      {
+        time: '23:45:22',
+        open: 182.4,
+        high: 184.99,
+        low: 182.0101,
+        close: 184.9751,
+        volume: 400,
+      },
+    ];
+
+    let timeoutIds: ReturnType<typeof setTimeout>[] = [];
+
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(
+          encoder.encode(
+            'event:connect\ndata:connected to e65bd0db-c2c2-4168-8f42-2d9b50388337\n\n'
+          )
+        );
+
+        mockStreamEvents.forEach((data, i) => {
+          const id = setTimeout(
+            () => {
+              controller.enqueue(
+                encoder.encode(
+                  `event:ticker-price\ndata:${JSON.stringify(data)}\n\n`
+                )
+              );
+              if (i === mockStreamEvents.length - 1) {
+                controller.close();
+              }
+            },
+            (i + 1) * 300
+          );
+          timeoutIds.push(id);
+        });
+      },
+      cancel() {
+        timeoutIds.forEach(clearTimeout);
+        timeoutIds = [];
+      },
+    });
+
+    return new HttpResponse(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
+  }),
+  http.get(`${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n')}`, () => {
+    return HttpResponse.json({
+      code: '200 OK',
+      message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
+      content: mockArticleSummary,
+    });
+  }),
 ];
 
 export default detailHandlers;

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Logo from '@/assets/images/Articker.png';
 import { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthButton from './AuthButton';
 
 type HeaderProps = {
   onClick: () => void;
@@ -9,6 +10,7 @@ type HeaderProps = {
 export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
   (props, ref) => {
     const navigate = useNavigate();
+
     return (
       <HeaderContainer ref={ref} onClick={props.onClick}>
         <LogoWrapper
@@ -16,22 +18,25 @@ export const MainHeader = forwardRef<HTMLDivElement, HeaderProps>(
           alt="Articker Logo"
           onClick={() => navigate('/')}
         />
-        <NavButton
-          onClick={() =>
-            window.open(
-              'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
-              '_blank'
-            )
-          }
-        >
-          피드백 남기기
-        </NavButton>
+        <ButtonContainer>
+          <NavButton
+            onClick={() =>
+              window.open(
+                'https://docs.google.com/forms/d/e/1FAIpQLSeXlCSj7un7J5cnisJRaQE_RTpEqSjcnDhVHv3ZrCOBj5-I3A/viewform?usp=dialog',
+                '_blank'
+              )
+            }
+          >
+            피드백 남기기
+          </NavButton>
+          <AuthButton />
+        </ButtonContainer>
       </HeaderContainer>
     );
   }
 );
 export default MainHeader;
-export const HEADER_HEIGHT = 50;
+export const HEADER_HEIGHT = 60;
 
 const HeaderContainer = styled.header`
   position: sticky;
@@ -58,6 +63,17 @@ const LogoWrapper = styled.img`
     width: 80px;
   }
 `;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media screen and (max-width: 768px) {
+    gap: 12px;
+  }
+`;
+
 const NavButton = styled.button`
   background: none;
   border: none;

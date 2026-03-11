@@ -6,6 +6,7 @@ import { getFilterTickerListPath } from '@/api/hooks/useGetFilterTickerList';
 const mockNewsList = [
   {
     articleId: '1',
+    isFavorite: true,
     title:
       'Bone Marrow Failure Market Growth Accelerates with Advances in Cell and Gene Therapy | DelveInsight',
     description:
@@ -20,6 +21,7 @@ const mockNewsList = [
   },
   {
     articleId: '29c3fbac-e2e7-41c0-baa3-aad081142d8f',
+    isFavorite: false,
     title: 'Transaction in Own Shares',
     description:
       'Shell plc announced a share buyback program on September 1, 2025, purchasing shares across multiple trading venues including London Stock Exchange, Chi-X, BATS, and Amsterdam exchanges. HSBC Bank plc is executing the trading decisions independently from July 31 to October 24, 2025.',

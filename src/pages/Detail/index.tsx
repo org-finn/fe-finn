@@ -5,28 +5,44 @@ import TickerCharts from '@/components/Ticker/TickerCharts';
 import RealTimeTickerCharts from '@/components/Ticker/RealTimeTickerCharts';
 import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
 import Button from '@/components/common/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
+import { useGetRealTimeStream } from '@/api/hooks/useGetRealTimeStream';
+import { useGetArticleSummaryTicker } from '@/api/hooks/useGetArticleSummaryTicker';
+import { usePutFavoriteTicker } from '@/api/hooks/usePutFavoriteTicker';
 import Loading from '@/components/common/Layout/Loading';
-import { useState, useEffect, useRef } from 'react';
+import { TickerRealTimeGraphResponse } from '@/types';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import RotationArticleItem from '@/components/Detail/RotationArticleItem';
+import SummaryModal from '@/components/Detail/SummaryModal';
 import useIsMobile from '@/hooks/useIsMobile';
+import useAuth from '@/hooks/useAuth';
+import { MdOutlineStickyNote2 } from 'react-icons/md';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
+import LoginModal from '@/components/common/Modal/LoginModal';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
+  const [liveChartData, setLiveChartData] = useState<
+    TickerRealTimeGraphResponse[]
+  >([]);
   const [showTooltip, setShowTooltip] = useState(false);
   const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const location = useLocation();
   const scrollPositionRef = useRef(0);
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  const { isAuthenticated } = useAuth();
 
   const {
     data: tickerResponse,
@@ -47,11 +63,79 @@ export default function DetailPage() {
     error: realTimePriceError,
   } = useGetRealTimePrice({
     tickerId: id,
+    enabled: isAuthenticated,
   });
+  const { data: summaryResponse } = useGetArticleSummaryTicker(id);
+  const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
   const realTimePriceData = realTimePriceResponse?.content;
+  const summaryData = summaryResponse?.content ?? null;
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    if (tickerData?.isFavorite !== undefined) {
+      setIsFavorite(tickerData.isFavorite);
+    }
+  }, [tickerData?.isFavorite]);
+
+  const handleLikeClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (!isAuthenticated) {
+        setShowLoginModal(true);
+        return;
+      }
+      const nextFavorite = !isFavorite;
+      setIsFavorite(nextFavorite);
+      putFavoriteTicker(
+        {
+          tickerCode: tickerData?.tickerCode ?? '',
+          mode: nextFavorite ? 'on' : 'off',
+        },
+        {
+          onError: () => {
+            setIsFavorite(!nextFavorite);
+            alert('좋아요 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        }
+      );
+    },
+    [isFavorite, isAuthenticated, tickerData?.tickerCode, putFavoriteTicker]
+  );
+
+  useEffect(() => {
+    if (realTimePriceData?.priceDataList) {
+      setLiveChartData(realTimePriceData.priceDataList);
+    }
+  }, [realTimePriceData]);
+
+  useGetRealTimeStream(id, isLiveMode && isAuthenticated, (newItem) => {
+    setLiveChartData((prev) => {
+      const last = prev[prev.length - 1];
+      const toMinute = (time: string) => time.slice(0, 5);
+
+      // 같은 1분봉이면 마지막 가격만 실시간 업데이트
+      if (last && toMinute(last.hours) === toMinute(newItem.time)) {
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...last,
+            price: newItem.close,
+            hours: newItem.time,
+          },
+        ];
+      }
+
+      const nextIndex = (last?.index ?? -1) + 1;
+      return [
+        ...prev,
+        { price: newItem.close, hours: newItem.time, index: nextIndex },
+      ];
+    });
+  });
 
   const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
   const error = tickerError || realGraphError || realTimePriceError;
@@ -95,6 +179,10 @@ export default function DetailPage() {
   };
 
   const handleLiveMode = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     scrollPositionRef.current = window.scrollY;
     setIsLiveMode(true);
     requestAnimationFrame(() => {
@@ -122,17 +210,134 @@ export default function DetailPage() {
   }
 
   return (
-    <Wrapper>
-      <TickerTitle>
-        <CompanyInfo>
-          <Text size={isMobile ? 'm' : 'l'} weight="bold">
-            {tickerData.shortCompanyName}
-          </Text>
-          <Text size={isMobile ? 'xs' : 's'} weight="normal" variant="grey">
-            {tickerData.tickerCode}
-          </Text>
-        </CompanyInfo>
-        {!isMobile && (
+    <>
+      <Wrapper>
+        <SummaryModal
+          isOpen={showSummaryModal}
+          onClose={() => setShowSummaryModal(false)}
+          summaryData={summaryData}
+        />
+        <TickerTitle>
+          <CompanyInfo>
+            <Text size={isMobile ? 'm' : 'l'} weight="bold">
+              {tickerData.shortCompanyName}
+            </Text>
+            <Text size={isMobile ? 'xs' : 's'} weight="normal" variant="grey">
+              {tickerData.tickerCode}
+            </Text>
+            <LikeIconWrapper onClick={handleLikeClick}>
+              {isFavorite ? (
+                <PiHeartFill color="#fe7373" size={isMobile ? 18 : 22} />
+              ) : (
+                <PiHeartLight size={isMobile ? 18 : 22} color="#ccc" />
+              )}
+            </LikeIconWrapper>
+          </CompanyInfo>
+          {!isMobile && (
+            <ScoreTitleContainer>
+              <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+                종목 점수
+              </Paragraph>
+              <TooltipContainer
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                <BsFillQuestionCircleFill
+                  size={isMobile ? 14 : 16}
+                  color="#BCC7D9"
+                />
+                {showTooltip && (
+                  <Tooltip>
+                    수집된 기사의 감정(긍정/부정) 비율에 추세를 반영하여 계산된
+                    점수입니다.
+                  </Tooltip>
+                )}
+              </TooltipContainer>
+            </ScoreTitleContainer>
+          )}
+        </TickerTitle>
+        <TickerInfo>
+          <InfoGrid>
+            <InfoItem>
+              <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
+                시가
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                $ {tickerData.detailData.open}
+              </Text>
+            </InfoItem>
+
+            <InfoItem>
+              <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
+                종가
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                $ {tickerData.detailData.close}
+              </Text>
+            </InfoItem>
+
+            <InfoItem>
+              <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
+                고가
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                $ {tickerData.detailData.high}
+              </Text>
+            </InfoItem>
+
+            <InfoItem>
+              <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
+                저가
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                $ {tickerData.detailData.low}
+              </Text>
+            </InfoItem>
+
+            <InfoItem>
+              <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
+                거래량
+              </Text>
+              <Text
+                size={isMobile ? 'xxs' : 'xs'}
+                weight="normal"
+                variant="grey"
+              >
+                {tickerData.detailData.volume.toLocaleString()}주
+              </Text>
+            </InfoItem>
+            <ItemDate>
+              <Text size="xxs" weight="normal" variant="grey">
+                * {formatDate(tickerData.detailData.priceDate)} 기준
+              </Text>
+            </ItemDate>
+          </InfoGrid>
+          {!isMobile && (
+            <ScoreGaugeChart
+              value={tickerData.sentimentScore}
+              maxValue={100}
+              title="점수"
+              predictionStrategy={tickerData.predictionStrategy}
+            />
+          )}
+        </TickerInfo>
+        {isMobile && (
           <ScoreTitleContainer>
             <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
               종목 점수
@@ -147,67 +352,14 @@ export default function DetailPage() {
               />
               {showTooltip && (
                 <Tooltip>
-                  수집된 기사의 감정(긍정/부정) 비율에 추세를 반영하여 계산된
-                  점수입니다.
+                  수집된 기사의 감정(긍정/부정) 비율에
+                  <br /> 추세를 반영하여 계산된 점수입니다.
                 </Tooltip>
               )}
             </TooltipContainer>
           </ScoreTitleContainer>
         )}
-      </TickerTitle>
-      <TickerInfo>
-        <InfoGrid>
-          <InfoItem>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-              시가
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              $ {tickerData.detailData.open}
-            </Text>
-          </InfoItem>
-
-          <InfoItem>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-              종가
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              $ {tickerData.detailData.close}
-            </Text>
-          </InfoItem>
-
-          <InfoItem>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-              고가
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              $ {tickerData.detailData.high}
-            </Text>
-          </InfoItem>
-
-          <InfoItem>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-              저가
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              $ {tickerData.detailData.low}
-            </Text>
-          </InfoItem>
-
-          <InfoItem>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal">
-              거래량
-            </Text>
-            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
-              {tickerData.detailData.volume.toLocaleString()}주
-            </Text>
-          </InfoItem>
-          <ItemDate>
-            <Text size="xxs" weight="normal" variant="grey">
-              * {formatDate(tickerData.detailData.priceDate)} 기준
-            </Text>
-          </ItemDate>
-        </InfoGrid>
-        {!isMobile && (
+        {isMobile && (
           <ScoreGaugeChart
             value={tickerData.sentimentScore}
             maxValue={100}
@@ -215,91 +367,94 @@ export default function DetailPage() {
             predictionStrategy={tickerData.predictionStrategy}
           />
         )}
-      </TickerInfo>
-      {isMobile && (
-        <ScoreTitleContainer>
+        <StockPriceSection>
           <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-            종목 점수
+            실제 주가
           </Paragraph>
-          <TooltipContainer
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-          >
-            <BsFillQuestionCircleFill
-              size={isMobile ? 14 : 16}
-              color="#BCC7D9"
-            />
-            {showTooltip && (
-              <Tooltip>
-                수집된 기사의 감정(긍정/부정) 비율에
-                <br /> 추세를 반영하여 계산된 점수입니다.
-              </Tooltip>
-            )}
-          </TooltipContainer>
-        </ScoreTitleContainer>
-      )}
-      {isMobile && (
-        <ScoreGaugeChart
-          value={tickerData.sentimentScore}
-          maxValue={100}
-          title="점수"
-          predictionStrategy={tickerData.predictionStrategy}
-        />
-      )}
-      <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-        실제 주가
-      </Paragraph>
-      <PeriodSelectorContainer>
-        <PeriodSelector>
-          {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
-            <PeriodButton
-              key={p}
-              $active={period === p && !isLiveMode}
-              onClick={() => handlePeriodChange(p)}
+          {isMobile && (
+            <SummaryButton
+              onClick={() => setShowSummaryModal(true)}
+              variant="grey"
+              size="small"
             >
-              {p}
-            </PeriodButton>
-          ))}
-          <LiveButton $active={isLiveMode} onClick={handleLiveMode}>
-            live
-            <LiveDot />
-          </LiveButton>
-        </PeriodSelector>
-        <RefreshContainer>
-          <RefreshButton onClick={handleRefresh} variant="grey" size="small">
-            <IoMdRefresh size={isMobile ? 14 : 16} />
-          </RefreshButton>
-          {showRefreshTooltip && (
-            <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
+              <MdOutlineStickyNote2 size={16} />
+            </SummaryButton>
           )}
-        </RefreshContainer>
-      </PeriodSelectorContainer>
-      {isLiveMode && realTimePriceData ? (
-        <RealTimeTickerCharts
-          realTimeData={realTimePriceData.priceDataList || []}
-        />
-      ) : (
-        realGraphData && (
-          <TickerCharts
-            realData={realGraphData.graphData || []}
-            sentiment={tickerData.sentiment ?? 0}
-          />
-        )
-      )}
-      {tickerData?.detailData.article &&
-        tickerData.detailData.article.length > 0 && (
-          <>
-            <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-              실시간 기사
-            </Paragraph>
-            <RotationArticleItem
-              key={currentNewsIndex}
-              item={tickerData.detailData.article[currentNewsIndex]}
-              tickerCode={tickerData.tickerCode}
+        </StockPriceSection>
+        <PeriodSelectorContainer>
+          <PeriodSelector>
+            {(['2W', '1M', '6M', '1Y'] as RealGraphPeriod[]).map((p) => (
+              <PeriodButton
+                key={p}
+                $active={period === p && !isLiveMode}
+                onClick={() => handlePeriodChange(p)}
+              >
+                {p}
+              </PeriodButton>
+            ))}
+            <LiveButton $active={isLiveMode} onClick={handleLiveMode}>
+              live
+              <LiveDot />
+            </LiveButton>
+          </PeriodSelector>
+          <ButtonGroup>
+            {!isMobile && (
+              <SummaryButton
+                onClick={() => setShowSummaryModal(true)}
+                variant="grey"
+                size="small"
+              >
+                <MdOutlineStickyNote2 size={16} />
+              </SummaryButton>
+            )}
+            <RefreshContainer>
+              <RefreshButton
+                onClick={handleRefresh}
+                variant="grey"
+                size="small"
+              >
+                <IoMdRefresh size={isMobile ? 14 : 16} />
+              </RefreshButton>
+              {showRefreshTooltip && (
+                <RefreshTooltip>
+                  최신 상태로 업데이트 되었습니다!
+                </RefreshTooltip>
+              )}
+            </RefreshContainer>
+          </ButtonGroup>
+        </PeriodSelectorContainer>
+        {isLiveMode ? (
+          <RealTimeTickerCharts realTimeData={liveChartData} />
+        ) : (
+          realGraphData && (
+            <TickerCharts
+              realData={realGraphData.graphData || []}
+              sentiment={tickerData.sentiment ?? 0}
             />
-          </>
+          )
         )}
-    </Wrapper>
+        {tickerData?.detailData.article &&
+          tickerData.detailData.article.length > 0 && (
+            <>
+              <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+                실시간 기사
+              </Paragraph>
+              <RotationArticleItem
+                key={currentNewsIndex}
+                item={tickerData.detailData.article[currentNewsIndex]}
+                tickerCode={tickerData.tickerCode}
+              />
+            </>
+          )}
+      </Wrapper>
+      {showLoginModal && (
+        <LoginModal
+          immediateOpen={true}
+          currentPath={location.pathname}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
+    </>
   );
 }
 const Wrapper = styled.div`
@@ -542,10 +697,39 @@ const LiveDot = styled.div`
     }
   }
 `;
+const StockPriceSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
 const PeriodSelectorContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 24px;
+
+  @media screen and (max-width: 768px) {
+    gap: 8px;
+    margin-right: 0;
+  }
+`;
+
+const SummaryButton = styled(Button)`
+  width: auto;
+  height: 34px;
+  padding: 0 12px;
+
+  @media screen and (max-width: 768px) {
+    height: 24px;
+    padding: 0 8px;
+  }
 `;
 
 const RefreshContainer = styled.div`
@@ -556,7 +740,6 @@ const RefreshContainer = styled.div`
 const RefreshButton = styled(Button)`
   width: 40px;
   height: 34px;
-  margin-right: 24px;
 
   &:hover {
     svg {
@@ -633,4 +816,11 @@ const ErrorMessage = styled.div`
   padding: 20px;
   text-align: center;
   color: #e74c3c;
+`;
+
+const LikeIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  line-height: 1;
 `;

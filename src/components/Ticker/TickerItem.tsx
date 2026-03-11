@@ -5,114 +5,99 @@ import { Link } from 'react-router-dom';
 import useGetVariant from '@/hooks/useGetVariant';
 import useGetSignSymbol from '@/hooks/useGetSignSymbol';
 import useIsMobile from '@/hooks/useIsMobile';
-import { getABTestVariant } from '@/utils/abTest';
-import KeywordView from './ABTest/KeywordView';
-import ArticleView from './ABTest/ArticleView';
 import GraphView from './ABTest/GraphView';
+import { useCallback, useState } from 'react';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
+import useAuth from '@/hooks/useAuth';
+import { usePutFavoriteTicker } from '@/api/hooks/usePutFavoriteTicker';
+import LoginModal from '@/components/common/Modal/LoginModal';
+import { useLocation } from 'react-router-dom';
 
 export default function TickerItem({ item }: { item: PredictionDataResponse }) {
   const isMobile = useIsMobile();
   const getVariant = useGetVariant(item.sentiment);
   const getSignSymbol = useGetSignSymbol(item.sentiment);
-  const variant = getABTestVariant();
-  const useCompactLayout =
-    variant === 'keyword' ||
-    (variant !== 'graph' && variant !== 'article' && isMobile);
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const [isFavorite, setIsFavorite] = useState(item.isFavorite ?? false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
+
+  const handleLikeClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (!isAuthenticated) {
+        setShowLoginModal(true);
+        return;
+      }
+      const nextFavorite = !isFavorite;
+      setIsFavorite(nextFavorite);
+      putFavoriteTicker(
+        { tickerCode: item.tickerCode, mode: nextFavorite ? 'on' : 'off' },
+        {
+          onError: () => {
+            setIsFavorite(!nextFavorite);
+            alert('좋아요 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        }
+      );
+    },
+    [isFavorite, isAuthenticated, item.tickerCode, putFavoriteTicker]
+  );
 
   return (
-    <Wrapper to={`/ticker/${item.tickerId}`}>
-      {useCompactLayout ? (
-        <MobileArticleLayout>
-          <MobileTickerInfo>
+    <>
+      <Wrapper to={`/ticker/${item.tickerId}`}>
+        <LeftSection>
+          <TickerInfo>
             <Text size={isMobile ? 's' : 'm'} weight="bold">
               {item.tickerCode}
             </Text>
             <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
               {item.shortCompanyName}
             </Text>
-          </MobileTickerInfo>
-
-          <KeywordView
-            predictionStrategy={item.predictionStrategy}
-            sentiment={item.sentiment}
-            positiveKeywords={item.positiveKeywords}
-            negativeKeywords={item.negativeKeywords}
-          />
-        </MobileArticleLayout>
-      ) : variant === 'article' && isMobile ? (
-        <MobileArticleVariantLayout>
-          <MobileArticleTop>
-            <TickerInfo>
-              <Text size="s" weight="bold">
-                {item.tickerCode}
-              </Text>
-              <Text size="xxs" weight="normal" variant="grey">
-                {item.shortCompanyName}
-              </Text>
-            </TickerInfo>
-            <SignalInfo>
-              {getSignSymbol && (
-                <span
-                  style={{
-                    marginRight: '4px',
-                    fontSize: '12px',
-                  }}
-                >
-                  {getSignSymbol}
-                </span>
+            <LikeIconWrapper onClick={handleLikeClick}>
+              {isFavorite ? (
+                <PiHeartFill color="#fe7373" size={isMobile ? 18 : 22} />
+              ) : (
+                <PiHeartLight size={isMobile ? 18 : 22} color="#ccc" />
               )}
-              <Text size="xxs" weight="bold" variant={getVariant}>
-                {item.predictionStrategy} 신호
-              </Text>
-            </SignalInfo>
-          </MobileArticleTop>
-          <ArticleView articleTitles={item.articleTitles} />
-        </MobileArticleVariantLayout>
-      ) : (
-        <>
-          <LeftSection>
-            <TickerInfo>
-              <Text size={isMobile ? 's' : 'm'} weight="bold">
-                {item.tickerCode}
-              </Text>
-              <Text
-                size={isMobile ? 'xxs' : 'xs'}
-                weight="normal"
-                variant="grey"
+            </LikeIconWrapper>
+          </TickerInfo>
+          <SignalInfo>
+            {getSignSymbol && (
+              <span
+                style={{
+                  marginRight: '4px',
+                  fontSize: isMobile ? '12px' : '14px',
+                }}
               >
-                {item.shortCompanyName}
-              </Text>
-            </TickerInfo>
-            <SignalInfo>
-              {getSignSymbol && (
-                <span
-                  style={{
-                    marginRight: '4px',
-                    fontSize: isMobile ? '12px' : '14px',
-                  }}
-                >
-                  {getSignSymbol}
-                </span>
-              )}
-              <Text
-                size={isMobile ? 'xxs' : 'xs'}
-                weight="bold"
-                variant={getVariant}
-              >
-                {item.predictionStrategy} 신호
-              </Text>
-            </SignalInfo>
-          </LeftSection>
-
-          <PriceInfo>
-            {variant === 'article' && (
-              <ArticleView articleTitles={item.articleTitles} />
+                {getSignSymbol}
+              </span>
             )}
-            {variant === 'graph' && <GraphView graphData={item.graphData} />}
-          </PriceInfo>
-        </>
+            <Text
+              size={isMobile ? 'xxs' : 'xs'}
+              weight="bold"
+              variant={getVariant}
+            >
+              {item.predictionStrategy} 신호
+            </Text>
+          </SignalInfo>
+        </LeftSection>
+
+        <PriceInfo>
+          <GraphView graphData={item.graphData} />
+        </PriceInfo>
+      </Wrapper>
+      {showLoginModal && (
+        <LoginModal
+          immediateOpen={true}
+          currentPath={location.pathname}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
-    </Wrapper>
+    </>
   );
 }
 
@@ -148,7 +133,7 @@ const LeftSection = styled.div`
 const TickerInfo = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 8px;
 `;
 
@@ -165,31 +150,9 @@ const PriceInfo = styled.div`
   flex: 1;
 `;
 
-const MobileArticleLayout = styled.div`
+const LikeIconWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  gap: 12px;
-`;
-
-const MobileTickerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
-`;
-
-const MobileArticleVariantLayout = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 8px;
-`;
-
-const MobileArticleTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
+  cursor: pointer;
+  line-height: 1;
 `;

@@ -46,6 +46,7 @@ jobs:
           fi
         env:
           VITE_GOOGLE_TAG: ${{ secrets.VITE_GOOGLE_TAG }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

@@ -7,29 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { useGetInfiniteTickerList } from '@/api/hooks/useGetInfiniteTickerList';
 import MarketStatusBanner from '@/components/common/Banner/MarketStatusBanner';
 import useIsMobile from '@/hooks/useIsMobile';
-import { useEffect } from 'react';
-import { getABTestVariant } from '@/utils/abTest';
 import ExchangeRate from '@/components/common/ExchangeRate';
 import ArticleSummary from '@/components/Main/ArticleSummary';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const { data: popularData } = useGetInfiniteTickerList({ sort: 'popular' });
-  const { data: volatilityData } = useGetInfiniteTickerList({
-    sort: 'volatility',
-  });
   const isMobile = useIsMobile();
-  const variant = getABTestVariant();
-
-  useEffect(() => {
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        event: 'ticker_item_view',
-        ab_test_name: 'ticker_item_ui',
-        ab_test_variant: variant,
-      });
-    }
-  }, [variant]);
   return (
     <Wrapper>
       <Header>
@@ -63,32 +47,6 @@ export default function MainPage() {
           </TickerTitle>
           <TickerList
             items={popularData?.pages[0].content.predictionList || []}
-          />
-        </TickerWrapper>
-        <TickerWrapper>
-          <TickerTitle>
-            <Left>
-              <Paragraph size={isMobile ? 'xs' : 'm'} weight="bold">
-                변동성이 가장 많은 종목 Top5
-              </Paragraph>
-              <Paragraph
-                size={isMobile ? '12px' : 'xxs'}
-                weight="normal"
-                variant="grey"
-              >
-                현재 변동성이 가장 많은 종목을 예측했어요!
-              </Paragraph>
-            </Left>
-            <MoreBtn
-              aria-label="more-ticker-btn"
-              onClick={() => navigate('/ticker')}
-            >
-              전체 보기
-              <IoIosArrowForward />
-            </MoreBtn>
-          </TickerTitle>
-          <TickerList
-            items={volatilityData?.pages[0].content.predictionList || []}
           />
         </TickerWrapper>
       </TickerSection>
