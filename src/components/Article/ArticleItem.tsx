@@ -40,18 +40,6 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
     [isFavorite, isAuthenticated, item.articleId, putFavoriteArticle]
   );
 
-  // const getSentimentInfo = () => {
-  //   if (item.sentiment === 'positive') {
-  //     return { label: '긍정', emoji: '📈', color: '#ef4444' };
-  //   } else if (item.sentiment === 'negative') {
-  //     return { label: '부정', emoji: '📉', color: '#3b82f6' };
-  //   } else {
-  //     return { label: '중립', emoji: '➖', color: '#6b7280' };
-  //   }
-  // };
-
-  // const sentimentInfo = getSentimentInfo();
-
   return (
     <>
       <Wrapper onClick={handleClick}>
@@ -95,14 +83,6 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
               </>
             ) : (
               <>
-                {/* {item.sentiment !== null && (
-                  <SentimentTag $color={sentimentInfo.color}>
-                    <span>{sentimentInfo.emoji}</span>
-                    <Text size="xs" weight="bold">
-                      {sentimentInfo.label}
-                    </Text>
-                  </SentimentTag>
-                )} */}
                 <CompanyContainer>
                   {item.shortCompanyNames?.slice(0, 5).map((company) => (
                     <CompanyTag key={company}>
@@ -240,23 +220,3 @@ const LikeIconWrapper = styled.div`
   line-height: 1;
   z-index: 1;
 `;
-
-// const SentimentTag = styled.div<{ $color: string }>`
-//   display: inline-flex;
-//   align-items: center;
-//   gap: 4px;
-//   padding: 6px 8px 4px 8px;
-//   background-color: ${(props) => props.$color}15;
-//   border: 1px solid ${(props) => props.$color}40;
-//   border-radius: 12px;
-//   white-space: nowrap;
-//   flex-shrink: 0;
-
-//   span {
-//     font-size: 12px;
-//   }
-
-//   & > *:last-child {
-//     color: ${(props) => props.$color} !important;
-//   }
-// `;

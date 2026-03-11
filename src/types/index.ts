@@ -89,8 +89,6 @@ export type ArticleDataResponse = {
   publishedDate: string;
   source: string;
   isFavorite?: boolean;
-  // sentiment: string;
-  // reasoning: string;
 };
 
 export type ArticleListData = {
