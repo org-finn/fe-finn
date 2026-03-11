@@ -124,9 +124,12 @@ const Wrapper = styled.div`
   text-decoration: none;
   gap: 4px;
   border-radius: 8px;
-
   background-color: #f7faff;
   padding: 12px;
+
+  &:hover {
+    background-color: #f4f7fc;
+  }
 
   @media screen and (max-width: 768px) {
     width: 120px;
