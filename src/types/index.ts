@@ -26,6 +26,7 @@ export type PredictionDataResponse = {
   negativeKeywords?: string;
   articleTitles?: ArticleTitleResponse[]; // Optional: param=article
   graphData?: PredictionListGraphDataResponse; // Optional: param=graph
+  isFavorite?: boolean;
 };
 
 export type TickerListData = {
@@ -52,6 +53,7 @@ export type TickerDetailData = {
   articleCount: number;
   sentimentScore: number;
   detailData: DetailDataResponse;
+  isFavorite?: boolean;
 };
 
 export type TickerGraphDataResponse = {
@@ -86,8 +88,7 @@ export type ArticleDataResponse = {
   contentUrl: string;
   publishedDate: string;
   source: string;
-  // sentiment: string;
-  // reasoning: string;
+  isFavorite?: boolean;
 };
 
 export type ArticleListData = {
@@ -154,6 +155,7 @@ export type ArticleDetailResponse = {
   publishedDate: string;
   source: string;
   tickers: ArticleDetailTickerResponse[];
+  isFavorite?: boolean;
 };
 
 export type ExchangeRateResponse = {

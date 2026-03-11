@@ -3,99 +3,129 @@ import { Text } from '../common/typography/Text';
 import { ArticleDataResponse } from '@/types';
 import FallbackImage from '../common/Item/FallbackImage';
 import useIsMobile from '@/hooks/useIsMobile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
+import useAuth from '@/hooks/useAuth';
+import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
+import LoginModal from '@/components/common/Modal/LoginModal';
 
 export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(item.isFavorite ?? false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { mutate: putFavoriteArticle } = usePutFavoriteArticle();
+
   const handleClick = () => {
     navigate(`/news/${item.articleId}`);
   };
 
-  // const getSentimentInfo = () => {
-  //   if (item.sentiment === 'positive') {
-  //     return { label: '긍정', emoji: '📈', color: '#ef4444' };
-  //   } else if (item.sentiment === 'negative') {
-  //     return { label: '부정', emoji: '📉', color: '#3b82f6' };
-  //   } else {
-  //     return { label: '중립', emoji: '➖', color: '#6b7280' };
-  //   }
-  // };
-
-  // const sentimentInfo = getSentimentInfo();
+  const handleLikeClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation();
+      if (!isAuthenticated) {
+        setShowLoginModal(true);
+        return;
+      }
+      const nextFavorite = !isFavorite;
+      setIsFavorite(nextFavorite);
+      putFavoriteArticle(
+        { articleId: item.articleId, mode: nextFavorite ? 'on' : 'off' },
+        {
+          onError: () => {
+            setIsFavorite(!nextFavorite);
+            alert('스크랩 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        }
+      );
+    },
+    [isFavorite, isAuthenticated, item.articleId, putFavoriteArticle]
+  );
 
   return (
-    <Wrapper onClick={handleClick}>
-      <NewsContent>
-        <ImageContainer>
-          <FallbackImage src={item.thumbnailUrl} alt={item.title} />
-        </ImageContainer>
-        <TextContainer>
-          <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
-            {item.title}
-          </TitleText>
-          {isMobile ? (
-            <>
-              <CompanyContainer>
-                {item.shortCompanyNames?.slice(0, 2).map((company) => (
-                  <CompanyTag key={company}>
-                    <Text size="12px" weight="normal">
-                      {company}
-                    </Text>
-                  </CompanyTag>
-                ))}
-                {item.shortCompanyNames &&
-                  item.shortCompanyNames.length > 2 && (
-                    <CompanyTag>
-                      <Text size="12px" weight="normal">
-                        ...
-                      </Text>
-                    </CompanyTag>
-                  )}
-              </CompanyContainer>
-              <Text size="12px" weight="normal" variant="grey">
-                {item.publishedDate}
-              </Text>
-            </>
+    <>
+      <Wrapper onClick={handleClick}>
+        <LikeIconWrapper onClick={handleLikeClick}>
+          {isFavorite ? (
+            <PiHeartFill color="#fe7373" size={isMobile ? 18 : 22} />
           ) : (
-            <>
-              {/* {item.sentiment !== null && (
-                <SentimentTag $color={sentimentInfo.color}>
-                  <span>{sentimentInfo.emoji}</span>
-                  <Text size="xs" weight="bold">
-                    {sentimentInfo.label}
-                  </Text>
-                </SentimentTag>
-              )} */}
-              <CompanyContainer>
-                {item.shortCompanyNames?.slice(0, 5).map((company) => (
-                  <CompanyTag key={company}>
-                    <Text size="xs" weight="normal">
-                      {company}
-                    </Text>
-                  </CompanyTag>
-                ))}
-                {item.shortCompanyNames &&
-                  item.shortCompanyNames.length > 4 && (
-                    <CompanyTag>
-                      <Text size="xs" weight="normal">
-                        ...
+            <PiHeartLight size={isMobile ? 18 : 22} color="#ccc" />
+          )}
+        </LikeIconWrapper>
+        <NewsContent>
+          <ImageContainer>
+            <FallbackImage src={item.thumbnailUrl} alt={item.title} />
+          </ImageContainer>
+          <TextContainer>
+            <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
+              {item.title}
+            </TitleText>
+            {isMobile ? (
+              <>
+                <CompanyContainer>
+                  {item.shortCompanyNames?.slice(0, 2).map((company, i) => (
+                    <CompanyTag key={`${company}-${i}`}>
+                      <Text size="12px" weight="normal">
+                        {company}
                       </Text>
                     </CompanyTag>
-                  )}
-              </CompanyContainer>
-              <Text size="xs" weight="normal" variant="grey">
-                {item.publishedDate}
-              </Text>
-            </>
-          )}
-        </TextContainer>
-      </NewsContent>
-    </Wrapper>
+                  ))}
+                  {item.shortCompanyNames &&
+                    item.shortCompanyNames.length > 2 && (
+                      <CompanyTag>
+                        <Text size="12px" weight="normal">
+                          ...
+                        </Text>
+                      </CompanyTag>
+                    )}
+                </CompanyContainer>
+                <Text size="12px" weight="normal" variant="grey">
+                  {item.publishedDate}
+                </Text>
+              </>
+            ) : (
+              <>
+                <CompanyContainer>
+                  {item.shortCompanyNames?.slice(0, 5).map((company, i) => (
+                    <CompanyTag key={`${company}-${i}`}>
+                      <Text size="xs" weight="normal">
+                        {company}
+                      </Text>
+                    </CompanyTag>
+                  ))}
+                  {item.shortCompanyNames &&
+                    item.shortCompanyNames.length > 4 && (
+                      <CompanyTag>
+                        <Text size="xs" weight="normal">
+                          ...
+                        </Text>
+                      </CompanyTag>
+                    )}
+                </CompanyContainer>
+                <Text size="xs" weight="normal" variant="grey">
+                  {item.publishedDate}
+                </Text>
+              </>
+            )}
+          </TextContainer>
+        </NewsContent>
+      </Wrapper>
+      {showLoginModal && (
+        <LoginModal
+          immediateOpen={true}
+          currentPath={location.pathname}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
+    </>
   );
 }
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 20px 30px;
@@ -185,22 +215,13 @@ const CompanyTag = styled.div`
   }
 `;
 
-// const SentimentTag = styled.div<{ $color: string }>`
-//   display: inline-flex;
-//   align-items: center;
-//   gap: 4px;
-//   padding: 6px 8px 4px 8px;
-//   background-color: ${(props) => props.$color}15;
-//   border: 1px solid ${(props) => props.$color}40;
-//   border-radius: 12px;
-//   white-space: nowrap;
-//   flex-shrink: 0;
-
-//   span {
-//     font-size: 12px;
-//   }
-
-//   & > *:last-child {
-//     color: ${(props) => props.$color} !important;
-//   }
-// `;
+const LikeIconWrapper = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 1;
+`;

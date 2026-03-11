@@ -163,7 +163,7 @@ export default function MyPage() {
         <FavoriteArticleSection />
       </FavoriteSection>
       <Text
-        size={isMobile ? 'xxs' : 'xs'}
+        size={isMobile ? '12px' : 'xxs'}
         weight="normal"
         style={{ color: '#9e9e9e', width: '90%' }}
       >
@@ -290,7 +290,7 @@ const FavoriteSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
