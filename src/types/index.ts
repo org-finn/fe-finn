@@ -88,6 +88,7 @@ export type ArticleDataResponse = {
   contentUrl: string;
   publishedDate: string;
   source: string;
+  isFavorite?: boolean;
   // sentiment: string;
   // reasoning: string;
 };

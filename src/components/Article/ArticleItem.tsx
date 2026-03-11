@@ -3,14 +3,42 @@ import { Text } from '../common/typography/Text';
 import { ArticleDataResponse } from '@/types';
 import FallbackImage from '../common/Item/FallbackImage';
 import useIsMobile from '@/hooks/useIsMobile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
+import useAuth from '@/hooks/useAuth';
+import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
+import LoginModal from '@/components/common/Modal/LoginModal';
 
 export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(item.isFavorite ?? false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { mutate: putFavoriteArticle } = usePutFavoriteArticle();
+
   const handleClick = () => {
     navigate(`/news/${item.articleId}`);
   };
+
+  const handleLikeClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation();
+      if (!isAuthenticated) {
+        setShowLoginModal(true);
+        return;
+      }
+      const nextFavorite = !isFavorite;
+      setIsFavorite(nextFavorite);
+      putFavoriteArticle({
+        articleId: item.articleId,
+        mode: nextFavorite ? 'on' : 'off',
+      });
+    },
+    [isFavorite, isAuthenticated, item.articleId, putFavoriteArticle]
+  );
 
   // const getSentimentInfo = () => {
   //   if (item.sentiment === 'positive') {
@@ -25,77 +53,94 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   // const sentimentInfo = getSentimentInfo();
 
   return (
-    <Wrapper onClick={handleClick}>
-      <NewsContent>
-        <ImageContainer>
-          <FallbackImage src={item.thumbnailUrl} alt={item.title} />
-        </ImageContainer>
-        <TextContainer>
-          <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
-            {item.title}
-          </TitleText>
-          {isMobile ? (
-            <>
-              <CompanyContainer>
-                {item.shortCompanyNames?.slice(0, 2).map((company) => (
-                  <CompanyTag key={company}>
-                    <Text size="12px" weight="normal">
-                      {company}
-                    </Text>
-                  </CompanyTag>
-                ))}
-                {item.shortCompanyNames &&
-                  item.shortCompanyNames.length > 2 && (
-                    <CompanyTag>
-                      <Text size="12px" weight="normal">
-                        ...
-                      </Text>
-                    </CompanyTag>
-                  )}
-              </CompanyContainer>
-              <Text size="12px" weight="normal" variant="grey">
-                {item.publishedDate}
-              </Text>
-            </>
+    <>
+      <Wrapper onClick={handleClick}>
+        <LikeIconWrapper onClick={handleLikeClick}>
+          {isFavorite ? (
+            <PiHeartFill color="#fe7373" size={isMobile ? 18 : 22} />
           ) : (
-            <>
-              {/* {item.sentiment !== null && (
-                <SentimentTag $color={sentimentInfo.color}>
-                  <span>{sentimentInfo.emoji}</span>
-                  <Text size="xs" weight="bold">
-                    {sentimentInfo.label}
-                  </Text>
-                </SentimentTag>
-              )} */}
-              <CompanyContainer>
-                {item.shortCompanyNames?.slice(0, 5).map((company) => (
-                  <CompanyTag key={company}>
-                    <Text size="xs" weight="normal">
-                      {company}
-                    </Text>
-                  </CompanyTag>
-                ))}
-                {item.shortCompanyNames &&
-                  item.shortCompanyNames.length > 4 && (
-                    <CompanyTag>
-                      <Text size="xs" weight="normal">
-                        ...
+            <PiHeartLight size={isMobile ? 18 : 22} color="#ccc" />
+          )}
+        </LikeIconWrapper>
+        <NewsContent>
+          <ImageContainer>
+            <FallbackImage src={item.thumbnailUrl} alt={item.title} />
+          </ImageContainer>
+          <TextContainer>
+            <TitleText size={isMobile ? 'xs' : 'm'} weight="bold">
+              {item.title}
+            </TitleText>
+            {isMobile ? (
+              <>
+                <CompanyContainer>
+                  {item.shortCompanyNames?.slice(0, 2).map((company) => (
+                    <CompanyTag key={company}>
+                      <Text size="12px" weight="normal">
+                        {company}
                       </Text>
                     </CompanyTag>
-                  )}
-              </CompanyContainer>
-              <Text size="xs" weight="normal" variant="grey">
-                {item.publishedDate}
-              </Text>
-            </>
-          )}
-        </TextContainer>
-      </NewsContent>
-    </Wrapper>
+                  ))}
+                  {item.shortCompanyNames &&
+                    item.shortCompanyNames.length > 2 && (
+                      <CompanyTag>
+                        <Text size="12px" weight="normal">
+                          ...
+                        </Text>
+                      </CompanyTag>
+                    )}
+                </CompanyContainer>
+                <Text size="12px" weight="normal" variant="grey">
+                  {item.publishedDate}
+                </Text>
+              </>
+            ) : (
+              <>
+                {/* {item.sentiment !== null && (
+                  <SentimentTag $color={sentimentInfo.color}>
+                    <span>{sentimentInfo.emoji}</span>
+                    <Text size="xs" weight="bold">
+                      {sentimentInfo.label}
+                    </Text>
+                  </SentimentTag>
+                )} */}
+                <CompanyContainer>
+                  {item.shortCompanyNames?.slice(0, 5).map((company) => (
+                    <CompanyTag key={company}>
+                      <Text size="xs" weight="normal">
+                        {company}
+                      </Text>
+                    </CompanyTag>
+                  ))}
+                  {item.shortCompanyNames &&
+                    item.shortCompanyNames.length > 4 && (
+                      <CompanyTag>
+                        <Text size="xs" weight="normal">
+                          ...
+                        </Text>
+                      </CompanyTag>
+                    )}
+                </CompanyContainer>
+                <Text size="xs" weight="normal" variant="grey">
+                  {item.publishedDate}
+                </Text>
+              </>
+            )}
+          </TextContainer>
+        </NewsContent>
+      </Wrapper>
+      {showLoginModal && (
+        <LoginModal
+          immediateOpen={true}
+          currentPath={location.pathname}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
+    </>
   );
 }
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 20px 30px;
@@ -183,6 +228,17 @@ const CompanyTag = styled.div`
   span {
     color: #374151 !important;
   }
+`;
+
+const LikeIconWrapper = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 1;
 `;
 
 // const SentimentTag = styled.div<{ $color: string }>`
