@@ -32,10 +32,15 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
       }
       const nextFavorite = !isFavorite;
       setIsFavorite(nextFavorite);
-      putFavoriteArticle({
-        articleId: item.articleId,
-        mode: nextFavorite ? 'on' : 'off',
-      });
+      putFavoriteArticle(
+        { articleId: item.articleId, mode: nextFavorite ? 'on' : 'off' },
+        {
+          onError: () => {
+            setIsFavorite(!nextFavorite);
+            alert('스크랩 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        }
+      );
     },
     [isFavorite, isAuthenticated, item.articleId, putFavoriteArticle]
   );

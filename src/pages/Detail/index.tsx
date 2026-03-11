@@ -88,10 +88,18 @@ export default function DetailPage() {
       }
       const nextFavorite = !isFavorite;
       setIsFavorite(nextFavorite);
-      putFavoriteTicker({
-        tickerCode: tickerData?.tickerCode ?? '',
-        mode: nextFavorite ? 'on' : 'off',
-      });
+      putFavoriteTicker(
+        {
+          tickerCode: tickerData?.tickerCode ?? '',
+          mode: nextFavorite ? 'on' : 'off',
+        },
+        {
+          onError: () => {
+            setIsFavorite(!nextFavorite);
+            alert('좋아요 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        }
+      );
     },
     [isFavorite, isAuthenticated, tickerData?.tickerCode, putFavoriteTicker]
   );
