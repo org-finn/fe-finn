@@ -66,8 +66,8 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
             {isMobile ? (
               <>
                 <CompanyContainer>
-                  {item.shortCompanyNames?.slice(0, 2).map((company) => (
-                    <CompanyTag key={company}>
+                  {item.shortCompanyNames?.slice(0, 2).map((company, i) => (
+                    <CompanyTag key={`${company}-${i}`}>
                       <Text size="12px" weight="normal">
                         {company}
                       </Text>
@@ -89,8 +89,8 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
             ) : (
               <>
                 <CompanyContainer>
-                  {item.shortCompanyNames?.slice(0, 5).map((company) => (
-                    <CompanyTag key={company}>
+                  {item.shortCompanyNames?.slice(0, 5).map((company, i) => (
+                    <CompanyTag key={`${company}-${i}`}>
                       <Text size="xs" weight="normal">
                         {company}
                       </Text>
