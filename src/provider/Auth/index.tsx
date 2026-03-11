@@ -27,6 +27,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('nickname');
     window.location.href = '/';
   }, [logout]);
 
