@@ -1,19 +1,44 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useCallback } from 'react';
 import { useGetArticleDetail } from '@/api/hooks/useGetArticleDetail';
 import Loading from '@/components/common/Layout/Loading';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import ArticleTicker from '@/components/ArticleDetail/ArticleTicker';
 import { IoIosArrowBack } from 'react-icons/io';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import styled from 'styled-components';
 import useIsMobile from '@/hooks/useIsMobile';
+import useAuth from '@/hooks/useAuth';
+import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
+import LoginModal from '@/components/common/Modal/LoginModal';
 
 export default function ArticleDetailPage() {
   const { id } = useParams() as { id: string };
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
+  const { isAuthenticated } = useAuth();
   const { data: articleResponse, isLoading, error } = useGetArticleDetail(id);
   const articleData = articleResponse?.content;
+  const [isFavorite, setIsFavorite] = useState(
+    articleData?.isFavorite ?? false
+  );
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { mutate: putFavoriteArticle } = usePutFavoriteArticle();
+
+  const handleLikeClick = useCallback(() => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    const nextFavorite = !isFavorite;
+    setIsFavorite(nextFavorite);
+    putFavoriteArticle({
+      articleId: id,
+      mode: nextFavorite ? 'on' : 'off',
+    });
+  }, [isFavorite, isAuthenticated, id, putFavoriteArticle]);
 
   if (isLoading) {
     return <Loading />;
@@ -101,6 +126,31 @@ export default function ArticleDetailPage() {
             ))}
           </TickersGrid>
         </TickersSection>
+      )}
+
+      <ScrapButtonWrapper>
+        <ScrapButton onClick={handleLikeClick}>
+          {isFavorite ? (
+            <PiHeartFill color="#fe7373" size={isMobile ? 16 : 18} />
+          ) : (
+            <PiHeartLight size={isMobile ? 16 : 18} color="#2d70d3" />
+          )}
+          <Text
+            size={isMobile ? 'xxs' : 'xs'}
+            weight="normal"
+            variant="#2d70d3"
+          >
+            기사 스크랩
+          </Text>
+        </ScrapButton>
+      </ScrapButtonWrapper>
+
+      {showLoginModal && (
+        <LoginModal
+          immediateOpen={true}
+          currentPath={location.pathname}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
     </Wrapper>
   );
@@ -219,6 +269,26 @@ const BackButton = styled.button`
   border: none;
   color: #6b7280;
   cursor: pointer;
+`;
+
+const ScrapButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const ScrapButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #2d70d3;
+  border-radius: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f3f5f7;
+  }
 `;
 
 const ErrorMessage = styled.div`

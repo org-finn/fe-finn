@@ -155,6 +155,7 @@ export type ArticleDetailResponse = {
   publishedDate: string;
   source: string;
   tickers: ArticleDetailTickerResponse[];
+  isFavorite?: boolean;
 };
 
 export type ExchangeRateResponse = {
