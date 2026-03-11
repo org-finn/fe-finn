@@ -63,6 +63,7 @@ export default function DetailPage() {
     error: realTimePriceError,
   } = useGetRealTimePrice({
     tickerId: id,
+    enabled: isAuthenticated,
   });
   const { data: summaryResponse } = useGetArticleSummaryTicker(id);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
@@ -111,7 +112,7 @@ export default function DetailPage() {
     }
   }, [realTimePriceData]);
 
-  useGetRealTimeStream(id, isLiveMode, (newItem) => {
+  useGetRealTimeStream(id, isLiveMode && isAuthenticated, (newItem) => {
     setLiveChartData((prev) => {
       const last = prev[prev.length - 1];
       const toMinute = (time: string) => time.slice(0, 5);
@@ -178,6 +179,10 @@ export default function DetailPage() {
   };
 
   const handleLiveMode = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     scrollPositionRef.current = window.scrollY;
     setIsLiveMode(true);
     requestAnimationFrame(() => {

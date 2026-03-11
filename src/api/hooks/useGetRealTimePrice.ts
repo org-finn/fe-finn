@@ -7,6 +7,7 @@ interface GetRealTimePriceParams {
   tickerId: string;
   gte?: number;
   missing?: number[];
+  enabled?: boolean;
 }
 
 export const getRealTimePricePath = (tickerId: string) =>
@@ -43,11 +44,13 @@ export const useGetRealTimePrice = ({
   tickerId,
   gte,
   missing,
+  enabled = false,
 }: GetRealTimePriceParams) => {
   return useQuery({
     queryKey: ['real-time-price', { tickerId, gte, missing }],
     queryFn: () => getRealTimePrice({ tickerId, gte, missing }),
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,
+    enabled,
   });
 };
