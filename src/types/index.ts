@@ -26,6 +26,7 @@ export type PredictionDataResponse = {
   negativeKeywords?: string;
   articleTitles?: ArticleTitleResponse[]; // Optional: param=article
   graphData?: PredictionListGraphDataResponse; // Optional: param=graph
+  isFavorite?: boolean;
 };
 
 export type TickerListData = {
