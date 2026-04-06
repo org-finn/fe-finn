@@ -3,23 +3,48 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
 import { useGetTickerSearch } from '@/api/hooks/useGetTickerSearch';
+import { useGetArticleSearch } from '@/api/hooks/useGetArticleSearch';
+import { ArticleDataResponse } from '@/types';
+import { Text } from './typography/Text';
 
 interface SearchBarProps {
-  onSearchResult?: (tickerCodes: string[] | null) => void;
+  type?: 'ticker' | 'article';
+  onTickerSearchResult?: (tickerCodes: string[] | null) => void;
+  onArticleSearchResult?: (articles: ArticleDataResponse[] | null) => void;
 }
 
-export default function SearchBar({ onSearchResult }: SearchBarProps) {
+export default function SearchBar({
+  type = 'ticker',
+  onTickerSearchResult,
+  onArticleSearchResult,
+}: SearchBarProps) {
   const [keyword, setKeyword] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const { data: searchData, isLoading } = useGetTickerSearch(keyword);
+  const { data: tickerSearchData, isLoading: tickerLoading } =
+    useGetTickerSearch(type === 'ticker' ? keyword : '');
+  const { data: articleSearchData, isLoading: articleLoading } =
+    useGetArticleSearch(type === 'article' ? keyword : '');
+
   const tickerList = useMemo(
-    () => searchData?.content.tickerSearchList ?? [],
-    [searchData]
+    () =>
+      type === 'ticker'
+        ? (tickerSearchData?.content.tickerSearchList ?? [])
+        : [],
+    [tickerSearchData, type]
   );
+  const articleList = useMemo(
+    () =>
+      type === 'article' ? (articleSearchData?.content?.articles ?? []) : [],
+    [articleSearchData, type]
+  );
+
+  const resultCount =
+    type === 'ticker' ? tickerList.length : articleList.length;
+  const isLoading = type === 'ticker' ? tickerLoading : articleLoading;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,20 +61,27 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
   }, []);
 
   useEffect(() => {
-    if (!onSearchResult) return;
+    if (!onTickerSearchResult) return;
     if (keyword.length < 2) {
-      onSearchResult(null);
+      onTickerSearchResult(null);
     } else {
-      onSearchResult(tickerList.map((t) => t.tickerCode));
+      onTickerSearchResult(tickerList.map((t) => t.tickerCode));
     }
-  }, [tickerList, keyword, onSearchResult]);
+  }, [tickerList, keyword, onTickerSearchResult]);
+
+  useEffect(() => {
+    if (!onArticleSearchResult) return;
+    if (keyword.length < 2) {
+      onArticleSearchResult(null);
+    }
+  }, [keyword, onArticleSearchResult]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setKeyword(value);
     setSelectedIndex(-1);
 
-    if (onSearchResult) return;
+    if (onTickerSearchResult) return;
 
     if (value.length >= 2) {
       setIsDropdownOpen(true);
@@ -59,14 +91,12 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isDropdownOpen || tickerList.length === 0) return;
+    if (!isDropdownOpen || resultCount === 0) return;
 
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < tickerList.length - 1 ? prev + 1 : prev
-        );
+        setSelectedIndex((prev) => (prev < resultCount - 1 ? prev + 1 : prev));
         break;
       case 'ArrowUp':
         e.preventDefault();
@@ -75,7 +105,11 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
       case 'Enter':
         e.preventDefault();
         if (selectedIndex >= 0) {
-          handleSelectTicker(tickerList[selectedIndex]);
+          if (type === 'ticker') {
+            handleSelectTicker(tickerList[selectedIndex]);
+          } else {
+            handleSelectArticle();
+          }
         }
         break;
       case 'Escape':
@@ -89,21 +123,31 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
     setKeyword(ticker.shortCompanyName);
     setIsDropdownOpen(false);
     setSelectedIndex(-1);
-
     navigate(`/ticker/${ticker.tickerId}`);
   };
+
+  const handleSelectArticle = () => {
+    setIsDropdownOpen(false);
+    setSelectedIndex(-1);
+    onArticleSearchResult?.(articleList);
+  };
+
+  const placeholder =
+    type === 'article' ? '기사를 검색해주세요!' : '종목을 검색해주세요!';
 
   return (
     <SearchContainer ref={searchBarRef}>
       <Wrapper>
         <Input
           type="text"
-          placeholder="종목을 검색해주세요!"
+          placeholder={placeholder}
           value={keyword}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() =>
-            !onSearchResult && keyword.length >= 2 && setIsDropdownOpen(true)
+            !onTickerSearchResult &&
+            keyword.length >= 2 &&
+            setIsDropdownOpen(true)
           }
         />
         <SearchIcon
@@ -111,26 +155,57 @@ export default function SearchBar({ onSearchResult }: SearchBarProps) {
           color="#363636"
           role="button"
           aria-label="search icon"
+          onClick={() =>
+            type === 'article' &&
+            keyword.length >= 2 &&
+            onArticleSearchResult?.(articleList)
+          }
         />
       </Wrapper>
 
-      {isDropdownOpen && !onSearchResult && (
+      {isDropdownOpen && !onTickerSearchResult && (
         <DropdownContainer>
           {isLoading ? (
             <DropdownItem>검색 중...</DropdownItem>
-          ) : tickerList.length > 0 ? (
-            tickerList.map((ticker, index) => (
+          ) : type === 'ticker' ? (
+            tickerList.length > 0 ? (
+              tickerList.map((ticker, index) => (
+                <DropdownItem
+                  key={ticker.tickerId}
+                  $isSelected={index === selectedIndex}
+                  onClick={() => handleSelectTicker(ticker)}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                >
+                  <TickerInfo>
+                    <CompanyName>{ticker.shortCompanyName}</CompanyName>
+                    <TickerCode>{ticker.tickerCode}</TickerCode>
+                  </TickerInfo>
+                  <FullCompanyName>{ticker.fullCompanyName}</FullCompanyName>
+                </DropdownItem>
+              ))
+            ) : keyword.length >= 2 ? (
+              <DropdownItem>검색 결과가 없습니다.</DropdownItem>
+            ) : null
+          ) : articleList.length > 0 ? (
+            articleList.map((article, index) => (
               <DropdownItem
-                key={ticker.tickerId}
+                key={article.articleId}
                 $isSelected={index === selectedIndex}
-                onClick={() => handleSelectTicker(ticker)}
+                onClick={handleSelectArticle}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <TickerInfo>
-                  <CompanyName>{ticker.shortCompanyName}</CompanyName>
-                  <TickerCode>{ticker.tickerCode}</TickerCode>
-                </TickerInfo>
-                <FullCompanyName>{ticker.fullCompanyName}</FullCompanyName>
+                <ArticleTitle>{article.title}</ArticleTitle>
+                <ArticleMeta>
+                  <Text size="xxs" weight="normal" variant="grey">
+                    {article.source}
+                  </Text>
+                  <Text size="xxs" weight="normal" variant="grey">
+                    ·
+                  </Text>
+                  <Text size="xxs" weight="normal" variant="grey">
+                    {article.publishedDate}
+                  </Text>
+                </ArticleMeta>
               </DropdownItem>
             ))
           ) : keyword.length >= 2 ? (
@@ -198,6 +273,8 @@ const DropdownItem = styled.div<{ $isSelected?: boolean }>`
   cursor: pointer;
   border-bottom: 1px solid #f0f0f0;
   color: #333;
+  background-color: ${(props) =>
+    props.$isSelected ? '#f5f5f5' : 'transparent'};
   &:hover {
     background-color: #f5f5f5;
   }
@@ -230,4 +307,18 @@ const TickerCode = styled.span`
 const FullCompanyName = styled.div`
   font-size: 12px;
   color: #999;
+`;
+
+const ArticleTitle = styled.div`
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const ArticleMeta = styled.div`
+  display: flex;
+  gap: 8px;
 `;
