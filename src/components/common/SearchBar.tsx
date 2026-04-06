@@ -73,8 +73,10 @@ export default function SearchBar({
     if (!onArticleSearchResult) return;
     if (keyword.length < 2) {
       onArticleSearchResult(null);
+    } else {
+      onArticleSearchResult(articleList);
     }
-  }, [keyword, onArticleSearchResult]);
+  }, [articleList, keyword, onArticleSearchResult]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -108,7 +110,7 @@ export default function SearchBar({
           if (type === 'ticker') {
             handleSelectTicker(tickerList[selectedIndex]);
           } else {
-            handleSelectArticle();
+            handleSelectArticle(articleList[selectedIndex]);
           }
         }
         break;
@@ -126,10 +128,10 @@ export default function SearchBar({
     navigate(`/ticker/${ticker.tickerId}`);
   };
 
-  const handleSelectArticle = () => {
+  const handleSelectArticle = (article: ArticleDataResponse) => {
     setIsDropdownOpen(false);
     setSelectedIndex(-1);
-    onArticleSearchResult?.(articleList);
+    navigate(`/news/${article.articleId}`);
   };
 
   const placeholder =
@@ -158,7 +160,7 @@ export default function SearchBar({
           onClick={() =>
             type === 'article' &&
             keyword.length >= 2 &&
-            onArticleSearchResult?.(articleList)
+            setIsDropdownOpen(false)
           }
         />
       </Wrapper>
@@ -191,7 +193,7 @@ export default function SearchBar({
               <DropdownItem
                 key={article.articleId}
                 $isSelected={index === selectedIndex}
-                onClick={handleSelectArticle}
+                onClick={() => handleSelectArticle(article)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <ArticleTitle>{article.title}</ArticleTitle>
