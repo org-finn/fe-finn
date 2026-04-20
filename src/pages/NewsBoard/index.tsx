@@ -10,6 +10,7 @@ import DropdownFilterBar from '@/components/Article/FilterDropdown';
 import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
 import Chip from '@/components/Article/FilterChip';
 import useIsMobile from '@/hooks/useIsMobile';
+import { ArticleDataResponse } from '@/types';
 
 type NewsSentiment = 'positive' | 'negative';
 type NewsSort = 'recent';
@@ -34,6 +35,9 @@ export default function NewsBoardPage() {
   );
   const [sort] = useState<NewsSort>('recent');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [searchArticles, setSearchArticles] = useState<
+    ArticleDataResponse[] | null
+  >(null);
   const { ref, inView } = useInView();
   const currentTickerCodes = getTickerCodes();
 
@@ -132,7 +136,7 @@ export default function NewsBoardPage() {
 
   return (
     <Wrapper>
-      <SearchBar />
+      <SearchBar type="article" onArticleSearchResult={setSearchArticles} />
 
       <FilterContainer>
         <FilterTabsGroup>
@@ -181,9 +185,15 @@ export default function NewsBoardPage() {
         />
       </ChipContainer>
 
-      <ArticleList items={allArticles} />
-      <div ref={ref} style={{ height: '50px' }} />
-      {isFetchingNextPage && <Loading />}
+      {searchArticles ? (
+        <ArticleList items={searchArticles} />
+      ) : (
+        <>
+          <ArticleList items={allArticles} />
+          <div ref={ref} style={{ height: '50px' }} />
+          {isFetchingNextPage && <Loading />}
+        </>
+      )}
     </Wrapper>
   );
 }
