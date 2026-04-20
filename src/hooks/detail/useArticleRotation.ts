@@ -6,13 +6,14 @@ export function useArticleRotation(articles: DetailArticleData[] | undefined) {
 
   useEffect(() => {
     const articleCount = articles?.length || 0;
-    if (articleCount > 1) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % articleCount);
-      }, 15000);
+    setCurrentIndex(0);
 
-      return () => clearInterval(interval);
-    }
+    if (articleCount <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % articleCount);
+    }, 15000);
+    return () => clearInterval(interval);
   }, [articles]);
 
   return { currentIndex };
