@@ -36,10 +36,13 @@ export function useLiveChart(
       }
 
       const nextIndex = (last?.index ?? -1) + 1;
-      return [
+      const next = [
         ...prev,
         { price: newItem.close, hours: newItem.time, index: nextIndex },
       ];
+      return realTimePriceData?.maxLen
+        ? next.slice(-realTimePriceData.maxLen)
+        : next;
     });
   });
 
