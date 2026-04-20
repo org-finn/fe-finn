@@ -106,7 +106,7 @@ export default function SearchBar({
         break;
       case 'Enter':
         e.preventDefault();
-        if (selectedIndex >= 0) {
+        if (selectedIndex >= 0 && selectedIndex < resultCount) {
           if (type === 'ticker') {
             handleSelectTicker(tickerList[selectedIndex]);
           } else {
