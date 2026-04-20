@@ -47,11 +47,11 @@ export default function DetailPage() {
     isLoading: realGraphLoading,
     error: realGraphError,
   } = useGetRealGraph({ tickerId: id, period });
-  const {
-    data: realTimePriceResponse,
-    isLoading: realTimePriceLoading,
-    error: realTimePriceError,
-  } = useGetRealTimePrice({ tickerId: id, enabled: isAuthenticated });
+  const { data: realTimePriceResponse, isLoading: realTimePriceLoading } =
+    useGetRealTimePrice({
+      tickerId: id,
+      enabled: isAuthenticated && isLiveMode,
+    });
   const { data: summaryResponse } = useGetArticleSummaryTicker(id);
 
   const tickerData = tickerResponse?.content;
@@ -102,8 +102,9 @@ export default function DetailPage() {
   );
   const { currentIndex } = useArticleRotation(articles);
 
-  const isLoading = tickerLoading || realGraphLoading || realTimePriceLoading;
-  const error = tickerError || realGraphError || realTimePriceError;
+  const isLoading =
+    tickerLoading || realGraphLoading || (isLiveMode && realTimePriceLoading);
+  const error = tickerError || realGraphError;
 
   const handleRefresh = () => {
     if (isLiveMode) {
