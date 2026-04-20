@@ -1,6 +1,6 @@
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import RotationArticleItem from '@/components/Detail/RotationArticleItem';
 import { DetailArticleData } from '@/types';
+import RotationArticleItem from '@/components/Detail/RotationArticleItem';
 
 type ArticleSectionProps = {
   articles: DetailArticleData[];
@@ -15,6 +15,12 @@ export default function ArticleSection({
   tickerCode,
   isMobile,
 }: ArticleSectionProps) {
+  const currentArticle = articles[currentIndex];
+
+  if (!currentArticle) {
+    return null;
+  }
+
   return (
     <>
       <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
