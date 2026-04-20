@@ -46,7 +46,12 @@ export default function ChartSection({
           실제 주가
         </Paragraph>
         {isMobile && (
-          <SummaryButton onClick={onShowSummary} variant="grey" size="small">
+          <SummaryButton
+            aria-label="뉴스 요약 보기"
+            onClick={onShowSummary}
+            variant="grey"
+            size="small"
+          >
             <MdOutlineStickyNote2 size={16} />
           </SummaryButton>
         )}
@@ -70,12 +75,22 @@ export default function ChartSection({
         </PeriodSelector>
         <ButtonGroup>
           {!isMobile && (
-            <SummaryButton onClick={onShowSummary} variant="grey" size="small">
+            <SummaryButton
+              aria-label="뉴스 요약 보기"
+              onClick={onShowSummary}
+              variant="grey"
+              size="small"
+            >
               <MdOutlineStickyNote2 size={16} />
             </SummaryButton>
           )}
           <RefreshContainer>
-            <RefreshButton onClick={onRefresh} variant="grey" size="small">
+            <RefreshButton
+              aria-label="차트 새로 고침"
+              onClick={onRefresh}
+              variant="grey"
+              size="small"
+            >
               <IoMdRefresh size={isMobile ? 14 : 16} />
             </RefreshButton>
             {showRefreshTooltip && (
