@@ -7,6 +7,8 @@ import { postReissueTokenPath } from '@/api/hooks/usePostReissueToken';
 let accessToken: string | null = null;
 let onUnauthorized: (() => void) | null = null;
 let refreshTokenFn: (() => Promise<string>) | null = null;
+let refreshInFlight: Promise<string> | null = null;
+let isLoggingOut = false;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
@@ -71,12 +73,18 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       ) {
         originalRequest._retry = true;
         try {
-          const newToken = await refreshTokenFn();
+          refreshInFlight ??= refreshTokenFn().finally(() => {
+            refreshInFlight = null;
+          });
+          const newToken = await refreshInFlight;
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return instance(originalRequest);
         } catch {
-          setAccessToken(null);
-          onUnauthorized?.();
+          if (!isLoggingOut) {
+            isLoggingOut = true;
+            setAccessToken(null);
+            onUnauthorized?.();
+          }
         }
       }
       return Promise.reject(error);
