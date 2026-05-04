@@ -2,14 +2,25 @@ import { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import getCurrentConfig from '../config';
+import { postReissueTokenPath } from '@/api/hooks/usePostReissueToken';
 
 let accessToken: string | null = null;
+let onUnauthorized: (() => void) | null = null;
+let refreshTokenFn: (() => Promise<string>) | null = null;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
 export const getAccessToken = () => accessToken;
+
+export const setOnUnauthorized = (callback: () => void) => {
+  onUnauthorized = callback;
+};
+
+export const setRefreshTokenFn = (fn: () => Promise<string>) => {
+  refreshTokenFn = fn;
+};
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
@@ -29,22 +40,44 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       }
       return requestConfig;
     },
-    (error) => {
-      return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
   );
 
   instance.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
+      const originalRequest = error.config;
+
       if (process.env.NODE_ENV === 'development') {
         console.error('API Error:', {
-          url: error.config?.url,
-          method: error.config?.method?.toUpperCase(),
+          url: originalRequest?.url,
+          method: originalRequest?.method?.toUpperCase(),
           status: error.response?.status,
           message: error.message,
           data: error.response?.data,
         });
+      }
+      const isUnauthorized = error.response?.status === 401;
+      const isReissueRequest = originalRequest?.url?.includes(
+        postReissueTokenPath()
+      );
+      const isAlreadyRetried = originalRequest?._retry;
+
+      if (
+        isUnauthorized &&
+        !isReissueRequest &&
+        !isAlreadyRetried &&
+        refreshTokenFn
+      ) {
+        originalRequest._retry = true;
+        try {
+          const newToken = await refreshTokenFn();
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return instance(originalRequest);
+        } catch {
+          setAccessToken(null);
+          onUnauthorized?.();
+        }
       }
       return Promise.reject(error);
     }
