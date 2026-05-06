@@ -32,7 +32,7 @@ export default function SearchBar({
   const articleList = useMemo(
     () =>
       type === 'all'
-        ? (searchPreviewData?.content?.articleSearchList ?? [])
+        ? (searchPreviewData?.content.articleSearchList ?? [])
         : [],
     [searchPreviewData, type]
   );
