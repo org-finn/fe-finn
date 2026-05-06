@@ -10,8 +10,7 @@
     "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "format": "prettier --write '**/*.{ts,tsx}'",
-    "graph": "madge --ts-config tsconfig.json --extensions ts,tsx --image"
+    "format": "prettier --write '**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.80.6",
@@ -42,7 +41,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "madge": "^8.0.0",
     "msw": "^2.10.4",
     "prettier": "^3.5.3",
     "typescript": "~5.8.3",
