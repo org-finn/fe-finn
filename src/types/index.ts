@@ -276,3 +276,11 @@ export type TickerRealTimeStreamResponse = {
   close: number;
   volume: number;
 };
+
+export type ArticleSearchListResponse = {
+  articles: ArticleDataResponse[];
+};
+
+export type TickerSearchListResponse = {
+  tickers: FavoriteTickerResponse[];
+};
