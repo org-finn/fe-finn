@@ -136,7 +136,7 @@ export default function NewsBoardPage() {
 
   return (
     <Wrapper>
-      <SearchBar type="article" onArticleSearchResult={setSearchArticles} />
+      <SearchBar onArticleSearchResult={setSearchArticles} />
 
       <FilterContainer>
         <FilterTabsGroup>

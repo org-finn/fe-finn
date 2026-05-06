@@ -6,13 +6,13 @@ import { useGetSearchPreview } from '@/api/hooks/useGetSearchPreview';
 import { ArticleDataResponse } from '@/types';
 
 interface SearchBarProps {
-  type?: 'ticker' | 'article'; // 추후 타입 삭제 예정
+  type?: 'ticker' | 'all';
   onTickerSearchResult?: (tickerCodes: string[] | null) => void;
   onArticleSearchResult?: (articles: ArticleDataResponse[] | null) => void;
 }
 
 export default function SearchBar({
-  type = 'ticker',
+  type = 'all',
   onTickerSearchResult,
   onArticleSearchResult,
 }: SearchBarProps) {
@@ -26,22 +26,21 @@ export default function SearchBar({
     useGetSearchPreview(keyword);
 
   const tickerList = useMemo(
-    () =>
-      type === 'ticker'
-        ? (searchPreviewData?.content.tickerSearchList ?? [])
-        : [],
-    [searchPreviewData, type]
+    () => searchPreviewData?.content.tickerSearchList ?? [],
+    [searchPreviewData]
   );
   const articleList = useMemo(
     () =>
-      type === 'article'
+      type === 'all'
         ? (searchPreviewData?.content?.articleSearchList ?? [])
         : [],
     [searchPreviewData, type]
   );
 
   const resultCount =
-    type === 'ticker' ? tickerList.length : articleList.length;
+    type === 'ticker'
+      ? tickerList.length
+      : tickerList.length + articleList.length;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -104,10 +103,10 @@ export default function SearchBar({
       case 'Enter':
         e.preventDefault();
         if (selectedIndex >= 0 && selectedIndex < resultCount) {
-          if (type === 'ticker') {
+          if (type === 'ticker' || selectedIndex < tickerList.length) {
             handleSelectTicker(tickerList[selectedIndex]);
           } else {
-            handleSelectArticle(articleList[selectedIndex]);
+            handleSelectArticle(articleList[selectedIndex - tickerList.length]);
           }
         }
         break;
@@ -132,7 +131,7 @@ export default function SearchBar({
   };
 
   const placeholder =
-    type === 'article' ? '기사를 검색해주세요!' : '종목을 검색해주세요!';
+    type === 'all' ? '검색어를 입력해주세요!' : '종목을 검색해주세요!';
 
   return (
     <SearchContainer ref={searchBarRef}>
@@ -155,9 +154,7 @@ export default function SearchBar({
           role="button"
           aria-label="search icon"
           onClick={() =>
-            type === 'article' &&
-            keyword.length >= 2 &&
-            setIsDropdownOpen(false)
+            type === 'all' && keyword.length >= 2 && setIsDropdownOpen(false)
           }
         />
       </Wrapper>
@@ -185,21 +182,42 @@ export default function SearchBar({
             ) : keyword.length >= 2 ? (
               <DropdownItem>검색 결과가 없습니다.</DropdownItem>
             ) : null
-          ) : articleList.length > 0 ? (
-            articleList.map((article, index) => (
-              <DropdownItem
-                key={article.articleId}
-                $isSelected={index === selectedIndex}
-                onClick={() => handleSelectArticle(article)}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <IoIosSearch size={16} color="#939393" />
-                <ArticleTitle>{article.title}</ArticleTitle>
-              </DropdownItem>
-            ))
-          ) : keyword.length >= 2 ? (
-            <DropdownItem>검색 결과가 없습니다.</DropdownItem>
-          ) : null}
+          ) : (
+            <>
+              {tickerList.map((ticker, index) => (
+                <DropdownItem
+                  key={ticker.tickerId}
+                  $isSelected={index === selectedIndex}
+                  onClick={() => handleSelectTicker(ticker)}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                >
+                  <IoIosSearch size={16} color="#939393" />
+                  <TickerInfo>
+                    <CompanyName>{ticker.shortCompanyName}</CompanyName>
+                    <TickerCode>{ticker.tickerCode}</TickerCode>
+                  </TickerInfo>
+                </DropdownItem>
+              ))}
+              {articleList.map((article, index) => (
+                <DropdownItem
+                  key={article.articleId}
+                  $isSelected={tickerList.length + index === selectedIndex}
+                  onClick={() => handleSelectArticle(article)}
+                  onMouseEnter={() =>
+                    setSelectedIndex(tickerList.length + index)
+                  }
+                >
+                  <IoIosSearch size={16} color="#939393" />
+                  <ArticleTitle>{article.title}</ArticleTitle>
+                </DropdownItem>
+              ))}
+              {tickerList.length === 0 &&
+                articleList.length === 0 &&
+                keyword.length >= 2 && (
+                  <DropdownItem>검색 결과가 없습니다.</DropdownItem>
+                )}
+            </>
+          )}
         </DropdownContainer>
       )}
     </SearchContainer>
