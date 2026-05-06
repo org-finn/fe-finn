@@ -2,19 +2,17 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
-import { useGetTickerSearch } from '@/api/hooks/useGetTickerSearch';
-import { useGetArticleSearch } from '@/api/hooks/useGetArticleSearch';
+import { useGetSearchPreview } from '@/api/hooks/useGetSearchPreview';
 import { ArticleDataResponse } from '@/types';
-import { Text } from './typography/Text';
 
 interface SearchBarProps {
-  type?: 'ticker' | 'article';
+  type?: 'ticker' | 'all';
   onTickerSearchResult?: (tickerCodes: string[] | null) => void;
   onArticleSearchResult?: (articles: ArticleDataResponse[] | null) => void;
 }
 
 export default function SearchBar({
-  type = 'ticker',
+  type = 'all',
   onTickerSearchResult,
   onArticleSearchResult,
 }: SearchBarProps) {
@@ -23,28 +21,28 @@ export default function SearchBar({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const trimmedKeyword = keyword.trim();
+  const isSearchDisabled = type !== 'all' || trimmedKeyword.length < 2;
 
-  const { data: tickerSearchData, isLoading: tickerLoading } =
-    useGetTickerSearch(type === 'ticker' ? keyword : '');
-  const { data: articleSearchData, isLoading: articleLoading } =
-    useGetArticleSearch(type === 'article' ? keyword : '');
+  const { data: searchPreviewData, isLoading: searchPreviewLoading } =
+    useGetSearchPreview(trimmedKeyword);
 
   const tickerList = useMemo(
-    () =>
-      type === 'ticker'
-        ? (tickerSearchData?.content.tickerSearchList ?? [])
-        : [],
-    [tickerSearchData, type]
+    () => searchPreviewData?.content.tickerSearchList ?? [],
+    [searchPreviewData]
   );
   const articleList = useMemo(
     () =>
-      type === 'article' ? (articleSearchData?.content?.articles ?? []) : [],
-    [articleSearchData, type]
+      type === 'all'
+        ? (searchPreviewData?.content.articleSearchList ?? [])
+        : [],
+    [searchPreviewData, type]
   );
 
   const resultCount =
-    type === 'ticker' ? tickerList.length : articleList.length;
-  const isLoading = type === 'ticker' ? tickerLoading : articleLoading;
+    type === 'ticker'
+      ? tickerList.length
+      : tickerList.length + articleList.length;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,21 +60,21 @@ export default function SearchBar({
 
   useEffect(() => {
     if (!onTickerSearchResult) return;
-    if (keyword.length < 2) {
+    if (trimmedKeyword.length < 2) {
       onTickerSearchResult(null);
     } else {
       onTickerSearchResult(tickerList.map((t) => t.tickerCode));
     }
-  }, [tickerList, keyword, onTickerSearchResult]);
+  }, [tickerList, trimmedKeyword, onTickerSearchResult]);
 
   useEffect(() => {
     if (!onArticleSearchResult) return;
-    if (keyword.length < 2) {
+    if (trimmedKeyword.length < 2) {
       onArticleSearchResult(null);
     } else {
       onArticleSearchResult(articleList);
     }
-  }, [articleList, keyword, onArticleSearchResult]);
+  }, [articleList, trimmedKeyword, onArticleSearchResult]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -85,7 +83,7 @@ export default function SearchBar({
 
     if (onTickerSearchResult) return;
 
-    if (value.length >= 2) {
+    if (value.trim().length >= 2) {
       setIsDropdownOpen(true);
     } else {
       setIsDropdownOpen(false);
@@ -93,6 +91,21 @@ export default function SearchBar({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && type === 'all') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < tickerList.length) {
+        handleSearchAll(tickerList[selectedIndex].shortCompanyName);
+      } else if (
+        selectedIndex >= tickerList.length &&
+        selectedIndex < resultCount
+      ) {
+        handleSearchAll(articleList[selectedIndex - tickerList.length].title);
+      } else {
+        handleSearchAll(trimmedKeyword);
+      }
+      return;
+    }
+
     if (!isDropdownOpen || resultCount === 0) return;
 
     switch (e.key) {
@@ -104,16 +117,6 @@ export default function SearchBar({
         e.preventDefault();
         setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
         break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && selectedIndex < resultCount) {
-          if (type === 'ticker') {
-            handleSelectTicker(tickerList[selectedIndex]);
-          } else {
-            handleSelectArticle(articleList[selectedIndex]);
-          }
-        }
-        break;
       case 'Escape':
         setIsDropdownOpen(false);
         setSelectedIndex(-1);
@@ -121,21 +124,16 @@ export default function SearchBar({
     }
   };
 
-  const handleSelectTicker = (ticker: (typeof tickerList)[0]) => {
-    setKeyword(ticker.shortCompanyName);
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
-    navigate(`/ticker/${ticker.tickerId}`);
-  };
-
-  const handleSelectArticle = (article: ArticleDataResponse) => {
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
-    navigate(`/news/${article.articleId}`);
+  const handleSearchAll = (searchKeyword: string) => {
+    if (searchKeyword.length >= 2) {
+      setIsDropdownOpen(false);
+      setSelectedIndex(-1);
+      navigate(`/search?keyword=${encodeURIComponent(searchKeyword)}`);
+    }
   };
 
   const placeholder =
-    type === 'article' ? '기사를 검색해주세요!' : '종목을 검색해주세요!';
+    type === 'all' ? '검색어를 입력해주세요!' : '종목을 검색해주세요!';
 
   return (
     <SearchContainer ref={searchBarRef}>
@@ -148,7 +146,7 @@ export default function SearchBar({
           onKeyDown={handleKeyDown}
           onFocus={() =>
             !onTickerSearchResult &&
-            keyword.length >= 2 &&
+            trimmedKeyword.length >= 2 &&
             setIsDropdownOpen(true)
           }
         />
@@ -157,17 +155,16 @@ export default function SearchBar({
           color="#363636"
           role="button"
           aria-label="search icon"
-          onClick={() =>
-            type === 'article' &&
-            keyword.length >= 2 &&
-            setIsDropdownOpen(false)
-          }
+          aria-disabled={isSearchDisabled}
+          tabIndex={isSearchDisabled ? -1 : 0}
+          $disabled={isSearchDisabled}
+          onClick={() => !isSearchDisabled && handleSearchAll(trimmedKeyword)}
         />
       </Wrapper>
 
       {isDropdownOpen && !onTickerSearchResult && (
         <DropdownContainer>
-          {isLoading ? (
+          {searchPreviewLoading ? (
             <DropdownItem>검색 중...</DropdownItem>
           ) : type === 'ticker' ? (
             tickerList.length > 0 ? (
@@ -175,44 +172,55 @@ export default function SearchBar({
                 <DropdownItem
                   key={ticker.tickerId}
                   $isSelected={index === selectedIndex}
-                  onClick={() => handleSelectTicker(ticker)}
+                  onClick={() => handleSearchAll(ticker.shortCompanyName)}
                   onMouseEnter={() => setSelectedIndex(index)}
                 >
+                  <IoIosSearch size={16} color="#939393" />
                   <TickerInfo>
                     <CompanyName>{ticker.shortCompanyName}</CompanyName>
                     <TickerCode>{ticker.tickerCode}</TickerCode>
                   </TickerInfo>
-                  <FullCompanyName>{ticker.fullCompanyName}</FullCompanyName>
                 </DropdownItem>
               ))
-            ) : keyword.length >= 2 ? (
+            ) : trimmedKeyword.length >= 2 ? (
               <DropdownItem>검색 결과가 없습니다.</DropdownItem>
             ) : null
-          ) : articleList.length > 0 ? (
-            articleList.map((article, index) => (
-              <DropdownItem
-                key={article.articleId}
-                $isSelected={index === selectedIndex}
-                onClick={() => handleSelectArticle(article)}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <ArticleTitle>{article.title}</ArticleTitle>
-                <ArticleMeta>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    {article.source}
-                  </Text>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    ·
-                  </Text>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    {article.publishedDate}
-                  </Text>
-                </ArticleMeta>
-              </DropdownItem>
-            ))
-          ) : keyword.length >= 2 ? (
-            <DropdownItem>검색 결과가 없습니다.</DropdownItem>
-          ) : null}
+          ) : (
+            <>
+              {tickerList.map((ticker, index) => (
+                <DropdownItem
+                  key={ticker.tickerId}
+                  $isSelected={index === selectedIndex}
+                  onClick={() => handleSearchAll(ticker.shortCompanyName)}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                >
+                  <IoIosSearch size={16} color="#939393" />
+                  <TickerInfo>
+                    <CompanyName>{ticker.shortCompanyName}</CompanyName>
+                    <TickerCode>{ticker.tickerCode}</TickerCode>
+                  </TickerInfo>
+                </DropdownItem>
+              ))}
+              {articleList.map((article, index) => (
+                <DropdownItem
+                  key={article.articleId}
+                  $isSelected={tickerList.length + index === selectedIndex}
+                  onClick={() => handleSearchAll(article.title)}
+                  onMouseEnter={() =>
+                    setSelectedIndex(tickerList.length + index)
+                  }
+                >
+                  <IoIosSearch size={16} color="#939393" />
+                  <ArticleTitle>{article.title}</ArticleTitle>
+                </DropdownItem>
+              ))}
+              {tickerList.length === 0 &&
+                articleList.length === 0 &&
+                trimmedKeyword.length >= 2 && (
+                  <DropdownItem>검색 결과가 없습니다.</DropdownItem>
+                )}
+            </>
+          )}
         </DropdownContainer>
       )}
     </SearchContainer>
@@ -246,9 +254,10 @@ const Input = styled.input`
     outline: none;
   }
 `;
-const SearchIcon = styled(IoIosSearch)`
+const SearchIcon = styled(IoIosSearch)<{ $disabled?: boolean }>`
   padding: 0px 14px;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
   z-index: 11;
 `;
 
@@ -270,6 +279,9 @@ const DropdownContainer = styled.div`
 `;
 
 const DropdownItem = styled.div<{ $isSelected?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 14px;
   padding: 12px 16px;
   cursor: pointer;
@@ -290,7 +302,6 @@ const TickerInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
 `;
 
 const CompanyName = styled.span`
@@ -305,22 +316,12 @@ const TickerCode = styled.span`
   padding: 2px 6px;
   border-radius: 4px;
 `;
-
-const FullCompanyName = styled.div`
-  font-size: 12px;
-  color: #999;
-`;
-
 const ArticleTitle = styled.div`
+  flex: 1;
+  min-width: 0;
   font-weight: 600;
   color: #333;
-  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const ArticleMeta = styled.div`
-  display: flex;
-  gap: 8px;
 `;

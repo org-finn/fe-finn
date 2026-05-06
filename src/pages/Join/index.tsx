@@ -88,7 +88,7 @@ export default function JoinPage() {
         </Text>
         을 선택하세요!
       </Paragraph>
-      <SearchBar onTickerSearchResult={setSearchResultCodes} />
+      <SearchBar type="ticker" onTickerSearchResult={setSearchResultCodes} />
       {filteredTickers.length === 0 ? (
         <NoItem
           message="종목 정보가 없어요!"
