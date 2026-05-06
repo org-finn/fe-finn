@@ -21,9 +21,11 @@ export default function SearchBar({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const trimmedKeyword = keyword.trim();
+  const isSearchDisabled = type !== 'all' || trimmedKeyword.length < 2;
 
   const { data: searchPreviewData, isLoading: searchPreviewLoading } =
-    useGetSearchPreview(keyword);
+    useGetSearchPreview(trimmedKeyword);
 
   const tickerList = useMemo(
     () => searchPreviewData?.content.tickerSearchList ?? [],
@@ -58,21 +60,21 @@ export default function SearchBar({
 
   useEffect(() => {
     if (!onTickerSearchResult) return;
-    if (keyword.length < 2) {
+    if (trimmedKeyword.length < 2) {
       onTickerSearchResult(null);
     } else {
       onTickerSearchResult(tickerList.map((t) => t.tickerCode));
     }
-  }, [tickerList, keyword, onTickerSearchResult]);
+  }, [tickerList, trimmedKeyword, onTickerSearchResult]);
 
   useEffect(() => {
     if (!onArticleSearchResult) return;
-    if (keyword.length < 2) {
+    if (trimmedKeyword.length < 2) {
       onArticleSearchResult(null);
     } else {
       onArticleSearchResult(articleList);
     }
-  }, [articleList, keyword, onArticleSearchResult]);
+  }, [articleList, trimmedKeyword, onArticleSearchResult]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -81,7 +83,7 @@ export default function SearchBar({
 
     if (onTickerSearchResult) return;
 
-    if (value.length >= 2) {
+    if (value.trim().length >= 2) {
       setIsDropdownOpen(true);
     } else {
       setIsDropdownOpen(false);
@@ -99,7 +101,7 @@ export default function SearchBar({
       ) {
         handleSearchAll(articleList[selectedIndex - tickerList.length].title);
       } else {
-        handleSearchAll(keyword);
+        handleSearchAll(trimmedKeyword);
       }
       return;
     }
@@ -144,7 +146,7 @@ export default function SearchBar({
           onKeyDown={handleKeyDown}
           onFocus={() =>
             !onTickerSearchResult &&
-            keyword.length >= 2 &&
+            trimmedKeyword.length >= 2 &&
             setIsDropdownOpen(true)
           }
         />
@@ -153,7 +155,10 @@ export default function SearchBar({
           color="#363636"
           role="button"
           aria-label="search icon"
-          onClick={() => type === 'all' && handleSearchAll(keyword)}
+          aria-disabled={isSearchDisabled}
+          tabIndex={isSearchDisabled ? -1 : 0}
+          $disabled={isSearchDisabled}
+          onClick={() => !isSearchDisabled && handleSearchAll(trimmedKeyword)}
         />
       </Wrapper>
 
@@ -177,7 +182,7 @@ export default function SearchBar({
                   </TickerInfo>
                 </DropdownItem>
               ))
-            ) : keyword.length >= 2 ? (
+            ) : trimmedKeyword.length >= 2 ? (
               <DropdownItem>검색 결과가 없습니다.</DropdownItem>
             ) : null
           ) : (
@@ -211,7 +216,7 @@ export default function SearchBar({
               ))}
               {tickerList.length === 0 &&
                 articleList.length === 0 &&
-                keyword.length >= 2 && (
+                trimmedKeyword.length >= 2 && (
                   <DropdownItem>검색 결과가 없습니다.</DropdownItem>
                 )}
             </>
@@ -249,9 +254,10 @@ const Input = styled.input`
     outline: none;
   }
 `;
-const SearchIcon = styled(IoIosSearch)`
+const SearchIcon = styled(IoIosSearch)<{ $disabled?: boolean }>`
   padding: 0px 14px;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
   z-index: 11;
 `;
 

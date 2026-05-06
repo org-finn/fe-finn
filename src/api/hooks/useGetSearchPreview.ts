@@ -20,10 +20,12 @@ export const getSearchPreview = async (keyword: string) => {
 };
 
 export const useGetSearchPreview = (keyword: string) => {
+  const trimmedKeyword = keyword.trim();
+
   return useQuery({
-    queryKey: ['searchPreview', keyword],
-    queryFn: () => getSearchPreview(keyword),
-    enabled: keyword.length >= 2, // 쿼리 활성화 조건 - 2글자부터 검색
+    queryKey: ['searchPreview', trimmedKeyword],
+    queryFn: () => getSearchPreview(trimmedKeyword),
+    enabled: trimmedKeyword.length >= 2, // 쿼리 활성화 조건 - 2글자부터 검색
     staleTime: 1000 * 60 * 5,
   });
 };
