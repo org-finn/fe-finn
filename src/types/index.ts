@@ -282,5 +282,5 @@ export type ArticleSearchListResponse = {
 };
 
 export type TickerSearchListResponse = {
-  tickers: FavoriteTickerResponse[];
+  tickers: PredictionDataResponse[]; // 추후 수정 필요
 };
