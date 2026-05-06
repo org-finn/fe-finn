@@ -10,7 +10,8 @@
     "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "format": "prettier --write '**/*.{ts,tsx}'"
+    "format": "prettier --write '**/*.{ts,tsx}'",
+    "graph": "depcruise --no-config --ts-config tsconfig.json --focus"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.80.6",
@@ -32,6 +33,7 @@
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
     "@vitejs/plugin-react": "^4.4.1",
+    "dependency-cruiser": "^16.10.4",
     "eslint": "^9.25.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
