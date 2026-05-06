@@ -5,7 +5,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useGetFavoriteArticles } from '@/api/hooks/useGetFavoriteArticles';
 import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
 import { GrPrevious, GrNext } from 'react-icons/gr';
-import { PiHeartFill } from 'react-icons/pi';
 import NoItem from '@/components/common/Layout/NoItem';
 import NewsItem from '@/components/Article/ArticleItem';
 import { Text } from '@/components/common/typography/Text';
@@ -96,18 +95,11 @@ export default function FavoriteArticleSection() {
       ) : (
         <SlideWrapper key={currentPage} $direction={slideDirection}>
           {currentArticles.map((article) => (
-            <ArticleWrapper key={article.articleId}>
-              <NewsItem item={article} />
-              <LikeButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleLike(article.articleId);
-                }}
-                aria-label="스크랩 해제"
-              >
-                <PiHeartFill color="#fe7373" size={24} />
-              </LikeButton>
-            </ArticleWrapper>
+            <NewsItem
+              key={article.articleId}
+              item={article}
+              onToggleLike={handleToggleLike}
+            />
           ))}
         </SlideWrapper>
       )}
@@ -193,26 +185,5 @@ const SlideWrapper = styled.div<{ $direction: 'left' | 'right' }>`
       transform: translateX(0);
       opacity: 1;
     }
-  }
-`;
-
-const ArticleWrapper = styled.div`
-  position: relative;
-`;
-
-const LikeButton = styled.button`
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    opacity: 0.8;
   }
 `;
