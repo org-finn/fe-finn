@@ -137,35 +137,41 @@ const mockTickerSearchData = [
   },
 ];
 
-export const tickerSearchHandlers = [
-  http.get(`${BASE_URL}/api/v1/search-preview/ticker`, ({ request }) => {
+export const searchPreviewHandlers = [
+  http.get(`${BASE_URL}/api/v1/search-preview`, ({ request }) => {
     const url = new URL(request.url);
     const keyword = url.searchParams.get('keyword') || '';
 
     if (keyword.length < 2) {
       return HttpResponse.json({
         code: '200 OK',
-        message: '종목 검색 결과를 성공적으로 조회하였습니다.',
+        message: '통합 검색 미리보기 결과를 성공적으로 조회하였습니다.',
         content: {
           tickerSearchList: [],
+          articleSearchList: [],
         },
       });
     }
 
-    const filteredResults = mockTickerSearchData.filter(
+    const filteredTickers = mockTickerSearchData.filter(
       (ticker) =>
         ticker.shortCompanyName.toLowerCase().includes(keyword.toLowerCase()) ||
         ticker.tickerCode.toLowerCase().includes(keyword.toLowerCase()) ||
         ticker.fullCompanyName.toLowerCase().includes(keyword.toLowerCase())
     );
 
-    const results = filteredResults.slice(0, 5); // 결과 최대 5개까지 보여줌
+    const filteredArticles = mockArticleSearchData.filter(
+      (article) =>
+        article.title.toLowerCase().includes(keyword.toLowerCase()) ||
+        article.description.toLowerCase().includes(keyword.toLowerCase())
+    );
 
     return HttpResponse.json({
       code: '200 OK',
-      message: '종목 검색 결과를 성공적으로 조회하였습니다.',
+      message: '통합 검색 미리보기 결과를 성공적으로 조회하였습니다.',
       content: {
-        tickerSearchList: results,
+        tickerSearchList: filteredTickers.slice(0, 5),
+        articleSearchList: filteredArticles.slice(0, 3),
       },
     });
   }),
@@ -199,6 +205,6 @@ export const articleSearchHandlers = [
 ];
 
 export const searchHandlers = [
-  ...tickerSearchHandlers,
+  ...searchPreviewHandlers,
   ...articleSearchHandlers,
 ];

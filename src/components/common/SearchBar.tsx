@@ -2,13 +2,12 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
-import { useGetTickerSearch } from '@/api/hooks/useGetTickerSearch';
-import { useGetArticleSearch } from '@/api/hooks/useGetArticleSearch';
+import { useGetSearchPreview } from '@/api/hooks/useGetSearchPreview';
 import { ArticleDataResponse } from '@/types';
 import { Text } from './typography/Text';
 
 interface SearchBarProps {
-  type?: 'ticker' | 'article';
+  type?: 'ticker' | 'article'; // 추후 타입 삭제 예정
   onTickerSearchResult?: (tickerCodes: string[] | null) => void;
   onArticleSearchResult?: (articles: ArticleDataResponse[] | null) => void;
 }
@@ -24,27 +23,26 @@ export default function SearchBar({
   const searchBarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const { data: tickerSearchData, isLoading: tickerLoading } =
-    useGetTickerSearch(type === 'ticker' ? keyword : '');
-  const { data: articleSearchData, isLoading: articleLoading } =
-    useGetArticleSearch(type === 'article' ? keyword : '');
+  const { data: searchPreviewData, isLoading: searchPreviewLoading } =
+    useGetSearchPreview(keyword);
 
   const tickerList = useMemo(
     () =>
       type === 'ticker'
-        ? (tickerSearchData?.content.tickerSearchList ?? [])
+        ? (searchPreviewData?.content.tickerSearchList ?? [])
         : [],
-    [tickerSearchData, type]
+    [searchPreviewData, type]
   );
   const articleList = useMemo(
     () =>
-      type === 'article' ? (articleSearchData?.content?.articles ?? []) : [],
-    [articleSearchData, type]
+      type === 'article'
+        ? (searchPreviewData?.content?.articleSearchList ?? [])
+        : [],
+    [searchPreviewData, type]
   );
 
   const resultCount =
     type === 'ticker' ? tickerList.length : articleList.length;
-  const isLoading = type === 'ticker' ? tickerLoading : articleLoading;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -167,7 +165,7 @@ export default function SearchBar({
 
       {isDropdownOpen && !onTickerSearchResult && (
         <DropdownContainer>
-          {isLoading ? (
+          {searchPreviewLoading ? (
             <DropdownItem>검색 중...</DropdownItem>
           ) : type === 'ticker' ? (
             tickerList.length > 0 ? (
