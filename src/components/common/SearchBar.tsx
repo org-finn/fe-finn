@@ -89,6 +89,21 @@ export default function SearchBar({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && type === 'all') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < tickerList.length) {
+        handleSearchAll(tickerList[selectedIndex].shortCompanyName);
+      } else if (
+        selectedIndex >= tickerList.length &&
+        selectedIndex < resultCount
+      ) {
+        handleSearchAll(articleList[selectedIndex - tickerList.length].title);
+      } else {
+        handleSearchAll(keyword);
+      }
+      return;
+    }
+
     if (!isDropdownOpen || resultCount === 0) return;
 
     switch (e.key) {
@@ -100,16 +115,6 @@ export default function SearchBar({
         e.preventDefault();
         setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
         break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && selectedIndex < resultCount) {
-          if (type === 'ticker' || selectedIndex < tickerList.length) {
-            handleSelectTicker(tickerList[selectedIndex]);
-          } else {
-            handleSelectArticle(articleList[selectedIndex - tickerList.length]);
-          }
-        }
-        break;
       case 'Escape':
         setIsDropdownOpen(false);
         setSelectedIndex(-1);
@@ -117,17 +122,12 @@ export default function SearchBar({
     }
   };
 
-  const handleSelectTicker = (ticker: (typeof tickerList)[0]) => {
-    setKeyword(ticker.shortCompanyName);
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
-    navigate(`/ticker/${ticker.tickerId}`);
-  };
-
-  const handleSelectArticle = (article: ArticleDataResponse) => {
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
-    navigate(`/news/${article.articleId}`);
+  const handleSearchAll = (searchKeyword: string) => {
+    if (searchKeyword.length >= 2) {
+      setIsDropdownOpen(false);
+      setSelectedIndex(-1);
+      navigate(`/search?keyword=${encodeURIComponent(searchKeyword)}`);
+    }
   };
 
   const placeholder =
@@ -153,9 +153,7 @@ export default function SearchBar({
           color="#363636"
           role="button"
           aria-label="search icon"
-          onClick={() =>
-            type === 'all' && keyword.length >= 2 && setIsDropdownOpen(false)
-          }
+          onClick={() => type === 'all' && handleSearchAll(keyword)}
         />
       </Wrapper>
 
@@ -169,7 +167,7 @@ export default function SearchBar({
                 <DropdownItem
                   key={ticker.tickerId}
                   $isSelected={index === selectedIndex}
-                  onClick={() => handleSelectTicker(ticker)}
+                  onClick={() => handleSearchAll(ticker.shortCompanyName)}
                   onMouseEnter={() => setSelectedIndex(index)}
                 >
                   <IoIosSearch size={16} color="#939393" />
@@ -188,7 +186,7 @@ export default function SearchBar({
                 <DropdownItem
                   key={ticker.tickerId}
                   $isSelected={index === selectedIndex}
-                  onClick={() => handleSelectTicker(ticker)}
+                  onClick={() => handleSearchAll(ticker.shortCompanyName)}
                   onMouseEnter={() => setSelectedIndex(index)}
                 >
                   <IoIosSearch size={16} color="#939393" />
@@ -202,7 +200,7 @@ export default function SearchBar({
                 <DropdownItem
                   key={article.articleId}
                   $isSelected={tickerList.length + index === selectedIndex}
-                  onClick={() => handleSelectArticle(article)}
+                  onClick={() => handleSearchAll(article.title)}
                   onMouseEnter={() =>
                     setSelectedIndex(tickerList.length + index)
                   }

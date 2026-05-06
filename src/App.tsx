@@ -12,6 +12,7 @@ import CallbackPage from './pages/Callback';
 import JoinPage from './pages/Join';
 import MyPage from './pages/My';
 import NotFoundPage from './pages/NotFound';
+import SearchPage from './pages/Search';
 import GlobalStyle from './global';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="/ticker/:id" element={<DetailPage />} />
           <Route path="/news" element={<NewsBoardPage />} />
           <Route path="/news/:id" element={<ArticleDetailPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route
             path="/join"
