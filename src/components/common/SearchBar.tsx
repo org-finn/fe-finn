@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
 import { useGetSearchPreview } from '@/api/hooks/useGetSearchPreview';
 import { ArticleDataResponse } from '@/types';
-import { Text } from './typography/Text';
 
 interface SearchBarProps {
   type?: 'ticker' | 'article'; // 추후 타입 삭제 예정
@@ -176,11 +175,11 @@ export default function SearchBar({
                   onClick={() => handleSelectTicker(ticker)}
                   onMouseEnter={() => setSelectedIndex(index)}
                 >
+                  <IoIosSearch size={16} color="#939393" />
                   <TickerInfo>
                     <CompanyName>{ticker.shortCompanyName}</CompanyName>
                     <TickerCode>{ticker.tickerCode}</TickerCode>
                   </TickerInfo>
-                  <FullCompanyName>{ticker.fullCompanyName}</FullCompanyName>
                 </DropdownItem>
               ))
             ) : keyword.length >= 2 ? (
@@ -194,18 +193,8 @@ export default function SearchBar({
                 onClick={() => handleSelectArticle(article)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
+                <IoIosSearch size={16} color="#939393" />
                 <ArticleTitle>{article.title}</ArticleTitle>
-                <ArticleMeta>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    {article.source}
-                  </Text>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    ·
-                  </Text>
-                  <Text size="xxs" weight="normal" variant="grey">
-                    {article.publishedDate}
-                  </Text>
-                </ArticleMeta>
               </DropdownItem>
             ))
           ) : keyword.length >= 2 ? (
@@ -268,6 +257,9 @@ const DropdownContainer = styled.div`
 `;
 
 const DropdownItem = styled.div<{ $isSelected?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 14px;
   padding: 12px 16px;
   cursor: pointer;
@@ -288,7 +280,6 @@ const TickerInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
 `;
 
 const CompanyName = styled.span`
@@ -303,22 +294,12 @@ const TickerCode = styled.span`
   padding: 2px 6px;
   border-radius: 4px;
 `;
-
-const FullCompanyName = styled.div`
-  font-size: 12px;
-  color: #999;
-`;
-
 const ArticleTitle = styled.div`
+  flex: 1;
+  min-width: 0;
   font-weight: 600;
   color: #333;
-  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const ArticleMeta = styled.div`
-  display: flex;
-  gap: 8px;
 `;
