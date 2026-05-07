@@ -19,7 +19,7 @@ export default function SearchArticleSection({
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  const { data: searchData } = useGetArticleSearchList(keyword);
+  const { data: searchData, isLoading } = useGetArticleSearchList(keyword);
   const allArticles = searchData?.content.articles ?? [];
   const articles = allArticles.slice(0, ARTICLE_LIMIT);
   const hasMore = allArticles.length > ARTICLE_LIMIT;
@@ -39,7 +39,10 @@ export default function SearchArticleSection({
         )}
       </SectionHeader>
       {articles.length === 0 ? (
-        <NoItem message="관련 기사가 없어요!" height={200} />
+        <NoItem
+          message={isLoading ? '검색 중...' : '관련 기사가 없어요!'}
+          height={200}
+        />
       ) : (
         <ArticleList>
           {articles.map((article) => (

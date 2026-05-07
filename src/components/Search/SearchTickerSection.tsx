@@ -33,7 +33,7 @@ export default function SearchTickerSection({
   const queryClient = useQueryClient();
   const displayCount = isMobile ? 2 : 3;
 
-  const { data: searchData } = useGetTickerSearchList(keyword);
+  const { data: searchData, isLoading } = useGetTickerSearchList(keyword);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
   const tickers = searchData?.content.tickers ?? [];
 
@@ -104,7 +104,10 @@ export default function SearchTickerSection({
         </Text>
       </SectionHeader>
       {tickers.length === 0 ? (
-        <NoItem message="관련 종목이 없어요!" height={200} />
+        <NoItem
+          message={isLoading ? '검색 중...' : '관련 종목이 없어요!'}
+          height={200}
+        />
       ) : (
         <ListWrapper>
           {tickers.length >= displayCount && (
