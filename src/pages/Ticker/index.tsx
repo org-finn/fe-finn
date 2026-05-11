@@ -20,6 +20,8 @@ export default function TickerPage() {
   };
 
   const [sortOption, setSortOption] = useState(getInitialSortOption());
+  const filterOption =
+    new URLSearchParams(location.search).get('filter') ?? undefined;
   const [showSortOptions, setShowSortOptions] = useState(false);
 
   const handleSortChange = (option: string) => {
@@ -39,7 +41,7 @@ export default function TickerPage() {
     hasNextPage: hasNext,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetInfiniteTickerList({ sort: sortOption });
+  } = useGetInfiniteTickerList({ sort: sortOption, filter: filterOption });
   const sortLabel: Record<string, string> = {
     popular: '인기순',
     upward: '점수 낮은순',

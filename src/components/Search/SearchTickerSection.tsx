@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { GrPrevious, GrNext } from 'react-icons/gr';
 import ApexChart from 'react-apexcharts';
@@ -30,6 +31,7 @@ export default function SearchTickerSection({
   const [hoverKey, setHoverKey] = useState(0);
   const listRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const displayCount = isMobile ? 2 : 3;
 
@@ -136,7 +138,12 @@ export default function SearchTickerSection({
                 onToggleLike={handleToggleLike}
               />
             ))}
-            <MoreWrapper onMouseEnter={() => setHoverKey((k) => k + 1)}>
+            <MoreWrapper
+              onMouseEnter={() => setHoverKey((k) => k + 1)}
+              onClick={() =>
+                navigate(`/ticker?filter=${encodeURIComponent(keyword)}`)
+              }
+            >
               <MoreImageContainer>
                 <MoreGraphWrapper>
                   <ApexChart
