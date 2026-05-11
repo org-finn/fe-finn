@@ -31,8 +31,11 @@ export default function SearchArticleSection({
           관련 기사
         </Text>
         {hasMore && (
-          // 추후 필터링 된 뉴스 페이지로 수정 필요
-          <MoreBtn onClick={() => navigate('/news')}>
+          <MoreBtn
+            onClick={() =>
+              navigate(`/news?filter=${encodeURIComponent(keyword)}`)
+            }
+          >
             더 보기
             <IoIosArrowForward />
           </MoreBtn>
