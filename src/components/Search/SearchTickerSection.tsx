@@ -267,6 +267,7 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
 `;
 
 const MoreBtn = styled.button`
+  box-sizing: content-box;
   border: none;
   width: 154px;
   display: flex;
