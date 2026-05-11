@@ -138,7 +138,9 @@ export default function SearchTickerSection({
                 onToggleLike={handleToggleLike}
               />
             ))}
-            <MoreWrapper
+            <MoreBtn
+              type="button"
+              aria-label={`${keyword} 관련 종목 더 보기`}
               onMouseEnter={() => setHoverKey((k) => k + 1)}
               onClick={() =>
                 navigate(`/ticker?filter=${encodeURIComponent(keyword)}`)
@@ -167,7 +169,7 @@ export default function SearchTickerSection({
                   더 보기
                 </Text>
               </MoreInfoContainer>
-            </MoreWrapper>
+            </MoreBtn>
           </ListContainer>
           {tickers.length >= displayCount && (
             <ArrowButton
@@ -264,7 +266,8 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
   }
 `;
 
-const MoreWrapper = styled.div`
+const MoreBtn = styled.button`
+  border: none;
   width: 154px;
   display: flex;
   flex-direction: column;
