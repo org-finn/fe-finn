@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
+import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
 import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
 import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
@@ -184,6 +186,16 @@ export default function NewsBoardPage() {
         />
       </ChipContainer>
 
+      {filterOption && (
+        <FilterKeywordContainer>
+          <Paragraph weight="normal" size="sm">
+            <Text weight="bold" size="sm" variant="#2d70d3">
+              {`${filterOption} `}
+            </Text>
+            로 검색한 결과입니다.
+          </Paragraph>
+        </FilterKeywordContainer>
+      )}
       <ArticleList items={allArticles} />
       <div ref={ref} style={{ height: '50px' }} />
       {isFetchingNextPage && <Loading />}
@@ -247,6 +259,14 @@ const ChipContainer = styled.div`
 
   @media screen and (max-width: 768px) {
     margin: -6px 0 -16px 0;
+  }
+`;
+
+export const FilterKeywordContainer = styled.div`
+  margin: -30px 0 -40px 0;
+
+  @media screen and (max-width: 768px) {
+    margin: -30px 0 -30px 0;
   }
 `;
 
