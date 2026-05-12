@@ -347,7 +347,7 @@ export const tickerSearchListHandlers = [
       return HttpResponse.json({
         code: '200 OK',
         message: '종목 검색 결과를 성공적으로 조회하였습니다.',
-        content: { tickers: [] },
+        content: { tickerSearchList: [], isMore: false },
       });
     }
 
@@ -371,7 +371,7 @@ export const tickerSearchListHandlers = [
     return HttpResponse.json({
       code: '200 OK',
       message: '종목 검색 결과를 성공적으로 조회하였습니다.',
-      content: { tickers },
+      content: { tickerSearchList: tickers, isMore: filtered.length > 3 },
     });
   }),
 ];
@@ -385,7 +385,7 @@ export const articleSearchListHandlers = [
       return HttpResponse.json({
         code: '200 OK',
         message: '기사 검색 결과를 성공적으로 조회하였습니다.',
-        content: { articles: [] },
+        content: { articles: [], isMore: false },
       });
     }
 
@@ -398,7 +398,7 @@ export const articleSearchListHandlers = [
     return HttpResponse.json({
       code: '200 OK',
       message: '기사 검색 결과를 성공적으로 조회하였습니다.',
-      content: { articles: filtered },
+      content: { articles: filtered, isMore: filtered.length > 3 },
     });
   }),
 ];

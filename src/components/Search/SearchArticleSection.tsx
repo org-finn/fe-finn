@@ -22,7 +22,7 @@ export default function SearchArticleSection({
   const { data: searchData, isLoading } = useGetArticleSearchList(keyword);
   const allArticles = searchData?.content.articles ?? [];
   const articles = allArticles.slice(0, ARTICLE_LIMIT);
-  const hasMore = allArticles.length > ARTICLE_LIMIT;
+  const hasMore = searchData?.content.isMore ?? false;
 
   return (
     <SectionContainer>

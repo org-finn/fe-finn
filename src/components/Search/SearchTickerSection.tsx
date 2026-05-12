@@ -37,7 +37,8 @@ export default function SearchTickerSection({
 
   const { data: searchData, isLoading } = useGetTickerSearchList(keyword);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
-  const tickers = searchData?.content.tickers ?? [];
+  const tickers = searchData?.content.tickerSearchList ?? [];
+  const hasMore = searchData?.content.isMore ?? false;
 
   const handleToggleLike = (tickerCode: string, isFavorite: boolean) => {
     putFavoriteTicker(
@@ -138,38 +139,40 @@ export default function SearchTickerSection({
                 onToggleLike={handleToggleLike}
               />
             ))}
-            <MoreBtn
-              type="button"
-              aria-label={`${keyword} 관련 종목 더 보기`}
-              onMouseEnter={() => setHoverKey((k) => k + 1)}
-              onClick={() =>
-                navigate(`/ticker?filter=${encodeURIComponent(keyword)}`)
-              }
-            >
-              <MoreImageContainer>
-                <MoreGraphWrapper>
-                  <ApexChart
-                    key={hoverKey}
-                    options={moreChartOptions}
-                    series={[{ name: 'Price', data: MORE_CHART_DATA }]}
-                    type="area"
-                    height={isMobile ? 36 : 44}
-                  />
-                </MoreGraphWrapper>
-              </MoreImageContainer>
-              <MoreInfoContainer>
-                <Text size={isMobile ? 'xs' : 's'} weight="bold">
-                  관련 종목
-                </Text>
-                <Text
-                  size={isMobile ? 'xxs' : 'xs'}
-                  weight="bold"
-                  variant="grey"
-                >
-                  더 보기
-                </Text>
-              </MoreInfoContainer>
-            </MoreBtn>
+            {hasMore && (
+              <MoreBtn
+                type="button"
+                aria-label={`${keyword} 관련 종목 더 보기`}
+                onMouseEnter={() => setHoverKey((k) => k + 1)}
+                onClick={() =>
+                  navigate(`/ticker?filter=${encodeURIComponent(keyword)}`)
+                }
+              >
+                <MoreImageContainer>
+                  <MoreGraphWrapper>
+                    <ApexChart
+                      key={hoverKey}
+                      options={moreChartOptions}
+                      series={[{ name: 'Price', data: MORE_CHART_DATA }]}
+                      type="area"
+                      height={isMobile ? 36 : 44}
+                    />
+                  </MoreGraphWrapper>
+                </MoreImageContainer>
+                <MoreInfoContainer>
+                  <Text size={isMobile ? 'xs' : 's'} weight="bold">
+                    관련 종목
+                  </Text>
+                  <Text
+                    size={isMobile ? 'xxs' : 'xs'}
+                    weight="bold"
+                    variant="grey"
+                  >
+                    더 보기
+                  </Text>
+                </MoreInfoContainer>
+              </MoreBtn>
+            )}
           </ListContainer>
           {tickers.length >= displayCount && (
             <ArrowButton
