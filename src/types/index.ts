@@ -283,6 +283,6 @@ export type ArticleSearchListResponse = {
 };
 
 export type TickerSearchListResponse = {
-  tickers: PredictionDataResponse[];
+  tickerSearchList: PredictionDataResponse[];
   isMore: boolean;
 };

@@ -37,7 +37,7 @@ export default function SearchTickerSection({
 
   const { data: searchData, isLoading } = useGetTickerSearchList(keyword);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
-  const tickers = searchData?.content.tickers ?? [];
+  const tickers = searchData?.content.tickerSearchList ?? [];
   const hasMore = searchData?.content.isMore ?? false;
 
   const handleToggleLike = (tickerCode: string, isFavorite: boolean) => {
