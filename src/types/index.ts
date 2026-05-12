@@ -279,8 +279,10 @@ export type TickerRealTimeStreamResponse = {
 
 export type ArticleSearchListResponse = {
   articles: ArticleDataResponse[];
+  isMore: boolean;
 };
 
 export type TickerSearchListResponse = {
-  tickers: PredictionDataResponse[]; // 추후 수정 필요
+  tickers: PredictionDataResponse[];
+  isMore: boolean;
 };
