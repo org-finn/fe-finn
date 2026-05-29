@@ -86,8 +86,8 @@ export default function TickerPage() {
       <SortSection ref={dropdownRef}>
         {filterOption && (
           <FilterKeywordContainer>
-            <Paragraph weight="normal" size="sm">
-              <Text weight="bold" size="sm" variant="#2d70d3">
+            <Paragraph weight="normal" size="s">
+              <Text weight="bold" size="s" variant="#2d70d3">
                 {`${filterOption} `}
               </Text>
               {josa.pick(filterOption, '으로/로')} 검색한 결과입니다.
