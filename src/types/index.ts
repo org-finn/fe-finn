@@ -290,7 +290,7 @@ export type TickerSearchListResponse = {
 export type KeywordsWithArticleResponse = {
   keyword: string;
   articles: { articleId: string; title: string }[];
-  sentiment: number;
+  sentiment: 1 | -1;
   date: string;
 };
 
