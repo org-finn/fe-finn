@@ -182,6 +182,7 @@ export default function KeywordBubbleMap({
                 transformOrigin: `${x}px ${y}px`,
                 cursor:
                   selected === null && hasArticles ? 'pointer' : 'default',
+                outline: 'none',
               }}
               onClick={(e) => {
                 if (selected === null && hasArticles) {
@@ -259,6 +260,7 @@ export default function KeywordBubbleMap({
                 transformOrigin: `${x}px ${y}px`,
                 cursor:
                   selected === null && hasArticles ? 'pointer' : 'default',
+                outline: 'none',
               }}
               onClick={(e) => {
                 if (selected === null && hasArticles) {
