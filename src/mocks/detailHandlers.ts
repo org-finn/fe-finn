@@ -310,15 +310,6 @@ const mockKeywordsData = [
     date: '2025-05-29',
   },
   {
-    keyword: '외국인매수',
-    articles: [
-      { articleId: '4', title: '코스피 외국인 순매수 전환' },
-      { articleId: '5', title: '2분기 실적 시장 기대치 상회' },
-    ],
-    sentiment: 1,
-    date: '2025-05-29',
-  },
-  {
     keyword: '신제품기대',
     articles: [
       { articleId: '2', title: '애플 신제품 출시 기대감 확산' },
@@ -339,6 +330,11 @@ const mockKeywordsData = [
       { articleId: '2', title: '애플 신제품 출시 기대감 확산' },
     ],
     sentiment: 1,
+  },
+  {
+    keyword: '배당확대',
+    articles: [],
+    sentiment: 1,
     date: '2025-05-29',
   },
   {
@@ -347,15 +343,6 @@ const mockKeywordsData = [
       { articleId: '1', title: '금리 인상 우려에 증시 하락' },
       { articleId: '5', title: '인플레이션 예상치 웃돌아' },
       { articleId: '3', title: '달러 강세 수출주 압박' },
-    ],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '중국침체',
-    articles: [
-      { articleId: '4', title: '중국 경기 침체 공포 확산' },
-      { articleId: '6', title: '반도체 공급 과잉 우려 지속' },
     ],
     sentiment: -1,
     date: '2025-05-29',
@@ -385,6 +372,12 @@ const mockKeywordsData = [
       { articleId: '5', title: '인플레이션 예상치 웃돌아' },
       { articleId: '1', title: '금리 인상 우려에 증시 하락' },
     ],
+    sentiment: -1,
+    date: '2025-05-29',
+  },
+  {
+    keyword: '규제리스크',
+    articles: [],
     sentiment: -1,
     date: '2025-05-29',
   },

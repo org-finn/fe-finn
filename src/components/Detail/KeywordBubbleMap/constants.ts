@@ -20,3 +20,7 @@ export const POS_TEXT = '#EF4444';
 export const NEG_FILL = '#DDF9FF';
 export const NEG_STROKE = '#A9CCFD';
 export const NEG_TEXT = '#3B82F6';
+
+export const EMPTY_FILL = '#F3F4F6';
+export const EMPTY_STROKE = '#D1D5DB';
+export const EMPTY_TEXT = '#9CA3AF';

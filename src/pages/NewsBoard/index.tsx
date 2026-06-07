@@ -190,7 +190,7 @@ export default function NewsBoardPage() {
       {filterOption && (
         <FilterKeywordContainer>
           <Paragraph weight="normal" size="s">
-            <Text weight="bold" size="s" variant="#2d70d3">
+            <Text weight="bold" size="m" variant="#2d70d3">
               {`${filterOption} `}
             </Text>
             {josa.pick(filterOption, '으로/로')} 검색한 결과입니다.

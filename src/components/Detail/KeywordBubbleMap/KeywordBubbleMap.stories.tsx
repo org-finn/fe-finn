@@ -141,3 +141,24 @@ export const LowPositiveRatio: Story = {
     negativeKeywords: mockNegativeKeywords,
   },
 };
+
+export const WithEmptyArticles: Story = {
+  args: {
+    positiveRatio: 50,
+    negativeRatio: 50,
+    positiveKeywords: [
+      ...mockPositiveKeywords.slice(0, 3),
+      { keyword: '배당확대', articles: [], sentiment: 1, date: '2025-05-29' },
+      { keyword: '자사주매입', articles: [], sentiment: 1, date: '2025-05-29' },
+    ],
+    negativeKeywords: [
+      ...mockNegativeKeywords.slice(0, 3),
+      {
+        keyword: '규제리스크',
+        articles: [],
+        sentiment: -1,
+        date: '2025-05-29',
+      },
+    ],
+  },
+};
