@@ -286,3 +286,14 @@ export type TickerSearchListResponse = {
   tickerSearchList: PredictionDataResponse[];
   isMore: boolean;
 };
+
+export type KeywordsWithArticleResponse = {
+  keyword: string;
+  articles: { articleId: string; title: string }[];
+  sentiment: number;
+  date: string;
+};
+
+export type KeywordsWithArticleListResponse = {
+  keywords: KeywordsWithArticleResponse[];
+};
