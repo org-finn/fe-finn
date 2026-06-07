@@ -865,13 +865,16 @@ export const detailHandlers = [
       });
     }
   ),
-  http.get(`${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n')}`, () => {
-    return HttpResponse.json({
-      code: '200 OK',
-      message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
-      content: mockArticleSummary,
-    });
-  }),
+  http.get(
+    `${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n', '2025-05-29')}`,
+    () => {
+      return HttpResponse.json({
+        code: '200 OK',
+        message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
+        content: mockArticleSummary,
+      });
+    }
+  ),
 ];
 
 export default detailHandlers;

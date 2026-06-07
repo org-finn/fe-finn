@@ -57,7 +57,7 @@ export default function DetailPage() {
       tickerId: id,
       enabled: isAuthenticated && isLiveMode,
     });
-  const { data: summaryResponse } = useGetArticleSummaryTicker(id);
+  const { data: summaryResponse } = useGetArticleSummaryTicker(id, today);
   const { data: keywordsResponse } = useGetTickerKeywords(id, today);
 
   const tickerData = tickerResponse?.content;
