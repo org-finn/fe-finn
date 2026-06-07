@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useGetTickerDetail } from '@/api/hooks/useGetTickerDetail';
 import { useGetRealGraph, RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
+import { useGetTickerKeywords } from '@/api/hooks/useGetTickerKeywords';
 import { useGetRealTimePrice } from '@/api/hooks/useGetRealTimePrice';
 import { useGetArticleSummaryTicker } from '@/api/hooks/useGetArticleSummaryTicker';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,12 +22,16 @@ import TickerHeader from '@/components/Detail/TickerHeader';
 import TickerPriceSection from '@/components/Detail/TickerPriceSection';
 import ChartSection from '@/components/Detail/ChartSection';
 import ArticleSection from '@/components/Detail/ArticleSection';
+import KeywordBubbleMap from '@/components/Detail/KeywordBubbleMap';
 
 export default function DetailPage() {
   const { id } = useParams() as { id: string };
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { isAuthenticated } = useAuth();
+
+  const today = new Date().toLocaleDateString('sv-SE');
 
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -53,12 +58,21 @@ export default function DetailPage() {
       enabled: isAuthenticated && isLiveMode,
     });
   const { data: summaryResponse } = useGetArticleSummaryTicker(id);
+  const { data: keywordsResponse } = useGetTickerKeywords(id, today);
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
   const realTimePriceData = realTimePriceResponse?.content;
   const summaryData = summaryResponse?.content ?? null;
   const articles = tickerData?.detailData.article;
+
+  const keywords = keywordsResponse?.content?.keywords ?? [];
+  const positiveKeywords = keywords.filter((k) => k.sentiment === 1);
+  const negativeKeywords = keywords.filter((k) => k.sentiment !== 1);
+  const total = positiveKeywords.length + negativeKeywords.length;
+  const positiveRatio =
+    total > 0 ? (positiveKeywords.length / total) * 100 : 50;
+  const negativeRatio = 100 - positiveRatio;
 
   const [isFavorite, setIsFavorite] = useState(false);
   const { mutate: putFavoriteTicker } = usePutFavoriteTicker();
@@ -180,6 +194,16 @@ export default function DetailPage() {
           onLiveMode={handleLiveMode}
           onShowSummary={() => setShowSummaryModal(true)}
         />
+        {keywords.length > 0 && (
+          <KeywordBubbleMap
+            positiveRatio={positiveRatio}
+            negativeRatio={negativeRatio}
+            positiveKeywords={positiveKeywords}
+            negativeKeywords={negativeKeywords}
+            date={today}
+            onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+          />
+        )}
         {articles && articles.length > 0 && (
           <ArticleSection
             articles={articles}
