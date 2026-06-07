@@ -10,6 +10,9 @@ import {
   NEG_FILL,
   NEG_STROKE,
   NEG_TEXT,
+  EMPTY_FILL,
+  EMPTY_STROKE,
+  EMPTY_TEXT,
   NEWS_ICON_SIZE,
   NEWS_ORBIT,
   NEWS_PILL_HEIGHT,
@@ -153,6 +156,10 @@ export default function KeywordBubbleMap({
           const pw = pillWidth(kw.keyword);
           const isSelected = selected?.keyword === kw.keyword;
           const isDimmed = selected !== null && !isSelected;
+          const hasArticles = kw.articles.length > 0;
+          const fill = hasArticles ? POS_FILL : EMPTY_FILL;
+          const stroke = hasArticles ? POS_STROKE : EMPTY_STROKE;
+          const textFill = hasArticles ? POS_TEXT : EMPTY_TEXT;
 
           return (
             <motion.g
@@ -165,20 +172,29 @@ export default function KeywordBubbleMap({
                 opacity: isDimmed ? 0 : 1,
               }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
-              whileHover={selected === null ? { scale: 1.08 } : {}}
-              whileFocus={selected === null ? { scale: 1.08 } : {}}
+              whileHover={
+                selected === null && hasArticles ? { scale: 1.08 } : {}
+              }
+              whileFocus={
+                selected === null && hasArticles ? { scale: 1.08 } : {}
+              }
               style={{
                 transformOrigin: `${x}px ${y}px`,
-                cursor: selected === null ? 'pointer' : 'default',
+                cursor:
+                  selected === null && hasArticles ? 'pointer' : 'default',
               }}
               onClick={(e) => {
-                if (selected === null) {
+                if (selected === null && hasArticles) {
                   e.stopPropagation();
                   setSelected(kw);
                 }
               }}
               onKeyDown={(e) => {
-                if (selected === null && (e.key === 'Enter' || e.key === ' ')) {
+                if (
+                  selected === null &&
+                  hasArticles &&
+                  (e.key === 'Enter' || e.key === ' ')
+                ) {
                   e.preventDefault();
                   e.stopPropagation();
                   setSelected(kw);
@@ -191,8 +207,8 @@ export default function KeywordBubbleMap({
                 width={pw}
                 height={PILL_HEIGHT}
                 rx={PILL_RADIUS}
-                fill={POS_FILL}
-                stroke={POS_STROKE}
+                fill={fill}
+                stroke={stroke}
                 strokeWidth={1}
                 filter={`url(#${posShadowId})`}
               />
@@ -203,7 +219,7 @@ export default function KeywordBubbleMap({
                 dominantBaseline="middle"
                 fontSize={13}
                 fontWeight="600"
-                fill={POS_TEXT}
+                fill={textFill}
                 style={{ pointerEvents: 'none' }}
               >
                 {kw.keyword}
@@ -217,6 +233,10 @@ export default function KeywordBubbleMap({
           const pw = pillWidth(kw.keyword);
           const isSelected = selected?.keyword === kw.keyword;
           const isDimmed = selected !== null && !isSelected;
+          const hasArticles = kw.articles.length > 0;
+          const fill = hasArticles ? NEG_FILL : EMPTY_FILL;
+          const stroke = hasArticles ? NEG_STROKE : EMPTY_STROKE;
+          const textFill = hasArticles ? NEG_TEXT : EMPTY_TEXT;
 
           return (
             <motion.g
@@ -229,20 +249,29 @@ export default function KeywordBubbleMap({
                 opacity: isDimmed ? 0 : 1,
               }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
-              whileHover={selected === null ? { scale: 1.08 } : {}}
-              whileFocus={selected === null ? { scale: 1.08 } : {}}
+              whileHover={
+                selected === null && hasArticles ? { scale: 1.08 } : {}
+              }
+              whileFocus={
+                selected === null && hasArticles ? { scale: 1.08 } : {}
+              }
               style={{
                 transformOrigin: `${x}px ${y}px`,
-                cursor: selected === null ? 'pointer' : 'default',
+                cursor:
+                  selected === null && hasArticles ? 'pointer' : 'default',
               }}
               onClick={(e) => {
-                if (selected === null) {
+                if (selected === null && hasArticles) {
                   e.stopPropagation();
                   setSelected(kw);
                 }
               }}
               onKeyDown={(e) => {
-                if (selected === null && (e.key === 'Enter' || e.key === ' ')) {
+                if (
+                  selected === null &&
+                  hasArticles &&
+                  (e.key === 'Enter' || e.key === ' ')
+                ) {
                   e.preventDefault();
                   e.stopPropagation();
                   setSelected(kw);
@@ -255,8 +284,8 @@ export default function KeywordBubbleMap({
                 width={pw}
                 height={PILL_HEIGHT}
                 rx={PILL_RADIUS}
-                fill={NEG_FILL}
-                stroke={NEG_STROKE}
+                fill={fill}
+                stroke={stroke}
                 strokeWidth={1}
                 filter={`url(#${negShadowId})`}
               />
@@ -267,7 +296,7 @@ export default function KeywordBubbleMap({
                 dominantBaseline="middle"
                 fontSize={13}
                 fontWeight="600"
-                fill={NEG_TEXT}
+                fill={textFill}
                 style={{ pointerEvents: 'none' }}
               >
                 {kw.keyword}
