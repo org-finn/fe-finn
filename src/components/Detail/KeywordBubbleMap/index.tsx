@@ -157,6 +157,8 @@ export default function KeywordBubbleMap({
           return (
             <motion.g
               key={kw.keyword}
+              role="button"
+              tabIndex={isDimmed ? -1 : 0}
               animate={{
                 x: isSelected ? SVG_WIDTH / 2 - x : 0,
                 y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -164,12 +166,20 @@ export default function KeywordBubbleMap({
               }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
               whileHover={selected === null ? { scale: 1.08 } : {}}
+              whileFocus={selected === null ? { scale: 1.08 } : {}}
               style={{
                 transformOrigin: `${x}px ${y}px`,
                 cursor: selected === null ? 'pointer' : 'default',
               }}
               onClick={(e) => {
                 if (selected === null) {
+                  e.stopPropagation();
+                  setSelected(kw);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (selected === null && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
                   e.stopPropagation();
                   setSelected(kw);
                 }
@@ -211,6 +221,8 @@ export default function KeywordBubbleMap({
           return (
             <motion.g
               key={kw.keyword}
+              role="button"
+              tabIndex={isDimmed ? -1 : 0}
               animate={{
                 x: isSelected ? SVG_WIDTH / 2 - x : 0,
                 y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -218,12 +230,20 @@ export default function KeywordBubbleMap({
               }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
               whileHover={selected === null ? { scale: 1.08 } : {}}
+              whileFocus={selected === null ? { scale: 1.08 } : {}}
               style={{
                 transformOrigin: `${x}px ${y}px`,
                 cursor: selected === null ? 'pointer' : 'default',
               }}
               onClick={(e) => {
                 if (selected === null) {
+                  e.stopPropagation();
+                  setSelected(kw);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (selected === null && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
                   e.stopPropagation();
                   setSelected(kw);
                 }
@@ -267,6 +287,8 @@ export default function KeywordBubbleMap({
               return (
                 <motion.g
                   key={`news-${article.articleId}`}
+                  role="button"
+                  tabIndex={0}
                   initial={{ opacity: 0, scale: 0.75 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.75 }}
@@ -276,6 +298,7 @@ export default function KeywordBubbleMap({
                     ease: 'easeOut',
                   }}
                   whileHover={{ scale: 1.04 }}
+                  whileFocus={{ scale: 1.04 }}
                   style={{
                     cursor: 'pointer',
                     transformOrigin: `${x}px ${y}px`,
@@ -283,6 +306,13 @@ export default function KeywordBubbleMap({
                   onClick={(e) => {
                     e.stopPropagation();
                     onNewsClick(article.articleId);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onNewsClick(article.articleId);
+                    }
                   }}
                 >
                   <rect
