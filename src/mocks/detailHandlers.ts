@@ -852,7 +852,7 @@ export const detailHandlers = [
     });
   }),
   http.get(
-    `${BASE_URL}${getTickerKeywordsPath('0-d-q-8b-95n', '2025-05-29')}`,
+    `${BASE_URL}${getTickerKeywordsPath('0-d-q-8b-95n', '2025-05-29', 5, 5, 20)}`,
     ({ request }) => {
       const url = new URL(request.url);
       const date = url.searchParams.get('date') ?? '2025-05-29';
