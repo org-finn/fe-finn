@@ -6,11 +6,7 @@ import { NicknameRequest } from '@/types';
 export const putNicknamePath = () => `/api/v1/my/nickname`;
 
 const putNickname = async ({ nickname }: NicknameRequest) => {
-  const response = await fetchInstance.put(
-    putNicknamePath(),
-    { nickname },
-    { withCredentials: true }
-  );
+  const response = await fetchInstance.put(putNicknamePath(), { nickname });
   return response.data;
 };
 

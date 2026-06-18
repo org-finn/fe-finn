@@ -14,8 +14,7 @@ const postOauthCode = async ({
     {
       authorizationCode,
       deviceType,
-    },
-    { withCredentials: true }
+    }
   );
   return response.data;
 };

@@ -11,8 +11,7 @@ const postReissueToken = async ({ deviceType }: ReIssueRequest) => {
     {
       deviceType,
       // refreshToken는 앱 기능 시작할 때 추가
-    },
-    { withCredentials: true }
+    }
   );
   return response.data;
 };

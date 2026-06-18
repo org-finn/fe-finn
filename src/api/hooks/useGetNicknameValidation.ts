@@ -9,7 +9,7 @@ export const getNicknameValidationPath = (nickname: string) =>
 export const getNicknameValidation = async (nickname: string) => {
   const response = await fetchInstance.get<
     ApiResponse<NicknameValidationResponse>
-  >(getNicknameValidationPath(nickname), { withCredentials: true });
+  >(getNicknameValidationPath(nickname));
   return response.data;
 };
 
