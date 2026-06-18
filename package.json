@@ -45,6 +45,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "@vitest/browser-playwright": "^4.1.7",
     "@vitest/coverage-v8": "^4.1.7",
+    "axios-mock-adapter": "^2.1.0",
     "chromatic": "^17.1.0",
     "dependency-cruiser": "^16.10.4",
     "eslint": "^9.25.0",
