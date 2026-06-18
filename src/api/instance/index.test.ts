@@ -28,6 +28,11 @@ describe('fetchInstance 응답 인터셉터', () => {
     await expect(fetchInstance.get('/test')).rejects.toMatchObject({
       response: { status: 401 },
     });
+    const headers = mock.history.get[0]?.headers as Record<
+      string,
+      string | undefined
+    >;
+    expect(headers?.Authorization).toBeUndefined();
     expect(mockRefresh).not.toHaveBeenCalled();
   });
 
