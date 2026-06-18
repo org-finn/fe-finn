@@ -139,7 +139,7 @@ export default function DetailPage() {
 
   const isLoading =
     tickerLoading || realGraphLoading || (isLiveMode && realTimePriceLoading);
-  const error = tickerError || realGraphError;
+  const error = tickerError;
 
   const handleRefresh = () => {
     if (isLiveMode) {
@@ -193,7 +193,6 @@ export default function DetailPage() {
     period,
     isLiveMode,
     showRefreshTooltip,
-    realGraphData,
     tickerData,
     liveChartData,
     onRefresh: handleRefresh,
@@ -231,10 +230,17 @@ export default function DetailPage() {
             />
             <TickerHeaderA {...commonHeaderProps} />
             <TickerPriceSectionA tickerData={tickerData} isMobile={isMobile} />
-            <ChartSectionA
-              {...commonChartProps}
-              onShowSummary={() => setShowSummaryModal(true)}
-            />
+            {realGraphData ? (
+              <ChartSectionA
+                {...commonChartProps}
+                realGraphData={realGraphData}
+                onShowSummary={() => setShowSummaryModal(true)}
+              />
+            ) : realGraphError ? (
+              <ErrorMessage>
+                차트 데이터를 불러오는 중 오류가 발생했습니다.
+              </ErrorMessage>
+            ) : null}
             {keywordBubbleMap}
           </>
         ) : (
@@ -243,7 +249,16 @@ export default function DetailPage() {
             <TickerPriceSectionB tickerData={tickerData} isMobile={isMobile} />
             {keywordBubbleMap}
             <DailySummary summaryData={summaryData} />
-            <ChartSectionB {...commonChartProps} />
+            {realGraphData ? (
+              <ChartSectionB
+                {...commonChartProps}
+                realGraphData={realGraphData}
+              />
+            ) : realGraphError ? (
+              <ErrorMessage>
+                차트 데이터를 불러오는 중 오류가 발생했습니다.
+              </ErrorMessage>
+            ) : null}
           </>
         )}
         {articles && articles.length > 0 && (
