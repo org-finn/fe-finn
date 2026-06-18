@@ -102,6 +102,10 @@ const Wrapper = styled.div`
   .apexcharts-canvas {
     background: transparent;
   }
+
+  @media screen and (max-width: 768px) {
+    padding-bottom: 12px;
+  }
 `;
 
 const ScoreLabel = styled.div`

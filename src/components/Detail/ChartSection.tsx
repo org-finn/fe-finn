@@ -4,7 +4,6 @@ import Button from '@/components/common/Button';
 import TickerCharts from '@/components/Ticker/TickerCharts';
 import RealTimeTickerCharts from '@/components/Ticker/RealTimeTickerCharts';
 import { IoMdRefresh } from 'react-icons/io';
-import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { RealGraphPeriod } from '@/api/hooks/useGetRealGraph';
 import {
   GraphData,
@@ -23,7 +22,6 @@ type ChartSectionProps = {
   onRefresh: () => void;
   onPeriodChange: (period: RealGraphPeriod) => void;
   onLiveMode: () => void;
-  onShowSummary: () => void;
 };
 
 export default function ChartSection({
@@ -37,7 +35,6 @@ export default function ChartSection({
   onRefresh,
   onPeriodChange,
   onLiveMode,
-  onShowSummary,
 }: ChartSectionProps) {
   return (
     <>
@@ -45,16 +42,6 @@ export default function ChartSection({
         <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
           실제 주가
         </Paragraph>
-        {isMobile && (
-          <SummaryButton
-            aria-label="뉴스 요약 보기"
-            onClick={onShowSummary}
-            variant="grey"
-            size="small"
-          >
-            <MdOutlineStickyNote2 size={16} />
-          </SummaryButton>
-        )}
       </StockPriceSection>
 
       <PeriodSelectorContainer>
@@ -73,31 +60,19 @@ export default function ChartSection({
             <LiveDot />
           </LiveButton>
         </PeriodSelector>
-        <ButtonGroup>
-          {!isMobile && (
-            <SummaryButton
-              aria-label="뉴스 요약 보기"
-              onClick={onShowSummary}
-              variant="grey"
-              size="small"
-            >
-              <MdOutlineStickyNote2 size={16} />
-            </SummaryButton>
+        <RefreshContainer>
+          <RefreshButton
+            aria-label="차트 새로 고침"
+            onClick={onRefresh}
+            variant="grey"
+            size="small"
+          >
+            <IoMdRefresh size={isMobile ? 14 : 16} />
+          </RefreshButton>
+          {showRefreshTooltip && (
+            <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
           )}
-          <RefreshContainer>
-            <RefreshButton
-              aria-label="차트 새로 고침"
-              onClick={onRefresh}
-              variant="grey"
-              size="small"
-            >
-              <IoMdRefresh size={isMobile ? 14 : 16} />
-            </RefreshButton>
-            {showRefreshTooltip && (
-              <RefreshTooltip>최신 상태로 업데이트 되었습니다!</RefreshTooltip>
-            )}
-          </RefreshContainer>
-        </ButtonGroup>
+        </RefreshContainer>
       </PeriodSelectorContainer>
 
       {isLiveMode ? (
@@ -203,32 +178,14 @@ const LiveDot = styled.div`
   }
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-right: 24px;
-
-  @media screen and (max-width: 768px) {
-    gap: 8px;
-    margin-right: 0;
-  }
-`;
-
-const SummaryButton = styled(Button)`
-  width: auto;
-  height: 34px;
-  padding: 0 12px;
-
-  @media screen and (max-width: 768px) {
-    height: 24px;
-    padding: 0 8px;
-  }
-`;
-
 const RefreshContainer = styled.div`
   position: relative;
   display: flex;
+  margin-right: 24px;
+
+  @media screen and (max-width: 768px) {
+    margin-right: 0;
+  }
 `;
 
 const RefreshButton = styled(Button)`

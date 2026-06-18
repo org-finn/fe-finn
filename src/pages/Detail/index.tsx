@@ -16,7 +16,7 @@ import useIsMobile from '@/hooks/useIsMobile';
 import useAuth from '@/hooks/useAuth';
 
 import Loading from '@/components/common/Layout/Loading';
-import SummaryModal from '@/components/Detail/SummaryModal';
+import DailySummary from '@/components/Detail/DailySummary';
 import LoginModal from '@/components/common/Modal/LoginModal';
 import TickerHeader from '@/components/Detail/TickerHeader';
 import TickerPriceSection from '@/components/Detail/TickerPriceSection';
@@ -38,7 +38,6 @@ export default function DetailPage() {
 
   const today = new Date().toLocaleDateString('sv-SE');
 
-  const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
@@ -180,11 +179,6 @@ export default function DetailPage() {
   return (
     <>
       <Wrapper>
-        <SummaryModal
-          isOpen={showSummaryModal}
-          onClose={() => setShowSummaryModal(false)}
-          summaryData={summaryData}
-        />
         <TickerHeader
           tickerData={tickerData}
           isMobile={isMobile}
@@ -192,6 +186,17 @@ export default function DetailPage() {
           onLikeClick={handleLikeClick}
         />
         <TickerPriceSection tickerData={tickerData} isMobile={isMobile} />
+        {keywords.length > 0 && (
+          <KeywordBubbleMap
+            positiveRatio={positiveRatio}
+            negativeRatio={negativeRatio}
+            positiveKeywords={positiveKeywords}
+            negativeKeywords={negativeKeywords}
+            date={today}
+            onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+          />
+        )}
+        <DailySummary summaryData={summaryData} />
         <ChartSection
           isMobile={isMobile}
           period={period}
@@ -203,18 +208,7 @@ export default function DetailPage() {
           onRefresh={handleRefresh}
           onPeriodChange={handlePeriodChange}
           onLiveMode={handleLiveMode}
-          onShowSummary={() => setShowSummaryModal(true)}
         />
-        {keywords.length > 0 && (
-          <KeywordBubbleMap
-            positiveRatio={positiveRatio}
-            negativeRatio={negativeRatio}
-            positiveKeywords={positiveKeywords}
-            negativeKeywords={negativeKeywords}
-            date={today}
-            onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
-          />
-        )}
         {articles && articles.length > 0 && (
           <ArticleSection
             articles={articles}
@@ -239,7 +233,7 @@ const Wrapper = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   padding: 16px 0;
 
   @media screen and (max-width: 768px) {

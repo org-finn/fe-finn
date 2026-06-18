@@ -95,10 +95,10 @@ const LikeIconWrapper = styled.div`
 export const ScoreTitleContainer = styled.div`
   display: flex;
   gap: 6px;
-  margin-right: 180px;
+  width: 204px;
 
   @media screen and (max-width: 768px) {
-    margin-right: 10px;
+    width: auto;
     gap: 4px;
   }
 `;
