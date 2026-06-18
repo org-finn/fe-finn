@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { fetchInstance } from '../instance';
 
 import { ApiResponse, GraphData } from '@/types';
@@ -16,15 +17,22 @@ export const getRealGraphPath = (tickerId: string) =>
 export const getRealGraph = async ({
   tickerId,
   period = '2W',
-}: GetRealGraphParams) => {
+}: GetRealGraphParams): Promise<ApiResponse<GraphData> | null> => {
   const params = new URLSearchParams({
     period,
   });
 
-  const response = await fetchInstance.get<ApiResponse<GraphData>>(
-    `${getRealGraphPath(tickerId)}?${params}`
-  );
-  return response.data;
+  try {
+    const response = await fetchInstance.get<ApiResponse<GraphData>>(
+      `${getRealGraphPath(tickerId)}?${params}`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 };
 
 export const useGetRealGraph = ({

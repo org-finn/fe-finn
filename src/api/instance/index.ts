@@ -69,7 +69,8 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
         isUnauthorized &&
         !isReissueRequest &&
         !isAlreadyRetried &&
-        refreshTokenFn
+        refreshTokenFn &&
+        accessToken
       ) {
         originalRequest._retry = true;
         try {

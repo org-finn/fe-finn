@@ -16,7 +16,7 @@ type ChartSectionProps = {
   period: RealGraphPeriod;
   isLiveMode: boolean;
   showRefreshTooltip: boolean;
-  realGraphData: GraphData | undefined;
+  realGraphData: GraphData;
   tickerData: TickerDetailData;
   liveChartData: TickerRealTimeGraphResponse[];
   onRefresh: () => void;
@@ -78,12 +78,10 @@ export default function ChartSection({
       {isLiveMode ? (
         <RealTimeTickerCharts realTimeData={liveChartData} />
       ) : (
-        realGraphData && (
-          <TickerCharts
-            realData={realGraphData.graphData || []}
-            sentiment={tickerData.sentiment ?? 0}
-          />
-        )
+        <TickerCharts
+          realData={realGraphData.graphData || []}
+          sentiment={tickerData.sentiment ?? 0}
+        />
       )}
     </>
   );
