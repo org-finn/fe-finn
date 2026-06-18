@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
-import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
+import ScoreGaugeChart from './ScoreGaugeChart';
 import { TickerDetailData } from '@/types';
 
 type TTickerPriceSectionProps = {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Text } from '../common/typography/Text';
+import { Text } from '@/components/common/typography/Text';
 import { ArticleSummaryTickerResponse } from '@/types';
 import useIsMobile from '@/hooks/useIsMobile';
 
