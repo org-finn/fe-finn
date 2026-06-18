@@ -25,6 +25,11 @@ import ArticleSection from '@/components/Detail/ArticleSection';
 import KeywordBubbleMap from '@/components/Detail/KeywordBubbleMap';
 
 export default function DetailPage() {
+  // 임시 확인용 - 추후 제거 예정
+  const keywordCount = 5;
+  const articleCount = 5;
+  const titleLength = 20;
+
   const { id } = useParams() as { id: string };
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,8 +62,14 @@ export default function DetailPage() {
       tickerId: id,
       enabled: isAuthenticated && isLiveMode,
     });
-  const { data: summaryResponse } = useGetArticleSummaryTicker(id);
-  const { data: keywordsResponse } = useGetTickerKeywords(id, today);
+  const { data: summaryResponse } = useGetArticleSummaryTicker(id, today);
+  const { data: keywordsResponse } = useGetTickerKeywords(
+    id,
+    today,
+    keywordCount,
+    articleCount,
+    titleLength
+  );
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
