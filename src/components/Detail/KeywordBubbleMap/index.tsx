@@ -103,7 +103,11 @@ export default function KeywordBubbleMap({
           {formatDate(date)}의 뉴스 요약
         </Paragraph>
         {onDateChange && (
-          <DatePickerButton selectedDate={date} onDateChange={onDateChange} />
+          <DatePickerButton
+            selectedDate={date}
+            onDateChange={onDateChange}
+            popupZIndex={9}
+          />
         )}
       </BubbleMapHeader>
       <Container onClick={close}>

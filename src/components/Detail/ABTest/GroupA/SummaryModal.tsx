@@ -37,6 +37,7 @@ export default function SummaryModal({
           <DatePickerButton
             selectedDate={selectedDate}
             onDateChange={onDateChange}
+            popupPosition="fixed"
           />
           <CloseButton onClick={onClose}>X</CloseButton>
         </HeaderActions>
