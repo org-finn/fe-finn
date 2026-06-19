@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ApiResponse, KeywordsWithArticleListResponse } from '@/types';
 import { fetchInstance } from '../instance';
 
@@ -57,5 +57,6 @@ export const useGetTickerKeywords = (
         titleLength
       ),
     staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
   });
 };

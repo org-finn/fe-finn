@@ -12,10 +12,15 @@ export const getArticleSummaryTicker = async (id: string, date: string) => {
   return response.data;
 };
 
-export const useGetArticleSummaryTicker = (id: string, date: string) => {
+export const useGetArticleSummaryTicker = (
+  id: string,
+  date: string,
+  enabled = true
+) => {
   return useQuery({
     queryKey: ['articleSummaryTicker', { id, date }],
     queryFn: () => getArticleSummaryTicker(id, date),
     staleTime: 1000 * 60 * 5,
+    enabled,
   });
 };

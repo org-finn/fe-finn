@@ -48,8 +48,10 @@ export default function DetailPage() {
 
   const today = new Date().toLocaleDateString('sv-SE');
 
+  const [selectedDate, setSelectedDate] = useState(today);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [summaryEnabled, setSummaryEnabled] = useState(false);
 
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
@@ -72,10 +74,22 @@ export default function DetailPage() {
       tickerId: id,
       enabled: isAuthenticated && isLiveMode,
     });
-  const { data: summaryResponse } = useGetArticleSummaryTicker(id, today);
+  const { data: summaryResponse, isLoading: summaryLoading } =
+    useGetArticleSummaryTicker(
+      id,
+      selectedDate,
+      variant === 'A' || (summaryEnabled && isAuthenticated)
+    );
+
+  const handleRequestSummary = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+    }
+    setSummaryEnabled(true);
+  };
   const { data: keywordsResponse } = useGetTickerKeywords(
     id,
-    today,
+    selectedDate,
     keywordCount,
     articleCount,
     titleLength
@@ -207,16 +221,18 @@ export default function DetailPage() {
     onLikeClick: handleLikeClick,
   };
 
-  const keywordBubbleMap = keywords.length > 0 && (
-    <KeywordBubbleMap
-      positiveRatio={positiveRatio}
-      negativeRatio={negativeRatio}
-      positiveKeywords={positiveKeywords}
-      negativeKeywords={negativeKeywords}
-      date={today}
-      onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
-    />
-  );
+  const keywordBubbleMap = (variant: 'A' | 'B') =>
+    keywords.length > 0 && (
+      <KeywordBubbleMap
+        positiveRatio={positiveRatio}
+        negativeRatio={negativeRatio}
+        positiveKeywords={positiveKeywords}
+        negativeKeywords={negativeKeywords}
+        date={selectedDate}
+        onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+        {...(variant === 'B' && { onDateChange: setSelectedDate })}
+      />
+    );
 
   return (
     <>
@@ -227,6 +243,8 @@ export default function DetailPage() {
               isOpen={showSummaryModal}
               onClose={() => setShowSummaryModal(false)}
               summaryData={summaryData}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
             />
             <TickerHeaderA {...commonHeaderProps} />
             <TickerPriceSectionA tickerData={tickerData} isMobile={isMobile} />
@@ -234,21 +252,32 @@ export default function DetailPage() {
               <ChartSectionA
                 {...commonChartProps}
                 realGraphData={realGraphData}
-                onShowSummary={() => setShowSummaryModal(true)}
+                onShowSummary={() => {
+                  if (!isAuthenticated) {
+                    setShowLoginModal(true);
+                    return;
+                  }
+                  setShowSummaryModal(true);
+                }}
               />
             ) : realGraphError ? (
               <ErrorMessage>
                 차트 데이터를 불러오는 중 오류가 발생했습니다.
               </ErrorMessage>
             ) : null}
-            {keywordBubbleMap}
+            {keywordBubbleMap('A')}
           </>
         ) : (
           <>
             <TickerHeaderB {...commonHeaderProps} />
             <TickerPriceSectionB tickerData={tickerData} isMobile={isMobile} />
-            {keywordBubbleMap}
-            <DailySummary summaryData={summaryData} />
+            {keywordBubbleMap('B')}
+            <DailySummary
+              summaryData={summaryData}
+              isEnabled={summaryEnabled && isAuthenticated}
+              isLoading={summaryLoading}
+              onRequestSummary={handleRequestSummary}
+            />
             {realGraphData ? (
               <ChartSectionB
                 {...commonChartProps}

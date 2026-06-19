@@ -34,6 +34,7 @@ import {
 } from './positions';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import useIsMobile from '@/hooks/useIsMobile';
+import DatePickerButton from '@/components/common/DatePickerButton';
 
 type Props = {
   positiveRatio: number;
@@ -42,6 +43,7 @@ type Props = {
   negativeKeywords: KeywordsWithArticleResponse[];
   onNewsClick: (articleId: string) => void;
   date: string;
+  onDateChange?: (date: string) => void;
 };
 
 export default function KeywordBubbleMap({
@@ -51,6 +53,7 @@ export default function KeywordBubbleMap({
   negativeKeywords,
   onNewsClick,
   date,
+  onDateChange,
 }: Props) {
   const isMobile = useIsMobile();
   const uid = useRef(Math.random().toString(36).slice(2, 8)).current;
@@ -95,9 +98,18 @@ export default function KeywordBubbleMap({
 
   return (
     <>
-      <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-        {formatDate(date)}의 뉴스 요약
-      </Paragraph>
+      <BubbleMapHeader>
+        <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+          {formatDate(date)}의 뉴스 요약
+        </Paragraph>
+        {onDateChange && (
+          <DatePickerButton
+            selectedDate={date}
+            onDateChange={onDateChange}
+            popupZIndex={9}
+          />
+        )}
+      </BubbleMapHeader>
       <Container onClick={close}>
         <Background $ratio={positiveRatio} />
         <DateText>{date}</DateText>
@@ -416,6 +428,12 @@ export default function KeywordBubbleMap({
     </>
   );
 }
+
+const BubbleMapHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const Container = styled.div`
   position: relative;
