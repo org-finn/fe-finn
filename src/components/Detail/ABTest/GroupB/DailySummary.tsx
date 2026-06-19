@@ -190,6 +190,7 @@ const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   padding: 20px 0;
+  min-height: 120px;
 `;
 
 const ReasoningRow = styled.div`
