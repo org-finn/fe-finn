@@ -89,7 +89,7 @@ export default function DetailPage() {
   };
   const { data: keywordsResponse } = useGetTickerKeywords(
     id,
-    today,
+    selectedDate,
     keywordCount,
     articleCount,
     titleLength
@@ -228,7 +228,7 @@ export default function DetailPage() {
         negativeRatio={negativeRatio}
         positiveKeywords={positiveKeywords}
         negativeKeywords={negativeKeywords}
-        date={today}
+        date={selectedDate}
         onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
         {...(variant === 'B' && { onDateChange: setSelectedDate })}
       />
