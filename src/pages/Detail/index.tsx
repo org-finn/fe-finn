@@ -51,6 +51,7 @@ export default function DetailPage() {
   const [selectedDate, setSelectedDate] = useState(today);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [summaryEnabled, setSummaryEnabled] = useState(false);
 
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
@@ -73,10 +74,19 @@ export default function DetailPage() {
       tickerId: id,
       enabled: isAuthenticated && isLiveMode,
     });
-  const { data: summaryResponse } = useGetArticleSummaryTicker(
-    id,
-    selectedDate
-  );
+  const { data: summaryResponse, isLoading: summaryLoading } =
+    useGetArticleSummaryTicker(
+      id,
+      selectedDate,
+      variant === 'A' || (summaryEnabled && isAuthenticated)
+    );
+
+  const handleRequestSummary = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+    }
+    setSummaryEnabled(true);
+  };
   const { data: keywordsResponse } = useGetTickerKeywords(
     id,
     today,
@@ -242,7 +252,13 @@ export default function DetailPage() {
               <ChartSectionA
                 {...commonChartProps}
                 realGraphData={realGraphData}
-                onShowSummary={() => setShowSummaryModal(true)}
+                onShowSummary={() => {
+                  if (!isAuthenticated) {
+                    setShowLoginModal(true);
+                    return;
+                  }
+                  setShowSummaryModal(true);
+                }}
               />
             ) : realGraphError ? (
               <ErrorMessage>
@@ -256,7 +272,12 @@ export default function DetailPage() {
             <TickerHeaderB {...commonHeaderProps} />
             <TickerPriceSectionB tickerData={tickerData} isMobile={isMobile} />
             {keywordBubbleMap('B')}
-            <DailySummary summaryData={summaryData} />
+            <DailySummary
+              summaryData={summaryData}
+              isEnabled={summaryEnabled && isAuthenticated}
+              isLoading={summaryLoading}
+              onRequestSummary={handleRequestSummary}
+            />
             {realGraphData ? (
               <ChartSectionB
                 {...commonChartProps}

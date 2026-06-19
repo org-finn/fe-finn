@@ -1,14 +1,62 @@
 import styled from 'styled-components';
+import { FiFileText } from 'react-icons/fi';
+import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
+import Button from '@/components/common/Button';
 import { ArticleSummaryTickerResponse } from '@/types';
 import useIsMobile from '@/hooks/useIsMobile';
 
 export type DailySummaryProps = {
   summaryData: null | ArticleSummaryTickerResponse;
+  isEnabled: boolean;
+  isLoading: boolean;
+  onRequestSummary: () => void;
 };
 
-export default function DailySummary({ summaryData }: DailySummaryProps) {
+export default function DailySummary({
+  summaryData,
+  isEnabled,
+  isLoading,
+  onRequestSummary,
+}: DailySummaryProps) {
   const isMobile = useIsMobile();
+
+  if (!isEnabled) {
+    return (
+      <Container>
+        <PlaceholderWrapper>
+          <FiFileText size={isMobile ? 28 : 32} color="#9ca3af" />
+          <PlaceholderTextSection>
+            <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+              오늘의 뉴스 요약
+            </Paragraph>
+            <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
+              AI가 분석한 긍정·부정 요인을 확인해보세요
+            </Text>
+          </PlaceholderTextSection>
+          <GenerateButton
+            variant="mint"
+            size="small"
+            onClick={onRequestSummary}
+          >
+            뉴스 요약 생성하기
+          </GenerateButton>
+        </PlaceholderWrapper>
+      </Container>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Container>
+        <LoadingWrapper>
+          <Text size={isMobile ? 'xxs' : 'xs'} weight="normal" variant="grey">
+            요약 불러오는 중...
+          </Text>
+        </LoadingWrapper>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -102,6 +150,46 @@ const Container = styled.div`
     gap: 12px;
     margin-bottom: 10px;
   }
+`;
+
+const PlaceholderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0;
+
+  @media screen and (max-width: 768px) {
+    padding: 12px 0;
+    gap: 10px;
+  }
+`;
+
+const PlaceholderTextSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+`;
+
+const GenerateButton = styled(Button)`
+  width: auto;
+  margin-top: 4px;
+  font-size: 14px;
+  padding: 0 16px;
+
+  @media screen and (max-width: 768px) {
+    padding: 0 12px;
+    font-size: 12px;
+  }
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
 `;
 
 const ReasoningRow = styled.div`
