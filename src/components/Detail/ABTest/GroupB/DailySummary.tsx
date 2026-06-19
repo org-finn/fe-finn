@@ -196,6 +196,18 @@ const ReasoningRow = styled.div`
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  animation: fadeSlideIn 0.8s ease both;
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
