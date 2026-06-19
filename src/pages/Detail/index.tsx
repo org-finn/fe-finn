@@ -48,6 +48,7 @@ export default function DetailPage() {
 
   const today = new Date().toLocaleDateString('sv-SE');
 
+  const [selectedDate, setSelectedDate] = useState(today);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -72,7 +73,10 @@ export default function DetailPage() {
       tickerId: id,
       enabled: isAuthenticated && isLiveMode,
     });
-  const { data: summaryResponse } = useGetArticleSummaryTicker(id, today);
+  const { data: summaryResponse } = useGetArticleSummaryTicker(
+    id,
+    selectedDate
+  );
   const { data: keywordsResponse } = useGetTickerKeywords(
     id,
     today,
@@ -207,16 +211,18 @@ export default function DetailPage() {
     onLikeClick: handleLikeClick,
   };
 
-  const keywordBubbleMap = keywords.length > 0 && (
-    <KeywordBubbleMap
-      positiveRatio={positiveRatio}
-      negativeRatio={negativeRatio}
-      positiveKeywords={positiveKeywords}
-      negativeKeywords={negativeKeywords}
-      date={today}
-      onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
-    />
-  );
+  const keywordBubbleMap = (variant: 'A' | 'B') =>
+    keywords.length > 0 && (
+      <KeywordBubbleMap
+        positiveRatio={positiveRatio}
+        negativeRatio={negativeRatio}
+        positiveKeywords={positiveKeywords}
+        negativeKeywords={negativeKeywords}
+        date={today}
+        onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+        {...(variant === 'B' && { onDateChange: setSelectedDate })}
+      />
+    );
 
   return (
     <>
@@ -227,6 +233,8 @@ export default function DetailPage() {
               isOpen={showSummaryModal}
               onClose={() => setShowSummaryModal(false)}
               summaryData={summaryData}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
             />
             <TickerHeaderA {...commonHeaderProps} />
             <TickerPriceSectionA tickerData={tickerData} isMobile={isMobile} />
@@ -241,13 +249,13 @@ export default function DetailPage() {
                 차트 데이터를 불러오는 중 오류가 발생했습니다.
               </ErrorMessage>
             ) : null}
-            {keywordBubbleMap}
+            {keywordBubbleMap('A')}
           </>
         ) : (
           <>
             <TickerHeaderB {...commonHeaderProps} />
             <TickerPriceSectionB tickerData={tickerData} isMobile={isMobile} />
-            {keywordBubbleMap}
+            {keywordBubbleMap('B')}
             <DailySummary summaryData={summaryData} />
             {realGraphData ? (
               <ChartSectionB
