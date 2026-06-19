@@ -34,13 +34,7 @@ export default function DatePickerButton({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside(
-    [
-      wrapperRef as React.RefObject<HTMLElement>,
-      popupRef as React.RefObject<HTMLElement>,
-    ],
-    () => setIsOpen(false)
-  );
+  useClickOutside([wrapperRef, popupRef], () => setIsOpen(false));
 
   useEffect(() => {
     if (!isOpen) return;
