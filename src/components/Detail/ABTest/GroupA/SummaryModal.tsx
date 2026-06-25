@@ -43,8 +43,7 @@ export default function SummaryModal({
         </HeaderActions>
         <ModalHeader>
           <Paragraph size={isMobile ? 's' : 'm'} weight="bold">
-            {summaryData?.summaryDate && formatDate(summaryData.summaryDate)}의
-            뉴스 요약
+            {formatDate(selectedDate)}의 뉴스 요약
           </Paragraph>
         </ModalHeader>
         <ModalContent>
