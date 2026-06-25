@@ -33,6 +33,7 @@ import {
   truncateTitle,
 } from './positions';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
 import useIsMobile from '@/hooks/useIsMobile';
 import DatePickerButton from '@/components/common/DatePickerButton';
 
@@ -100,7 +101,10 @@ export default function KeywordBubbleMap({
     <>
       <BubbleMapHeader>
         <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-          {formatDate(date)}의 뉴스 요약
+          <Text size={isMobile ? 'xs' : 's'} weight="bold" variant="#2d70d3">
+            {formatDate(date)}
+          </Text>
+          의 뉴스 요약
         </Paragraph>
         {onDateChange && (
           <DatePickerButton
