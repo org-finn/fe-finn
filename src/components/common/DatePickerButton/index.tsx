@@ -91,7 +91,7 @@ export default function DatePickerButton({
                 mode="single"
                 selected={parseDateString(selectedDate)}
                 onSelect={handleSelect}
-                disabled={{ after: new Date() }}
+                disabled={{ before: new Date(2026, 5, 1), after: new Date() }}
                 defaultMonth={parseDateString(selectedDate)}
               />
             </DayPickerWrapper>
