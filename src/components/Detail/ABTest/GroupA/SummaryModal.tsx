@@ -4,6 +4,7 @@ import { ArticleSummaryTickerResponse } from '@/types';
 import useIsMobile from '@/hooks/useIsMobile';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import DatePickerButton from '@/components/common/DatePickerButton';
+import { formatMonthDay } from '@/utils/formatDate';
 
 type SummaryModalProps = {
   isOpen: boolean;
@@ -24,11 +25,6 @@ export default function SummaryModal({
 
   if (!isOpen) return null;
 
-  const formatDate = (dateString: string) => {
-    const [, month, day] = dateString.split('-');
-    return `${Number(month)}월 ${Number(day)}일`;
-  };
-
   return (
     <>
       <Overlay onClick={onClose} />
@@ -44,7 +40,7 @@ export default function SummaryModal({
         </HeaderActions>
         <ModalHeader>
           <Paragraph size={isMobile ? 's' : 'm'} weight="bold">
-            {formatDate(selectedDate)}의 뉴스 요약
+            {formatMonthDay(selectedDate)}의 뉴스 요약
           </Paragraph>
         </ModalHeader>
         <ModalContent>

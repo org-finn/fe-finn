@@ -36,6 +36,7 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
 import useIsMobile from '@/hooks/useIsMobile';
 import DatePickerButton from '@/components/common/DatePickerButton';
+import { formatMonthDay } from '@/utils/formatDate';
 
 type Props = {
   positiveRatio: number;
@@ -92,17 +93,12 @@ export default function KeywordBubbleMap({
   const negShadowId = `${uid}-sn`;
   const newsShadowId = `${uid}-ns`;
 
-  const formatDate = (dateString: string) => {
-    const [, month, day] = dateString.split('-');
-    return `${Number(month)}월 ${Number(day)}일`;
-  };
-
   return (
     <>
       <BubbleMapHeader>
         <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
           <Text size={isMobile ? 'xs' : 's'} weight="bold" variant="#2d70d3">
-            {formatDate(date)}
+            {formatMonthDay(date)}
           </Text>
           의 뉴스 요약
         </Paragraph>
