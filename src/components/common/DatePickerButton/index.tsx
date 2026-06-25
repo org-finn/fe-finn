@@ -114,7 +114,7 @@ const IconButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 0 0 4px 0;
   color: #6b7280;
   border-radius: 4px;
   transition:
@@ -127,14 +127,15 @@ const IconButton = styled.button`
   }
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   @media screen and (max-width: 768px) {
+    padding: 0 0 2px 0;
     svg {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
     }
   }
 `;
