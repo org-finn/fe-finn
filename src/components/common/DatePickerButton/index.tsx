@@ -11,6 +11,7 @@ type DatePickerButtonProps = {
   onDateChange: (date: string) => void;
   popupZIndex?: number;
   popupPosition?: 'fixed' | 'absolute';
+  popupAlign?: 'left' | 'right';
 };
 
 function parseDateString(value: string): Date | undefined {
@@ -28,13 +29,14 @@ export default function DatePickerButton({
   onDateChange,
   popupZIndex = 101,
   popupPosition = 'absolute',
+  popupAlign = 'left',
 }: DatePickerButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({});
+  const [fixedStyle, setFixedStyle] = useState<React.CSSProperties>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
+  const fixedPopupRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside([wrapperRef, popupRef], () => setIsOpen(false));
+  useClickOutside([wrapperRef, fixedPopupRef], () => setIsOpen(false));
 
   useEffect(() => {
     if (!isOpen) return;
@@ -46,15 +48,18 @@ export default function DatePickerButton({
   }, [isOpen]);
 
   useLayoutEffect(() => {
-    if (!isOpen || !popupRef.current || !wrapperRef.current) return;
+    if (popupPosition !== 'fixed' || !isOpen || !wrapperRef.current) return;
     const rect = wrapperRef.current.getBoundingClientRect();
-    const popupWidth = popupRef.current.offsetWidth;
-    const isFixed = popupPosition === 'fixed';
-    setPopupStyle({
-      top: rect.bottom + (isFixed ? 0 : window.scrollY) + 6,
-      left: rect.right + (isFixed ? 0 : window.scrollX) - popupWidth,
-    });
-  }, [isOpen, popupPosition]);
+    if (popupAlign === 'right') {
+      setFixedStyle({
+        top: rect.bottom + 6,
+        left: rect.right,
+        transform: 'translateX(-100%)',
+      });
+    } else {
+      setFixedStyle({ top: rect.bottom + 6, left: rect.left });
+    }
+  }, [isOpen, popupPosition, popupAlign]);
 
   const handleToggle = () => setIsOpen((prev) => !prev);
 
@@ -65,40 +70,48 @@ export default function DatePickerButton({
     }
   };
 
+  const dayPicker = (
+    <DayPickerWrapper>
+      <DayPicker
+        mode="single"
+        selected={parseDateString(selectedDate)}
+        onSelect={handleSelect}
+        disabled={{ before: new Date(2026, 5, 1), after: new Date() }}
+        defaultMonth={parseDateString(selectedDate)}
+      />
+    </DayPickerWrapper>
+  );
+
   return (
-    <>
-      <Wrapper ref={wrapperRef}>
-        <IconButton
-          onClick={handleToggle}
-          type="button"
-          aria-label="날짜 선택"
-          aria-expanded={isOpen}
-        >
-          <FiCalendar />
-        </IconButton>
-      </Wrapper>
+    <Wrapper ref={wrapperRef}>
+      <IconButton
+        onClick={handleToggle}
+        type="button"
+        aria-label="날짜 선택"
+        aria-expanded={isOpen}
+      >
+        <FiCalendar />
+      </IconButton>
+
+      {isOpen && popupPosition === 'absolute' && (
+        <AbsolutePopup $zIndex={popupZIndex} $align={popupAlign}>
+          {dayPicker}
+        </AbsolutePopup>
+      )}
 
       {isOpen &&
+        popupPosition === 'fixed' &&
         createPortal(
-          <PopupContainer
-            ref={popupRef}
-            style={popupStyle}
+          <FixedPopup
+            ref={fixedPopupRef}
+            style={fixedStyle}
             $zIndex={popupZIndex}
-            $position={popupPosition}
           >
-            <DayPickerWrapper>
-              <DayPicker
-                mode="single"
-                selected={parseDateString(selectedDate)}
-                onSelect={handleSelect}
-                disabled={{ before: new Date(2026, 5, 1), after: new Date() }}
-                defaultMonth={parseDateString(selectedDate)}
-              />
-            </DayPickerWrapper>
-          </PopupContainer>,
+            {dayPicker}
+          </FixedPopup>,
           document.body
         )}
-    </>
+    </Wrapper>
   );
 }
 
@@ -140,11 +153,7 @@ const IconButton = styled.button`
   }
 `;
 
-const PopupContainer = styled.div<{
-  $zIndex: number;
-  $position: 'fixed' | 'absolute';
-}>`
-  position: ${({ $position }) => $position};
+const PopupBase = styled.div<{ $zIndex: number }>`
   z-index: ${({ $zIndex }) => $zIndex};
   background: #ffffff;
   border-radius: 12px;
@@ -153,6 +162,16 @@ const PopupContainer = styled.div<{
     0 2px 4px -1px rgba(0, 0, 0, 0.06),
     0 0 0 1px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+`;
+
+const AbsolutePopup = styled(PopupBase)<{ $align: 'left' | 'right' }>`
+  position: absolute;
+  top: calc(100% + 6px);
+  ${({ $align }) => ($align === 'right' ? 'right: 0;' : 'left: 0;')}
+`;
+
+const FixedPopup = styled(PopupBase)`
+  position: fixed;
 `;
 
 const DayPickerWrapper = styled.div`

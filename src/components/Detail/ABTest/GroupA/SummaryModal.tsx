@@ -38,6 +38,7 @@ export default function SummaryModal({
             selectedDate={selectedDate}
             onDateChange={onDateChange}
             popupPosition="fixed"
+            popupAlign="right"
           />
           <CloseButton onClick={onClose}>X</CloseButton>
         </HeaderActions>

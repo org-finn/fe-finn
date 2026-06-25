@@ -434,6 +434,7 @@ export default function KeywordBubbleMap({
 }
 
 const BubbleMapHeader = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-start;
