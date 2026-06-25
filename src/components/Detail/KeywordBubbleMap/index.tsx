@@ -33,8 +33,10 @@ import {
   truncateTitle,
 } from './positions';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
 import useIsMobile from '@/hooks/useIsMobile';
 import DatePickerButton from '@/components/common/DatePickerButton';
+import { formatMonthDay } from '@/utils/formatDate';
 
 type Props = {
   positiveRatio: number;
@@ -91,16 +93,14 @@ export default function KeywordBubbleMap({
   const negShadowId = `${uid}-sn`;
   const newsShadowId = `${uid}-ns`;
 
-  const formatDate = (dateString: string) => {
-    const [, month, day] = dateString.split('-');
-    return `${Number(month)}월 ${Number(day)}일`;
-  };
-
   return (
     <>
       <BubbleMapHeader>
         <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-          {formatDate(date)}의 뉴스 요약
+          <Text size={isMobile ? 'xs' : 's'} weight="bold" variant="#2d70d3">
+            {formatMonthDay(date)}
+          </Text>
+          의 뉴스 요약
         </Paragraph>
         {onDateChange && (
           <DatePickerButton
@@ -430,9 +430,11 @@ export default function KeywordBubbleMap({
 }
 
 const BubbleMapHeader = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 6px;
 `;
 
 const Container = styled.div`

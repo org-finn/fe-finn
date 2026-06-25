@@ -91,7 +91,7 @@ export const mockFavoriteTickers = mockTickerData.slice(0, 5).map((item) => {
       ];
 
   return {
-    tickerId: crypto.randomUUID(),
+    tickerId: Math.random().toString(36).slice(2),
     ...item,
     graphData: { isMarketOpen, priceData },
   };
