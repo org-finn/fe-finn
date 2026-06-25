@@ -35,6 +35,7 @@ export default function DatePickerButton({
   const [fixedStyle, setFixedStyle] = useState<React.CSSProperties>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
   const fixedPopupRef = useRef<HTMLDivElement>(null);
+  const MIN_SELECTABLE_DATE = new Date(2026, 5, 1);
 
   useClickOutside([wrapperRef, fixedPopupRef], () => setIsOpen(false));
 
@@ -76,7 +77,7 @@ export default function DatePickerButton({
         mode="single"
         selected={parseDateString(selectedDate)}
         onSelect={handleSelect}
-        disabled={{ before: new Date(2026, 5, 1), after: new Date() }}
+        disabled={{ before: MIN_SELECTABLE_DATE, after: new Date() }}
         defaultMonth={parseDateString(selectedDate)}
       />
     </DayPickerWrapper>
