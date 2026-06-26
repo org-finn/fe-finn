@@ -16,8 +16,11 @@ import useIsMobile from '@/hooks/useIsMobile';
 import useAuth from '@/hooks/useAuth';
 
 import { getDetailABVariant } from '@/utils/abTest';
+import { formatMonthDay } from '@/utils/formatDate';
 
 import Loading from '@/components/common/Layout/Loading';
+import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
 import LoginModal from '@/components/common/Modal/LoginModal';
 import ArticleSection from '@/components/Detail/ArticleSection';
 import KeywordBubbleMap from '@/components/Detail/KeywordBubbleMap';
@@ -31,6 +34,7 @@ import DailySummary from '@/components/Detail/ABTest/GroupB/DailySummary';
 import TickerHeaderB from '@/components/Detail/ABTest/GroupB/TickerHeader';
 import TickerPriceSectionB from '@/components/Detail/ABTest/GroupB/TickerPriceSection';
 import ChartSectionB from '@/components/Detail/ABTest/GroupB/ChartSection';
+import DatePickerButton from '@/components/common/DatePickerButton';
 
 export default function DetailPage() {
   const variant = getDetailABVariant();
@@ -233,16 +237,32 @@ export default function DetailPage() {
   };
 
   const keywordBubbleMap = (variant: 'A' | 'B') => (
-    <KeywordBubbleMap
-      positiveRatio={positiveRatio}
-      negativeRatio={negativeRatio}
-      positiveKeywords={positiveKeywords}
-      negativeKeywords={negativeKeywords}
-      date={selectedDate}
-      isEmpty={isKeywordsEmpty}
-      onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
-      {...(variant === 'B' && { onDateChange: setSelectedDate })}
-    />
+    <>
+      <SummarySectionHeader>
+        <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
+          <Text size={isMobile ? 'xs' : 's'} weight="bold" variant="#2d70d3">
+            {formatMonthDay(selectedDate)}
+          </Text>
+          의 뉴스 요약
+        </Paragraph>
+        {variant === 'B' && (
+          <DatePickerButton
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            popupZIndex={9}
+          />
+        )}
+      </SummarySectionHeader>
+      <KeywordBubbleMap
+        positiveRatio={positiveRatio}
+        negativeRatio={negativeRatio}
+        positiveKeywords={positiveKeywords}
+        negativeKeywords={negativeKeywords}
+        date={selectedDate}
+        isEmpty={isKeywordsEmpty}
+        onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+      />
+    </>
   );
 
   return (
@@ -333,6 +353,14 @@ const Wrapper = styled.div<{ $variant: 'A' | 'B' }>`
     gap: 18px;
     padding: 12px 0;
   }
+`;
+
+const SummarySectionHeader = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
 `;
 
 const ErrorMessage = styled.div`
