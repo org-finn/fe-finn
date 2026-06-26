@@ -162,3 +162,14 @@ export const WithEmptyArticles: Story = {
     ],
   },
 };
+
+export const EmptyKeywords: Story = {
+  args: {
+    positiveRatio: 50,
+    negativeRatio: 50,
+    positiveKeywords: mockPositiveKeywords,
+    negativeKeywords: mockNegativeKeywords,
+    isEmpty: true,
+    date: '2025-05-30',
+  },
+};

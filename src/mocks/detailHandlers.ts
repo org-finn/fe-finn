@@ -856,6 +856,16 @@ export const detailHandlers = [
     ({ request }) => {
       const url = new URL(request.url);
       const date = url.searchParams.get('date') ?? '2025-05-29';
+
+      const emptyDates = ['2026-06-07', '2026-06-08', '2026-06-26'];
+      if (emptyDates.includes(date)) {
+        return HttpResponse.json({
+          code: '200 OK',
+          message: '키워드/관련 아티클 목록을 성공적으로 조회하였습니다.',
+          content: { keywords: [] },
+        });
+      }
+
       const keywords = mockKeywordsData.map((kw) => ({ ...kw, date }));
 
       return HttpResponse.json({

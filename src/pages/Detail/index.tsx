@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -101,7 +101,18 @@ export default function DetailPage() {
   const summaryData = summaryResponse?.content ?? null;
   const articles = tickerData?.detailData.article;
 
-  const keywords = keywordsResponse?.content?.keywords ?? [];
+  const rawKeywords = useMemo(
+    () => keywordsResponse?.content?.keywords ?? [],
+    [keywordsResponse]
+  );
+  const isKeywordsEmpty = rawKeywords.length === 0;
+
+  const [savedKeywords, setSavedKeywords] = useState(rawKeywords);
+  useEffect(() => {
+    if (rawKeywords.length > 0) setSavedKeywords(rawKeywords);
+  }, [rawKeywords]);
+
+  const keywords = isKeywordsEmpty ? savedKeywords : rawKeywords;
   const positiveKeywords = keywords.filter((k) => k.sentiment === 1);
   const negativeKeywords = keywords.filter((k) => k.sentiment !== 1);
   const total = positiveKeywords.length + negativeKeywords.length;
@@ -221,18 +232,18 @@ export default function DetailPage() {
     onLikeClick: handleLikeClick,
   };
 
-  const keywordBubbleMap = (variant: 'A' | 'B') =>
-    keywords.length > 0 && (
-      <KeywordBubbleMap
-        positiveRatio={positiveRatio}
-        negativeRatio={negativeRatio}
-        positiveKeywords={positiveKeywords}
-        negativeKeywords={negativeKeywords}
-        date={selectedDate}
-        onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
-        {...(variant === 'B' && { onDateChange: setSelectedDate })}
-      />
-    );
+  const keywordBubbleMap = (variant: 'A' | 'B') => (
+    <KeywordBubbleMap
+      positiveRatio={positiveRatio}
+      negativeRatio={negativeRatio}
+      positiveKeywords={positiveKeywords}
+      negativeKeywords={negativeKeywords}
+      date={selectedDate}
+      isEmpty={isKeywordsEmpty}
+      onNewsClick={(articleId) => navigate(`/news/${articleId}`)}
+      {...(variant === 'B' && { onDateChange: setSelectedDate })}
+    />
+  );
 
   return (
     <>
