@@ -236,7 +236,7 @@ export default function KeywordBubbleMap({
                   y={y}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={13}
+                  fontSize={12}
                   fontWeight="600"
                   fill={textFill}
                   style={{ pointerEvents: 'none' }}
@@ -314,7 +314,7 @@ export default function KeywordBubbleMap({
                   y={y}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={13}
+                  fontSize={12}
                   fontWeight="600"
                   fill={textFill}
                   style={{ pointerEvents: 'none' }}

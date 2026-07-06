@@ -19,7 +19,7 @@ const ANGLES_5 = [
 ];
 
 export function pillWidth(text: string): number {
-  return Math.max(56, text.length * 13 + 20);
+  return Math.max(56, text.length * 10 + 24);
 }
 
 export function calcBubblePositions(count: number, cx: number, orbitR: number) {

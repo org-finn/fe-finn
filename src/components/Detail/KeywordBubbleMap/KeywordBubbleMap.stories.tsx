@@ -163,6 +163,48 @@ export const WithEmptyArticles: Story = {
   },
 };
 
+export const NewsCount2: Story = {
+  args: {
+    positiveRatio: 60,
+    negativeRatio: 40,
+    positiveKeywords: [
+      {
+        keyword: '어닝서프라이즈',
+        articles: [
+          {
+            articleId: 'a1',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+          {
+            articleId: 'a2',
+            title: '마이크로소프트 스탁 온 더 딥을 사야 한다',
+          },
+        ],
+        sentiment: 1,
+        date: '2025-05-29',
+      },
+    ],
+    negativeKeywords: [
+      {
+        keyword: '금리인상우려',
+        articles: [
+          {
+            articleId: 'b1',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+          {
+            articleId: 'b2',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+        ],
+        sentiment: -1,
+        date: '2025-05-29',
+      },
+    ],
+    date: '2025-05-29',
+  },
+};
+
 export const EmptyKeywords: Story = {
   args: {
     positiveRatio: 50,
