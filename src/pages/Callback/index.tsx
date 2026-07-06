@@ -23,13 +23,13 @@ export default function CallbackPage() {
     if (!state || state !== storedState) {
       console.error('OAuth state mismatch - possible CSRF attack');
       sessionStorage.removeItem('oauthState');
-      window.location.href = '/';
+      window.location.replace('/');
       return;
     }
     sessionStorage.removeItem('oauthState');
 
     if (!code) {
-      window.location.href = '/';
+      window.location.replace('/');
       return;
     }
     isOAuthProcessingRef.current = true;
@@ -46,11 +46,11 @@ export default function CallbackPage() {
             queryClient.setQueryData(['userInfo'], userInfoResponse);
             handleLoginSuccess(userInfoResponse.content);
           } catch {
-            window.location.href = '/';
+            window.location.replace('/');
             return;
           }
           if (response.content.isNewUser === true) {
-            window.location.href = '/join';
+            window.location.replace('/join');
             return;
           }
           const redirectPath = localStorage.getItem('redirectPath');
@@ -60,14 +60,14 @@ export default function CallbackPage() {
             !redirectPath.startsWith('//')
           ) {
             localStorage.removeItem('redirectPath');
-            window.location.href = redirectPath;
+            window.location.replace(redirectPath);
           } else {
-            window.location.href = '/';
+            window.location.replace('/');
           }
         },
         onError: (error) => {
           console.error('OAuth login failed:', error);
-          window.location.href = '/';
+          window.location.replace('/');
         },
       }
     );

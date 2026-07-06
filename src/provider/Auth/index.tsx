@@ -13,10 +13,12 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
+const getStoredAuthStatus = () =>
+  localStorage.getItem('isAuthenticated') === 'true';
+
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    () => localStorage.getItem('isAuthenticated') === 'true'
-  );
+  const [isAuthenticated, setIsAuthenticated] =
+    useState<boolean>(getStoredAuthStatus);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const { mutateAsync: refreshToken } = usePostReissueToken();
   const { mutateAsync: logout } = usePostLogout();
@@ -45,6 +47,20 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     setOnUnauthorized(handleLogout);
   }, [doRefreshToken, handleLogout]);
 
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        const storedAuthStatus = getStoredAuthStatus();
+        if (storedAuthStatus !== isAuthenticated) {
+          document.body.style.visibility = 'hidden';
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [isAuthenticated]);
+
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoResponse) => {
       if (!isAuthenticated) {
@@ -58,8 +74,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initialize = async () => {
-      const savedAuthStatus =
-        localStorage.getItem('isAuthenticated') === 'true';
+      const savedAuthStatus = getStoredAuthStatus();
       if (savedAuthStatus) {
         try {
           await doRefreshToken();
