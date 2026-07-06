@@ -51,6 +51,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         const storedAuthStatus =
           localStorage.getItem('isAuthenticated') === 'true';
         if (storedAuthStatus !== isAuthenticated) {
+          document.body.style.visibility = 'hidden';
           window.location.reload();
         }
       }
