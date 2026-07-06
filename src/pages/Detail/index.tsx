@@ -24,6 +24,7 @@ import { Text } from '@/components/common/typography/Text';
 import LoginModal from '@/components/common/Modal/LoginModal';
 import ArticleSection from '@/components/Detail/ArticleSection';
 import KeywordBubbleMap from '@/components/Detail/KeywordBubbleMap';
+import { mockKeywordsData } from '@/mocks/mockKeywordsData';
 
 import SummaryModal from '@/components/Detail/ABTest/GroupA/SummaryModal';
 import TickerHeaderA from '@/components/Detail/ABTest/GroupA/TickerHeader';
@@ -111,12 +112,7 @@ export default function DetailPage() {
   );
   const isKeywordsEmpty = rawKeywords.length === 0;
 
-  const [savedKeywords, setSavedKeywords] = useState(rawKeywords);
-  useEffect(() => {
-    if (rawKeywords.length > 0) setSavedKeywords(rawKeywords);
-  }, [rawKeywords]);
-
-  const keywords = isKeywordsEmpty ? savedKeywords : rawKeywords;
+  const keywords = isKeywordsEmpty ? mockKeywordsData : rawKeywords;
   const positiveKeywords = keywords.filter((k) => k.sentiment === 1);
   const negativeKeywords = keywords.filter((k) => k.sentiment !== 1);
   const total = positiveKeywords.length + negativeKeywords.length;
