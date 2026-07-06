@@ -92,13 +92,14 @@ export default function DetailPage() {
     }
     setSummaryEnabled(true);
   };
-  const { data: keywordsResponse } = useGetTickerKeywords(
-    id,
-    selectedDate,
-    keywordCount,
-    articleCount,
-    titleLength
-  );
+  const { data: keywordsResponse, isLoading: isKeywordsLoading } =
+    useGetTickerKeywords(
+      id,
+      selectedDate,
+      keywordCount,
+      articleCount,
+      titleLength
+    );
 
   const tickerData = tickerResponse?.content;
   const realGraphData = realGraphResponse?.content;
@@ -110,7 +111,7 @@ export default function DetailPage() {
     () => keywordsResponse?.content?.keywords ?? [],
     [keywordsResponse]
   );
-  const isKeywordsEmpty = rawKeywords.length === 0;
+  const isKeywordsEmpty = !isKeywordsLoading && rawKeywords.length === 0;
 
   const keywords = isKeywordsEmpty ? mockKeywordsData : rawKeywords;
   const positiveKeywords = keywords.filter((k) => k.sentiment === 1);
