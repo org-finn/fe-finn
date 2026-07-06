@@ -56,7 +56,9 @@ export default function DetailPage() {
   const [selectedDate, setSelectedDate] = useState(today);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [summaryEnabled, setSummaryEnabled] = useState(false);
+  const [summaryEnabled, setSummaryEnabled] = useState(
+    () => sessionStorage.getItem('today_summary_enabled') === 'true'
+  );
 
   const [period, setPeriod] = useState<RealGraphPeriod>('2W');
   const [isLiveMode, setIsLiveMode] = useState(false);
@@ -90,6 +92,7 @@ export default function DetailPage() {
     if (!isAuthenticated) {
       setShowLoginModal(true);
     }
+    sessionStorage.setItem('today_summary_enabled', 'true');
     setSummaryEnabled(true);
   };
   const { data: keywordsResponse, isLoading: isKeywordsLoading } =
