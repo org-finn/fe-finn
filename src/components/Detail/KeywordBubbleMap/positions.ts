@@ -9,7 +9,6 @@ import {
   PILL_HEIGHT,
 } from './constants';
 
-// count=5 공통 각도: 하단 쌍을 45°/135°로 넓혀 좌하/우하 간격 확보 (cf - 정오각형은 72° 간격)
 const ANGLES_5 = [
   -Math.PI / 2,
   -Math.PI / 10,
@@ -59,33 +58,73 @@ export function calcNewsPositions(count: number, orbit: number) {
     return [{ x: cx, y: SVG_CENTER_Y + orbit * Math.sin(Math.PI / 6) }];
   }
   if (count === 2) {
-    const r = Math.PI / 6;
+    const angle = Math.PI / 6;
     return [
-      { x: cx - orbit * Math.cos(r), y: SVG_CENTER_Y + orbit * Math.sin(r) },
-      { x: cx + orbit * Math.cos(r), y: SVG_CENTER_Y + orbit * Math.sin(r) },
+      {
+        x: cx - orbit * Math.cos(angle),
+        y: SVG_CENTER_Y + orbit * Math.sin(angle),
+      },
+      {
+        x: cx + orbit * Math.cos(angle),
+        y: SVG_CENTER_Y + orbit * Math.sin(angle),
+      },
     ];
   }
   if (count === 3) {
-    const r = Math.PI / 6;
+    const angle = Math.PI / 6;
     return [
-      { x: cx, y: SVG_CENTER_Y - orbit * Math.sin(r) },
-      { x: cx - orbit * Math.cos(r), y: SVG_CENTER_Y + orbit * Math.sin(r) },
-      { x: cx + orbit * Math.cos(r), y: SVG_CENTER_Y + orbit * Math.sin(r) },
+      { x: cx, y: SVG_CENTER_Y - orbit * Math.sin(angle) },
+      {
+        x: cx - orbit * Math.cos(angle),
+        y: SVG_CENTER_Y + orbit * Math.sin(angle),
+      },
+      {
+        x: cx + orbit * Math.cos(angle),
+        y: SVG_CENTER_Y + orbit * Math.sin(angle),
+      },
     ];
   }
   if (count === 4) {
-    return Array.from({ length: 4 }, (_, i) => {
-      const angle = -Math.PI / 4 + (Math.PI / 2) * i;
-      return {
+    const angle = Math.PI / 6;
+    return [
+      {
+        x: cx - orbit * Math.cos(angle),
+        y: SVG_CENTER_Y - orbit * Math.sin(angle),
+      },
+      {
+        x: cx + orbit * Math.cos(angle),
+        y: SVG_CENTER_Y - orbit * Math.sin(angle),
+      },
+      {
+        x: cx - orbit * Math.cos(angle),
+        y: SVG_CENTER_Y + orbit * Math.sin(angle),
+      },
+      {
         x: cx + orbit * Math.cos(angle),
         y: SVG_CENTER_Y + orbit * Math.sin(angle),
-      };
-    });
+      },
+    ];
   }
-  return ANGLES_5.map((angle) => ({
-    x: cx + orbit * Math.cos(angle),
-    y: SVG_CENTER_Y + orbit * Math.sin(angle),
-  }));
+  const bottomAngle = Math.PI / 5;
+  return [
+    { x: cx, y: SVG_CENTER_Y - orbit * 0.8 },
+    {
+      x: cx + orbit * Math.cos(Math.PI / 10),
+      y: SVG_CENTER_Y - orbit * Math.sin(Math.PI / 10),
+    },
+    {
+      x: cx + orbit * Math.cos(bottomAngle),
+      y: SVG_CENTER_Y + orbit * Math.sin(bottomAngle),
+    },
+    {
+      x: cx - orbit * Math.cos(bottomAngle),
+      y: SVG_CENTER_Y + orbit * Math.sin(bottomAngle),
+    },
+    {
+      x: cx - orbit * Math.cos(Math.PI / 10),
+      y: SVG_CENTER_Y - orbit * Math.sin(Math.PI / 10),
+    },
+  ];
 }
 
 export function calcKeywordOrbit(
