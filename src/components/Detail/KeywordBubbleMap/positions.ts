@@ -22,14 +22,17 @@ export function pillWidth(text: string): number {
   return Math.max(56, text.length * 10 + 24);
 }
 
+function getBubbleAngles(count: number): number[] {
+  return count === 5
+    ? ANGLES_5
+    : Array.from(
+        { length: count },
+        (_, i) => ((2 * Math.PI) / Math.max(count, 1)) * i - Math.PI / 2
+      );
+}
+
 export function calcBubblePositions(count: number, cx: number, orbitR: number) {
-  const angles =
-    count === 5
-      ? ANGLES_5
-      : Array.from(
-          { length: count },
-          (_, i) => ((2 * Math.PI) / Math.max(count, 1)) * i - Math.PI / 2
-        );
+  const angles = getBubbleAngles(count);
   return angles.map((angle) => ({
     x: cx + orbitR * Math.cos(angle),
     y: SVG_CENTER_Y + orbitR * Math.sin(angle),
@@ -43,6 +46,7 @@ export function calcBubblePositions(count: number, cx: number, orbitR: number) {
  */
 export function calcNewsOrbit(keywordText: string): number {
   const pw = pillWidth(keywordText);
+  // 여백값 12, 2도 나중에 상수로 빼서 관리하기
   const minByHoriz = pw / 2 + NEWS_PILL_WIDTH / 2 + 12;
   const maxByBounds = SVG_CENTER_Y - NEWS_PILL_HEIGHT / 2 - 2;
   return Math.min(maxByBounds, Math.max(NEWS_ORBIT, minByHoriz));
@@ -84,15 +88,36 @@ export function calcNewsPositions(count: number, orbit: number) {
   }));
 }
 
-export function clampOrbit(sectionWidth: number): number {
-  return Math.max(
-    0,
-    Math.min(
-      MAX_ORBIT,
-      sectionWidth / 2 - PILL_HEIGHT - 8,
-      SVG_CENTER_Y - PILL_HEIGHT - 14
-    )
-  );
+export function calcKeywordOrbit(
+  sentiSectionWidth: number,
+  keywords: string[] = []
+): number {
+  const count = keywords.length;
+
+  if (count === 0) return MAX_ORBIT;
+  const maxPw = Math.max(...keywords.map(pillWidth));
+  const halfSec = sentiSectionWidth / 2;
+  const margin = 4;
+
+  const angles = getBubbleAngles(count);
+
+  let upperBound = Infinity;
+  for (const angle of angles) {
+    const absC = Math.abs(Math.cos(angle));
+    const absS = Math.abs(Math.sin(angle));
+    upperBound = Math.min(upperBound, (halfSec - maxPw / 2 - margin) / absC);
+    upperBound = Math.min(
+      upperBound,
+      (SVG_CENTER_Y - PILL_HEIGHT / 2 - margin) / absS
+    );
+  }
+  if (!isFinite(upperBound)) upperBound = halfSec - maxPw / 2 - margin;
+
+  if (count <= 1) return Math.max(0, Math.min(MAX_ORBIT, upperBound));
+  const minAngleGap = count === 5 ? (7 * Math.PI) / 20 : (2 * Math.PI) / count;
+  const minByPills = (maxPw + 8) / (2 * Math.sin(minAngleGap / 2));
+
+  return Math.max(0, Math.min(upperBound, Math.max(MAX_ORBIT, minByPills)));
 }
 
 export function truncateTitle(title: string): string {

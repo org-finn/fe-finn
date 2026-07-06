@@ -28,7 +28,7 @@ import {
   calcBubblePositions,
   calcNewsOrbit,
   calcNewsPositions,
-  clampOrbit,
+  calcKeywordOrbit,
   pillWidth,
   truncateTitle,
 } from './positions';
@@ -58,20 +58,26 @@ export default function KeywordBubbleMap({
     null
   );
 
-  const posW = (positiveRatio / 100) * SVG_WIDTH;
-  const negW = (negativeRatio / 100) * SVG_WIDTH;
-  const posCX = posW / 2;
-  const negCX = posW + negW / 2;
+  const posSectionWidth = (positiveRatio / 100) * SVG_WIDTH;
+  const negSectionWidth = (negativeRatio / 100) * SVG_WIDTH;
+  const posCX = posSectionWidth / 2;
+  const negCX = posSectionWidth + negSectionWidth / 2;
 
   const posPos = calcBubblePositions(
     positiveKeywords.length,
     posCX,
-    clampOrbit(posW)
+    calcKeywordOrbit(
+      posSectionWidth,
+      positiveKeywords.map((kw) => kw.keyword)
+    )
   );
   const negPos = calcBubblePositions(
     negativeKeywords.length,
     negCX,
-    clampOrbit(negW)
+    calcKeywordOrbit(
+      negSectionWidth,
+      negativeKeywords.map((kw) => kw.keyword)
+    )
   );
 
   const displayedArticles = selected?.articles.slice(0, 5) ?? [];
