@@ -5,7 +5,9 @@ import { getRealGraphPath } from '@/api/hooks/useGetRealGraph';
 import { getRealTimePricePath } from '@/api/hooks/useGetRealTimePrice';
 import { getRealTimeStreamPath } from '@/api/hooks/useGetRealTimeStream';
 import { getArticleSummaryTickerPath } from '@/api/hooks/useGetArticleSummaryTicker';
+import { getTickerKeywordsPath } from '@/api/hooks/useGetTickerKeywords';
 import { TickerRealTimeStreamResponse } from '@/types';
+import { mockKeywordsData } from './mockKeywordsData';
 
 const mockNewsData = [
   {
@@ -759,13 +761,40 @@ export const detailHandlers = [
       },
     });
   }),
-  http.get(`${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n')}`, () => {
-    return HttpResponse.json({
-      code: '200 OK',
-      message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
-      content: mockArticleSummary,
-    });
-  }),
+  http.get(
+    `${BASE_URL}${getTickerKeywordsPath('0-d-q-8b-95n', '2025-05-29', 5, 5, 20)}`,
+    ({ request }) => {
+      const url = new URL(request.url);
+      const date = url.searchParams.get('date') ?? '2025-05-29';
+
+      const emptyDates = ['2026-06-07', '2026-06-08', '2026-06-26'];
+      if (emptyDates.includes(date)) {
+        return HttpResponse.json({
+          code: '200 OK',
+          message: '키워드/관련 아티클 목록을 성공적으로 조회하였습니다.',
+          content: { keywords: [] },
+        });
+      }
+
+      const keywords = mockKeywordsData.map((kw) => ({ ...kw, date }));
+
+      return HttpResponse.json({
+        code: '200 OK',
+        message: '키워드/관련 아티클 목록을 성공적으로 조회하였습니다.',
+        content: { keywords },
+      });
+    }
+  ),
+  http.get(
+    `${BASE_URL}${getArticleSummaryTickerPath('0-d-q-8b-95n', '2025-05-29')}`,
+    () => {
+      return HttpResponse.json({
+        code: '200 OK',
+        message: '종목 뉴스 요약 데이터 조회에 성공하였습니다.',
+        content: mockArticleSummary,
+      });
+    }
+  ),
 ];
 
 export default detailHandlers;

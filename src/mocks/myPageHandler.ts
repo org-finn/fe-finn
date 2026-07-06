@@ -78,7 +78,7 @@ const mockFavoriteArticles = [
   },
 ];
 
-const mockFavoriteTickers = mockTickerData.slice(0, 5).map((item) => {
+export const mockFavoriteTickers = mockTickerData.slice(0, 5).map((item) => {
   const isMarketOpen = Math.random() > 0.5;
   const priceData = isMarketOpen
     ? [
@@ -91,7 +91,7 @@ const mockFavoriteTickers = mockTickerData.slice(0, 5).map((item) => {
       ];
 
   return {
-    tickerId: crypto.randomUUID(),
+    tickerId: Math.random().toString(36).slice(2),
     ...item,
     graphData: { isMarketOpen, priceData },
   };

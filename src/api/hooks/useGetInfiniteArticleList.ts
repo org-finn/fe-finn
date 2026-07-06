@@ -7,6 +7,7 @@ interface ArticleListParams {
   sentiment?: 'positive' | 'negative';
   sort: 'recent';
   tickerCode?: string[];
+  filter?: string;
 }
 
 export const getInfiniteArticleListPath = () => `/api/v1/article`;
@@ -16,6 +17,7 @@ export const getInfiniteArticleList = async ({
   sort,
   page,
   tickerCode,
+  filter,
 }: ArticleListParams & { page: number }) => {
   const params = new URLSearchParams({
     sort,
@@ -32,6 +34,8 @@ export const getInfiniteArticleList = async ({
     params.append('sentiment', sentiment);
   }
 
+  if (filter) params.set('filter', filter);
+
   const response = await fetchInstance.get<PageableData<ArticleListData>>(
     `${getInfiniteArticleListPath()}?${params}`
   );
@@ -42,11 +46,24 @@ export const useGetInfiniteArticleList = ({
   sentiment,
   sort,
   tickerCode,
+  filter,
 }: ArticleListParams) => {
   return useInfiniteQuery({
-    queryKey: ['articleList', tickerCode || [], sentiment || null, sort],
+    queryKey: [
+      'articleList',
+      tickerCode || [],
+      sentiment || null,
+      sort,
+      filter,
+    ],
     queryFn: ({ pageParam = 0 }) =>
-      getInfiniteArticleList({ sentiment, sort, page: pageParam, tickerCode }),
+      getInfiniteArticleList({
+        sentiment,
+        sort,
+        page: pageParam,
+        tickerCode,
+        filter,
+      }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.content.hasNext) {

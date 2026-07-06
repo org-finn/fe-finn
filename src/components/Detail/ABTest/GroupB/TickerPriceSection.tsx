@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
-import ScoreGaugeChart from '@/components/Detail/ScoreGaugeChart';
+import ScoreGaugeChart from './ScoreGaugeChart';
 import { TickerDetailData } from '@/types';
 
 type TTickerPriceSectionProps = {
@@ -122,19 +122,20 @@ export default function TickerPriceSection({
 const TickerInfo = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  padding: 8px 0px 12px 0px;
+  justify-content: space-between;
+  padding-bottom: 12px;
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
     gap: 16px;
+    padding-bottom: 10px;
   }
 `;
 
 const InfoGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 340px;
+  width: 350px;
   border-radius: 8px;
   gap: 24px;
   padding: 24px 0 0 0;

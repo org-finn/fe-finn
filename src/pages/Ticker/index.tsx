@@ -1,3 +1,4 @@
+import { josa } from 'es-hangul';
 import TickerList from '@/components/Ticker/TickerList';
 import styled from 'styled-components';
 import { useGetInfiniteTickerList } from '@/api/hooks/useGetInfiniteTickerList';
@@ -8,6 +9,9 @@ import Loading from '@/components/common/Layout/Loading';
 import SearchBar from '@/components/common/SearchBar';
 import Button from '@/components/common/Button';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
+
 export default function TickerPage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -20,6 +24,8 @@ export default function TickerPage() {
   };
 
   const [sortOption, setSortOption] = useState(getInitialSortOption());
+  const filterOption =
+    new URLSearchParams(location.search).get('filter') ?? undefined;
   const [showSortOptions, setShowSortOptions] = useState(false);
 
   const handleSortChange = (option: string) => {
@@ -39,7 +45,7 @@ export default function TickerPage() {
     hasNextPage: hasNext,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetInfiniteTickerList({ sort: sortOption });
+  } = useGetInfiniteTickerList({ sort: sortOption, filter: filterOption });
   const sortLabel: Record<string, string> = {
     popular: '인기순',
     upward: '점수 낮은순',
@@ -78,6 +84,16 @@ export default function TickerPage() {
     <Wrapper>
       <SearchBar />
       <SortSection ref={dropdownRef}>
+        {filterOption && (
+          <FilterKeywordContainer>
+            <Paragraph weight="normal" size="s">
+              <Text weight="bold" size="m" variant="#2d70d3">
+                {`${filterOption} `}
+              </Text>
+              {josa.pick(filterOption, '으로/로')} 검색한 결과입니다.
+            </Paragraph>
+          </FilterKeywordContainer>
+        )}
         <StyledButton
           aria-label="티커 정렬"
           variant="white"
@@ -133,8 +149,9 @@ const ErrorMessage = styled.div`
 const SortSection = styled.div`
   position: relative;
   display: flex;
-  justify-content: flex-end;
-  margin: -10px 0;
+  justify-content: space-between;
+  align-items: center;
+  margin: -14px 0;
 
   @media screen and (max-width: 768px) {
   }
@@ -223,5 +240,13 @@ const SortItem = styled.div`
       border-bottom-left-radius: 4px;
       border-bottom-right-radius: 4px;
     }
+  }
+`;
+
+const FilterKeywordContainer = styled.div`
+  margin: 8px 0 0 0;
+
+  @media screen and (max-width: 768px) {
+    margin: 4px 0 0 0;
   }
 `;

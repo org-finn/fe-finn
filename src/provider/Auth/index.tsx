@@ -3,18 +3,22 @@ import { usePostReissueToken } from '@/api/hooks/usePostReissueToken';
 import { usePostLogout } from '@/api/hooks/usePostLogout';
 import { AuthContext } from './AuthContext';
 import { UserInfoResponse } from '@/types';
-import { setAccessToken } from '@/api/instance';
+import {
+  setAccessToken,
+  setOnUnauthorized,
+  setRefreshTokenFn,
+} from '@/api/instance';
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // 만료 시간 1시간
+const getStoredAuthStatus = () =>
+  localStorage.getItem('isAuthenticated') === 'true';
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    () => localStorage.getItem('isAuthenticated') === 'true'
-  );
+  const [isAuthenticated, setIsAuthenticated] =
+    useState<boolean>(getStoredAuthStatus);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const { mutateAsync: refreshToken } = usePostReissueToken();
   const { mutateAsync: logout } = usePostLogout();
@@ -31,15 +35,31 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     window.location.href = '/';
   }, [logout]);
 
-  const refreshTokenRegularly = useCallback(async () => {
-    try {
-      const tokenResponse = await refreshToken({ deviceType: 'web' });
-      setAccessToken(tokenResponse.content.accessToken);
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      handleLogout();
-    }
-  }, [refreshToken, handleLogout]);
+  const doRefreshToken = useCallback(async () => {
+    const tokenResponse = await refreshToken({ deviceType: 'web' });
+    const newToken = tokenResponse.content.accessToken;
+    setAccessToken(newToken);
+    return newToken;
+  }, [refreshToken]);
+
+  useEffect(() => {
+    setRefreshTokenFn(doRefreshToken);
+    setOnUnauthorized(handleLogout);
+  }, [doRefreshToken, handleLogout]);
+
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        const storedAuthStatus = getStoredAuthStatus();
+        if (storedAuthStatus !== isAuthenticated) {
+          document.body.style.visibility = 'hidden';
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [isAuthenticated]);
 
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoResponse) => {
@@ -54,11 +74,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initialize = async () => {
-      const savedAuthStatus =
-        localStorage.getItem('isAuthenticated') === 'true';
+      const savedAuthStatus = getStoredAuthStatus();
       if (savedAuthStatus) {
         try {
-          await refreshTokenRegularly();
+          await doRefreshToken();
         } catch (error) {
           console.error(
             'Failed to refresh token during initialization:',
@@ -71,23 +90,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     };
 
     initialize();
-  }, [refreshTokenRegularly, handleLogout]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (isAuthenticated) {
-      intervalId = setInterval(() => {
-        refreshTokenRegularly();
-      }, ACCESS_TOKEN_REFRESH_INTERVAL);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isAuthenticated, refreshTokenRegularly]);
+  }, [doRefreshToken, handleLogout]);
 
   const value = useMemo(
     () =>

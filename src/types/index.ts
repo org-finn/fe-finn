@@ -276,3 +276,24 @@ export type TickerRealTimeStreamResponse = {
   close: number;
   volume: number;
 };
+
+export type ArticleSearchListResponse = {
+  articles: ArticleDataResponse[];
+  isMore: boolean;
+};
+
+export type TickerSearchListResponse = {
+  tickerSearchList: PredictionDataResponse[];
+  isMore: boolean;
+};
+
+export type KeywordsWithArticleResponse = {
+  keyword: string;
+  articles: { articleId: string; title: string }[];
+  sentiment: 1 | -1;
+  date: string;
+};
+
+export type KeywordsWithArticleListResponse = {
+  keywords: KeywordsWithArticleResponse[];
+};

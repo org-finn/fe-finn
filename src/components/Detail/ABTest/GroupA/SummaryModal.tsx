@@ -1,38 +1,46 @@
 import styled from 'styled-components';
-import { Text } from '../common/typography/Text';
+import { Text } from '@/components/common/typography/Text';
 import { ArticleSummaryTickerResponse } from '@/types';
 import useIsMobile from '@/hooks/useIsMobile';
-import { Paragraph } from '../common/typography/Paragraph';
+import { Paragraph } from '@/components/common/typography/Paragraph';
+import DatePickerButton from '@/components/common/DatePickerButton';
+import { formatMonthDay } from '@/utils/formatDate';
 
 type SummaryModalProps = {
   isOpen: boolean;
   onClose: () => void;
   summaryData: ArticleSummaryTickerResponse | null;
+  selectedDate: string;
+  onDateChange: (date: string) => void;
 };
 
 export default function SummaryModal({
   isOpen,
   onClose,
   summaryData,
+  selectedDate,
+  onDateChange,
 }: SummaryModalProps) {
   const isMobile = useIsMobile();
 
   if (!isOpen) return null;
 
-  const formatDate = (dateString: string) => {
-    const [, month, day] = dateString.split('-');
-    return `${Number(month)}월 ${Number(day)}일`;
-  };
-
   return (
     <>
       <Overlay onClick={onClose} />
       <ModalContainer $isMobile={isMobile}>
-        <CloseButton onClick={onClose}>X</CloseButton>
+        <HeaderActions>
+          <DatePickerButton
+            selectedDate={selectedDate}
+            onDateChange={onDateChange}
+            popupPosition="fixed"
+            popupAlign="right"
+          />
+          <CloseButton onClick={onClose}>X</CloseButton>
+        </HeaderActions>
         <ModalHeader>
           <Paragraph size={isMobile ? 's' : 'm'} weight="bold">
-            {summaryData?.summaryDate && formatDate(summaryData.summaryDate)}의
-            뉴스 요약
+            {formatMonthDay(selectedDate)}의 뉴스 요약
           </Paragraph>
         </ModalHeader>
         <ModalContent>
@@ -183,10 +191,21 @@ const ModalContainer = styled.div<{ $isMobile: boolean }>`
   }
 `;
 
-const CloseButton = styled.button`
+const HeaderActions = styled.div`
   position: absolute;
   top: 20px;
   right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  @media screen and (max-width: 768px) {
+    top: 16px;
+    right: 16px;
+  }
+`;
+
+const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 24px;
@@ -195,8 +214,6 @@ const CloseButton = styled.button`
   padding: 4px 8px;
 
   @media screen and (max-width: 768px) {
-    top: 16px;
-    right: 16px;
     font-size: 20px;
   }
 `;

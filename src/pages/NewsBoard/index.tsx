@@ -1,7 +1,10 @@
+import { josa } from 'es-hangul';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
+import { Paragraph } from '@/components/common/typography/Paragraph';
+import { Text } from '@/components/common/typography/Text';
 import SearchBar from '@/components/common/SearchBar';
 import ArticleList from '@/components/Article/ArticleList';
 import { useGetInfiniteArticleList } from '@/api/hooks/useGetInfiniteArticleList';
@@ -10,7 +13,6 @@ import DropdownFilterBar from '@/components/Article/FilterDropdown';
 import { useGetFilterTickerList } from '@/api/hooks/useGetFilterTickerList';
 import Chip from '@/components/Article/FilterChip';
 import useIsMobile from '@/hooks/useIsMobile';
-import { ArticleDataResponse } from '@/types';
 
 type NewsSentiment = 'positive' | 'negative';
 type NewsSort = 'recent';
@@ -34,10 +36,9 @@ export default function NewsBoardPage() {
     getInitialSentiment()
   );
   const [sort] = useState<NewsSort>('recent');
+  const filterOption =
+    new URLSearchParams(location.search).get('filter') ?? undefined;
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [searchArticles, setSearchArticles] = useState<
-    ArticleDataResponse[] | null
-  >(null);
   const { ref, inView } = useInView();
   const currentTickerCodes = getTickerCodes();
 
@@ -52,6 +53,7 @@ export default function NewsBoardPage() {
     tickerCode: currentTickerCodes.length > 0 ? currentTickerCodes : undefined,
     sentiment: sentiment || undefined,
     sort,
+    filter: filterOption,
   });
 
   const { data: filterTickerData } = useGetFilterTickerList();
@@ -136,7 +138,7 @@ export default function NewsBoardPage() {
 
   return (
     <Wrapper>
-      <SearchBar type="article" onArticleSearchResult={setSearchArticles} />
+      <SearchBar />
 
       <FilterContainer>
         <FilterTabsGroup>
@@ -185,15 +187,19 @@ export default function NewsBoardPage() {
         />
       </ChipContainer>
 
-      {searchArticles ? (
-        <ArticleList items={searchArticles} />
-      ) : (
-        <>
-          <ArticleList items={allArticles} />
-          <div ref={ref} style={{ height: '50px' }} />
-          {isFetchingNextPage && <Loading />}
-        </>
+      {filterOption && (
+        <FilterKeywordContainer>
+          <Paragraph weight="normal" size="s">
+            <Text weight="bold" size="m" variant="#2d70d3">
+              {`${filterOption} `}
+            </Text>
+            {josa.pick(filterOption, '으로/로')} 검색한 결과입니다.
+          </Paragraph>
+        </FilterKeywordContainer>
       )}
+      <ArticleList items={allArticles} />
+      <div ref={ref} style={{ height: '50px' }} />
+      {isFetchingNextPage && <Loading />}
     </Wrapper>
   );
 }
@@ -254,6 +260,14 @@ const ChipContainer = styled.div`
 
   @media screen and (max-width: 768px) {
     margin: -6px 0 -16px 0;
+  }
+`;
+
+export const FilterKeywordContainer = styled.div`
+  margin: -30px 0 -40px 0;
+
+  @media screen and (max-width: 768px) {
+    margin: -30px 0 -30px 0;
   }
 `;
 

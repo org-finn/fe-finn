@@ -10,7 +10,13 @@ import useAuth from '@/hooks/useAuth';
 import { usePutFavoriteArticle } from '@/api/hooks/usePutFavoriteArticle';
 import LoginModal from '@/components/common/Modal/LoginModal';
 
-export default function NewsItem({ item }: { item: ArticleDataResponse }) {
+export default function NewsItem({
+  item,
+  onToggleLike,
+}: {
+  item: ArticleDataResponse;
+  onToggleLike?: (articleId: string) => void;
+}) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +32,10 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
   const handleLikeClick = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
+      if (onToggleLike) {
+        onToggleLike(item.articleId);
+        return;
+      }
       if (!isAuthenticated) {
         setShowLoginModal(true);
         return;
@@ -42,7 +52,13 @@ export default function NewsItem({ item }: { item: ArticleDataResponse }) {
         }
       );
     },
-    [isFavorite, isAuthenticated, item.articleId, putFavoriteArticle]
+    [
+      isFavorite,
+      isAuthenticated,
+      item.articleId,
+      putFavoriteArticle,
+      onToggleLike,
+    ]
   );
 
   return (

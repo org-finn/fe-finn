@@ -11,8 +11,7 @@ const postLogout = async ({ deviceType }: LogoutRequest) => {
     {
       deviceType,
       // refreshToken는 앱 기능 시작할 때 추가
-    },
-    { withCredentials: true }
+    }
   );
   return response.data;
 };
