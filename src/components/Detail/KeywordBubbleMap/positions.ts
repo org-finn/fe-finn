@@ -30,7 +30,7 @@ export function newsPillWidth(title: string): number {
       (code >= 0xac00 && code <= 0xd7a3) || (code >= 0x4e00 && code <= 0x9fff);
     textWidth += isKorean ? 10 : 6;
   }
-  return Math.max(100, NEWS_ICON_SIZE + textWidth + 8);
+  return Math.max(100, 8 + NEWS_ICON_SIZE + 5 + textWidth + 8);
 }
 
 function getBubbleAngles(count: number): number[] {
