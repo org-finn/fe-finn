@@ -345,8 +345,8 @@ export default function KeywordBubbleMap({
               displayedArticles.map((article, i) => {
                 const { x, y } = newsPos[i];
                 const title = newsTitles[i];
-                const newsPillWidth = newsPillWidths[i];
-                const pl = x - newsPillWidth / 2;
+                const currentNewsPillWidth = newsPillWidths[i];
+                const pl = x - currentNewsPillWidth / 2;
                 const pt = y - NEWS_PILL_HEIGHT / 2;
 
                 return (
@@ -383,7 +383,7 @@ export default function KeywordBubbleMap({
                     <rect
                       x={pl}
                       y={pt}
-                      width={newsPillWidth}
+                      width={currentNewsPillWidth}
                       height={NEWS_PILL_HEIGHT}
                       rx={NEWS_PILL_RADIUS}
                       fill="white"
