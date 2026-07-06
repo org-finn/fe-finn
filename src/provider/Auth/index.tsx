@@ -45,6 +45,20 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     setOnUnauthorized(handleLogout);
   }, [doRefreshToken, handleLogout]);
 
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        const storedAuthStatus =
+          localStorage.getItem('isAuthenticated') === 'true';
+        if (storedAuthStatus !== isAuthenticated) {
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [isAuthenticated]);
+
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoResponse) => {
       if (!isAuthenticated) {
