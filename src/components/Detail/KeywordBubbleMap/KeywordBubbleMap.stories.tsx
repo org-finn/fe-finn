@@ -162,3 +162,90 @@ export const WithEmptyArticles: Story = {
     ],
   },
 };
+
+export const NewsCount2: Story = {
+  args: {
+    positiveRatio: 60,
+    negativeRatio: 40,
+    positiveKeywords: [
+      {
+        keyword: '어닝서프라이즈',
+        articles: [
+          {
+            articleId: 'a1',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+          {
+            articleId: 'a2',
+            title: '마이크로소프트 스탁 온 더 딥을 사야 한다',
+          },
+        ],
+        sentiment: 1,
+        date: '2025-05-29',
+      },
+    ],
+    negativeKeywords: [
+      {
+        keyword: '금리인상우려',
+        articles: [
+          {
+            articleId: 'b1',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+          {
+            articleId: 'b2',
+            title: '삼성전자 실적 호조로 주가 급등 추세 보여',
+          },
+        ],
+        sentiment: -1,
+        date: '2025-05-29',
+      },
+    ],
+    date: '2025-05-29',
+  },
+};
+
+export const MixedLanguageNews: Story = {
+  args: {
+    positiveRatio: 50,
+    negativeRatio: 50,
+    positiveKeywords: [
+      {
+        keyword: 'AI인프라',
+        articles: [
+          { articleId: 'a1', title: 'Dell Technologies의 레거시 전환' },
+          { articleId: 'a2', title: '이 에너지 주식은 AI의 가장 큰 수혜주' },
+          { articleId: 'a3', title: 'Nvidia의 2027년 매출 전망 상향' },
+          { articleId: 'a4', title: '삼성전자 AI반도체 공급 계약 체결' },
+          { articleId: 'a5', title: 'ServiceNow와 Salesforce 협업 발표' },
+        ],
+        sentiment: 1,
+        date: '2025-05-29',
+      },
+    ],
+    negativeKeywords: [
+      {
+        keyword: '규제리스크',
+        articles: [
+          { articleId: 'b1', title: 'EU AI Act 규제 강화로 빅테크 압박' },
+          { articleId: 'b2', title: 'Microsoft vs Google antitrust 소송' },
+          { articleId: 'b3', title: '반도체 수출 규제 확대 우려 증가세' },
+        ],
+        sentiment: -1,
+        date: '2025-05-29',
+      },
+    ],
+    date: '2025-05-29',
+  },
+};
+
+export const EmptyKeywords: Story = {
+  args: {
+    positiveRatio: 50,
+    negativeRatio: 50,
+    positiveKeywords: mockPositiveKeywords,
+    negativeKeywords: mockNegativeKeywords,
+    isEmpty: true,
+    date: '2025-05-30',
+  },
+};

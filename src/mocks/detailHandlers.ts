@@ -7,6 +7,7 @@ import { getRealTimeStreamPath } from '@/api/hooks/useGetRealTimeStream';
 import { getArticleSummaryTickerPath } from '@/api/hooks/useGetArticleSummaryTicker';
 import { getTickerKeywordsPath } from '@/api/hooks/useGetTickerKeywords';
 import { TickerRealTimeStreamResponse } from '@/types';
+import { mockKeywordsData } from './mockKeywordsData';
 
 const mockNewsData = [
   {
@@ -291,97 +292,6 @@ const realTimeGraphData = {
 const mockRealGraphData = generateGraphDataWithChangeRate(
   baseMockRealGraphData
 );
-
-const mockKeywordsData = [
-  {
-    keyword: '실적호조',
-    articles: [
-      { articleId: '1', title: '삼성전자 실적 호조로 주가 급등' },
-      { articleId: '2', title: '애플 신제품 출시 기대감 확산' },
-      { articleId: '3', title: 'AI 반도체 수요 폭발적 증가세' },
-    ],
-    sentiment: 1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: 'AI반도체',
-    articles: [{ articleId: '3', title: 'AI 반도체 수요 폭발적 증가세' }],
-    sentiment: 1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '신제품기대',
-    articles: [
-      { articleId: '2', title: '애플 신제품 출시 기대감 확산' },
-      { articleId: '1', title: '삼성전자 실적 호조로 주가 급등' },
-      { articleId: '5', title: '2분기 실적 시장 기대치 상회' },
-      { articleId: '3', title: 'AI 반도체 수요 폭발적 증가세' },
-      { articleId: '4', title: '코스피 외국인 순매수 전환' },
-    ],
-    sentiment: 1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '어닝서프라이즈',
-    articles: [
-      { articleId: '5', title: '2분기 실적 시장 기대치 상회' },
-      { articleId: '3', title: 'AI 반도체 수요 폭발적 증가세' },
-      { articleId: '1', title: '삼성전자 실적 호조로 주가 급등' },
-      { articleId: '2', title: '애플 신제품 출시 기대감 확산' },
-    ],
-    sentiment: 1,
-  },
-  {
-    keyword: '배당확대',
-    articles: [],
-    sentiment: 1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '금리인상',
-    articles: [
-      { articleId: '1', title: '금리 인상 우려에 증시 하락' },
-      { articleId: '5', title: '인플레이션 예상치 웃돌아' },
-      { articleId: '3', title: '달러 강세 수출주 압박' },
-    ],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '달러강세',
-    articles: [
-      { articleId: '3', title: '달러 강세 수출주 압박' },
-      { articleId: '1', title: '금리 인상 우려에 증시 하락' },
-    ],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '공급과잉',
-    articles: [
-      { articleId: '6', title: '반도체 공급 과잉 우려 지속' },
-      { articleId: '4', title: '중국 경기 침체 공포 확산' },
-      { articleId: '5', title: '인플레이션 예상치 웃돌아' },
-    ],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '인플레이션',
-    articles: [
-      { articleId: '5', title: '인플레이션 예상치 웃돌아' },
-      { articleId: '1', title: '금리 인상 우려에 증시 하락' },
-    ],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-  {
-    keyword: '규제리스크',
-    articles: [],
-    sentiment: -1,
-    date: '2025-05-29',
-  },
-];
 
 const mockArticleSummary = {
   tickerId: '0-d-q-8b-95n',
@@ -856,6 +766,16 @@ export const detailHandlers = [
     ({ request }) => {
       const url = new URL(request.url);
       const date = url.searchParams.get('date') ?? '2025-05-29';
+
+      const emptyDates = ['2026-06-07', '2026-06-08', '2026-06-26'];
+      if (emptyDates.includes(date)) {
+        return HttpResponse.json({
+          code: '200 OK',
+          message: '키워드/관련 아티클 목록을 성공적으로 조회하였습니다.',
+          content: { keywords: [] },
+        });
+      }
+
       const keywords = mockKeywordsData.map((kw) => ({ ...kw, date }));
 
       return HttpResponse.json({

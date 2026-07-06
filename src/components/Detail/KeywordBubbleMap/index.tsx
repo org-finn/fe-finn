@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { IoDocumentTextOutline } from 'react-icons/io5';
+import { IoCalendarOutline, IoDocumentTextOutline } from 'react-icons/io5';
 import styled from 'styled-components';
 import type { KeywordsWithArticleResponse } from '@/types';
 import {
@@ -28,15 +28,12 @@ import {
   calcBubblePositions,
   calcNewsOrbit,
   calcNewsPositions,
-  clampOrbit,
+  calcKeywordOrbit,
+  newsPillWidth,
   pillWidth,
   truncateTitle,
 } from './positions';
-import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
-import useIsMobile from '@/hooks/useIsMobile';
-import DatePickerButton from '@/components/common/DatePickerButton';
-import { formatMonthDay } from '@/utils/formatDate';
 
 type Props = {
   positiveRatio: number;
@@ -45,7 +42,7 @@ type Props = {
   negativeKeywords: KeywordsWithArticleResponse[];
   onNewsClick: (articleId: string) => void;
   date: string;
-  onDateChange?: (date: string) => void;
+  isEmpty?: boolean;
 };
 
 export default function KeywordBubbleMap({
@@ -55,32 +52,43 @@ export default function KeywordBubbleMap({
   negativeKeywords,
   onNewsClick,
   date,
-  onDateChange,
+  isEmpty = false,
 }: Props) {
-  const isMobile = useIsMobile();
   const uid = useRef(Math.random().toString(36).slice(2, 8)).current;
   const [selected, setSelected] = useState<KeywordsWithArticleResponse | null>(
     null
   );
 
-  const posW = (positiveRatio / 100) * SVG_WIDTH;
-  const negW = (negativeRatio / 100) * SVG_WIDTH;
-  const posCX = posW / 2;
-  const negCX = posW + negW / 2;
+  const posSectionWidth = (positiveRatio / 100) * SVG_WIDTH;
+  const negSectionWidth = (negativeRatio / 100) * SVG_WIDTH;
+  const posCX = posSectionWidth / 2;
+  const negCX = posSectionWidth + negSectionWidth / 2;
 
   const posPos = calcBubblePositions(
     positiveKeywords.length,
     posCX,
-    clampOrbit(posW)
+    calcKeywordOrbit(
+      posSectionWidth,
+      positiveKeywords.map((kw) => kw.keyword)
+    )
   );
   const negPos = calcBubblePositions(
     negativeKeywords.length,
     negCX,
-    clampOrbit(negW)
+    calcKeywordOrbit(
+      negSectionWidth,
+      negativeKeywords.map((kw) => kw.keyword)
+    )
   );
 
   const displayedArticles = selected?.articles.slice(0, 5) ?? [];
-  const newsOrbit = selected ? calcNewsOrbit(selected.keyword) : NEWS_ORBIT;
+  const newsTitles = displayedArticles.map((a) => truncateTitle(a.title));
+  const newsPillWidths = newsTitles.map(newsPillWidth);
+  const maxNewsPillWidth =
+    newsPillWidths.length > 0 ? Math.max(...newsPillWidths) : NEWS_PILL_WIDTH;
+  const newsOrbit = selected
+    ? calcNewsOrbit(selected.keyword, maxNewsPillWidth)
+    : NEWS_ORBIT;
   const newsPos = calcNewsPositions(displayedArticles.length, newsOrbit);
 
   const isPos = (selected?.sentiment ?? 0) === 1;
@@ -94,23 +102,8 @@ export default function KeywordBubbleMap({
   const newsShadowId = `${uid}-ns`;
 
   return (
-    <>
-      <BubbleMapHeader>
-        <Paragraph size={isMobile ? 'xs' : 's'} weight="bold">
-          <Text size={isMobile ? 'xs' : 's'} weight="bold" variant="#2d70d3">
-            {formatMonthDay(date)}
-          </Text>
-          의 뉴스 요약
-        </Paragraph>
-        {onDateChange && (
-          <DatePickerButton
-            selectedDate={date}
-            onDateChange={onDateChange}
-            popupZIndex={9}
-          />
-        )}
-      </BubbleMapHeader>
-      <Container onClick={close}>
+    <Container onClick={isEmpty ? undefined : close}>
+      <BlurContent $blurred={isEmpty}>
         <Background $ratio={positiveRatio} />
         <DateText>{date}</DateText>
 
@@ -203,7 +196,7 @@ export default function KeywordBubbleMap({
               <motion.g
                 key={kw.keyword}
                 role="button"
-                tabIndex={isDimmed ? -1 : 0}
+                tabIndex={isDimmed || isEmpty ? -1 : 0}
                 animate={{
                   x: isSelected ? SVG_WIDTH / 2 - x : 0,
                   y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -230,6 +223,7 @@ export default function KeywordBubbleMap({
                 }}
                 onKeyDown={(e) => {
                   if (
+                    !isEmpty &&
                     selected === null &&
                     hasArticles &&
                     (e.key === 'Enter' || e.key === ' ')
@@ -256,7 +250,7 @@ export default function KeywordBubbleMap({
                   y={y}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={13}
+                  fontSize={12}
                   fontWeight="600"
                   fill={textFill}
                   style={{ pointerEvents: 'none' }}
@@ -281,7 +275,7 @@ export default function KeywordBubbleMap({
               <motion.g
                 key={kw.keyword}
                 role="button"
-                tabIndex={isDimmed ? -1 : 0}
+                tabIndex={isDimmed || isEmpty ? -1 : 0}
                 animate={{
                   x: isSelected ? SVG_WIDTH / 2 - x : 0,
                   y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -308,6 +302,7 @@ export default function KeywordBubbleMap({
                 }}
                 onKeyDown={(e) => {
                   if (
+                    !isEmpty &&
                     selected === null &&
                     hasArticles &&
                     (e.key === 'Enter' || e.key === ' ')
@@ -334,7 +329,7 @@ export default function KeywordBubbleMap({
                   y={y}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={13}
+                  fontSize={12}
                   fontWeight="600"
                   fill={textFill}
                   style={{ pointerEvents: 'none' }}
@@ -349,8 +344,9 @@ export default function KeywordBubbleMap({
             {selected !== null &&
               displayedArticles.map((article, i) => {
                 const { x, y } = newsPos[i];
-                const title = truncateTitle(article.title);
-                const pl = x - NEWS_PILL_WIDTH / 2;
+                const title = newsTitles[i];
+                const currentNewsPillWidth = newsPillWidths[i];
+                const pl = x - currentNewsPillWidth / 2;
                 const pt = y - NEWS_PILL_HEIGHT / 2;
 
                 return (
@@ -387,7 +383,7 @@ export default function KeywordBubbleMap({
                     <rect
                       x={pl}
                       y={pt}
-                      width={NEWS_PILL_WIDTH}
+                      width={currentNewsPillWidth}
                       height={NEWS_PILL_HEIGHT}
                       rx={NEWS_PILL_RADIUS}
                       fill="white"
@@ -424,18 +420,18 @@ export default function KeywordBubbleMap({
               })}
           </AnimatePresence>
         </Svg>
-      </Container>
-    </>
+      </BlurContent>
+      {isEmpty && (
+        <EmptyOverlay>
+          <IoCalendarOutline size={36} color="#9ca3af" />
+          <Text size="xs" weight="bold" variant="#62676d">
+            해당 날짜에 생성된 키워드가 없어요!
+          </Text>
+        </EmptyOverlay>
+      )}
+    </Container>
   );
 }
-
-const BubbleMapHeader = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-`;
 
 const Container = styled.div`
   position: relative;
@@ -472,4 +468,22 @@ const Svg = styled.svg`
   inset: 0;
   width: 100%;
   height: 100%;
+`;
+
+const BlurContent = styled.div<{ $blurred: boolean }>`
+  position: absolute;
+  inset: 0;
+  filter: ${({ $blurred }) => ($blurred ? 'blur(8px)' : 'none')};
+  pointer-events: ${({ $blurred }) => ($blurred ? 'none' : 'auto')};
+`;
+
+const EmptyOverlay = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  gap: 16px;
+  z-index: 2;
 `;

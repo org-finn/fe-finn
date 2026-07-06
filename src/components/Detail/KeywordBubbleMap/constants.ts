@@ -6,11 +6,11 @@ export const PILL_HEIGHT = 30;
 export const PILL_RADIUS = PILL_HEIGHT / 2;
 export const MAX_ORBIT = 74;
 
-export const NEWS_PILL_WIDTH = 150;
+export const NEWS_PILL_WIDTH = 200;
 export const NEWS_PILL_HEIGHT = 34;
 export const NEWS_PILL_RADIUS = 10;
 export const NEWS_ICON_SIZE = 14;
-export const NEWS_MAX_CHARS = 10;
+export const NEWS_MAX_CHARS = 21;
 export const NEWS_ORBIT = 115;
 
 export const POS_FILL = '#FBEBF0';
