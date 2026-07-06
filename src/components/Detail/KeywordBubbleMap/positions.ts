@@ -2,6 +2,7 @@ import {
   SVG_CENTER_Y,
   SVG_WIDTH,
   MAX_ORBIT,
+  NEWS_ICON_SIZE,
   NEWS_MAX_CHARS,
   NEWS_ORBIT,
   NEWS_PILL_HEIGHT,
@@ -19,6 +20,17 @@ const ANGLES_5 = [
 
 export function pillWidth(text: string): number {
   return Math.max(56, text.length * 10 + 24);
+}
+
+export function newsPillWidth(title: string): number {
+  let textWidth = 0;
+  for (const ch of title) {
+    const code = ch.codePointAt(0) ?? 0;
+    const isKorean =
+      (code >= 0xac00 && code <= 0xd7a3) || (code >= 0x4e00 && code <= 0x9fff);
+    textWidth += isKorean ? 10 : 6;
+  }
+  return Math.max(100, NEWS_ICON_SIZE + textWidth + 8);
 }
 
 function getBubbleAngles(count: number): number[] {
@@ -43,10 +55,13 @@ export function calcBubblePositions(count: number, cx: number, orbitR: number) {
  * - 수평 최솟값: pill 너비/2 + gap + 뉴스 카드 너비/2 (pill과 뉴스 카드가 겹치지 않도록)
  * - 상한: SVG 세로 경계를 벗어나지 않도록 제한
  */
-export function calcNewsOrbit(keywordText: string): number {
+export function calcNewsOrbit(
+  keywordText: string,
+  maxNewsPillWidth = NEWS_PILL_WIDTH
+): number {
   const pw = pillWidth(keywordText);
   // 여백값 12, 2도 나중에 상수로 빼서 관리하기
-  const minByHoriz = pw / 2 + NEWS_PILL_WIDTH / 2 + 12;
+  const minByHoriz = pw / 2 + maxNewsPillWidth / 2 + 12;
   const maxByBounds = SVG_CENTER_Y - NEWS_PILL_HEIGHT / 2 - 2;
   return Math.min(maxByBounds, Math.max(NEWS_ORBIT, minByHoriz));
 }

@@ -29,6 +29,7 @@ import {
   calcNewsOrbit,
   calcNewsPositions,
   calcKeywordOrbit,
+  newsPillWidth,
   pillWidth,
   truncateTitle,
 } from './positions';
@@ -81,7 +82,13 @@ export default function KeywordBubbleMap({
   );
 
   const displayedArticles = selected?.articles.slice(0, 5) ?? [];
-  const newsOrbit = selected ? calcNewsOrbit(selected.keyword) : NEWS_ORBIT;
+  const newsTitles = displayedArticles.map((a) => truncateTitle(a.title));
+  const newsPillWidths = newsTitles.map(newsPillWidth);
+  const maxNewsPillWidth =
+    newsPillWidths.length > 0 ? Math.max(...newsPillWidths) : NEWS_PILL_WIDTH;
+  const newsOrbit = selected
+    ? calcNewsOrbit(selected.keyword, maxNewsPillWidth)
+    : NEWS_ORBIT;
   const newsPos = calcNewsPositions(displayedArticles.length, newsOrbit);
 
   const isPos = (selected?.sentiment ?? 0) === 1;
@@ -335,8 +342,9 @@ export default function KeywordBubbleMap({
             {selected !== null &&
               displayedArticles.map((article, i) => {
                 const { x, y } = newsPos[i];
-                const title = truncateTitle(article.title);
-                const pl = x - NEWS_PILL_WIDTH / 2;
+                const title = newsTitles[i];
+                const newsPillWidth = newsPillWidths[i];
+                const pl = x - newsPillWidth / 2;
                 const pt = y - NEWS_PILL_HEIGHT / 2;
 
                 return (
@@ -373,7 +381,7 @@ export default function KeywordBubbleMap({
                     <rect
                       x={pl}
                       y={pt}
-                      width={NEWS_PILL_WIDTH}
+                      width={newsPillWidth}
                       height={NEWS_PILL_HEIGHT}
                       rx={NEWS_PILL_RADIUS}
                       fill="white"
