@@ -196,7 +196,7 @@ export default function KeywordBubbleMap({
               <motion.g
                 key={kw.keyword}
                 role="button"
-                tabIndex={isDimmed ? -1 : 0}
+                tabIndex={isDimmed || isEmpty ? -1 : 0}
                 animate={{
                   x: isSelected ? SVG_WIDTH / 2 - x : 0,
                   y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -223,6 +223,7 @@ export default function KeywordBubbleMap({
                 }}
                 onKeyDown={(e) => {
                   if (
+                    !isEmpty &&
                     selected === null &&
                     hasArticles &&
                     (e.key === 'Enter' || e.key === ' ')
@@ -274,7 +275,7 @@ export default function KeywordBubbleMap({
               <motion.g
                 key={kw.keyword}
                 role="button"
-                tabIndex={isDimmed ? -1 : 0}
+                tabIndex={isDimmed || isEmpty ? -1 : 0}
                 animate={{
                   x: isSelected ? SVG_WIDTH / 2 - x : 0,
                   y: isSelected ? SVG_CENTER_Y - y : 0,
@@ -301,6 +302,7 @@ export default function KeywordBubbleMap({
                 }}
                 onKeyDown={(e) => {
                   if (
+                    !isEmpty &&
                     selected === null &&
                     hasArticles &&
                     (e.key === 'Enter' || e.key === ' ')
